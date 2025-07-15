@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&family=Cinzel:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(60, 4.8%, 95.9%);
+  --secondary-foreground: hsl(24, 9.8%, 10%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+  
+  /* Noble family colors */
+  --burgundy: hsl(345, 100%, 27%);
+  --noble-gold: hsl(45, 70%, 52%);
+  --parchment: hsl(60, 29%, 94%);
+  --silver: hsl(0, 0%, 75%);
+  --cross-red: hsl(348, 83%, 47%);
+  --historic-blue: hsl(224, 76%, 23%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    @apply antialiased bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .font-playfair {
+    font-family: 'Playfair Display', serif;
+  }
+  
+  .font-cinzel {
+    font-family: 'Cinzel', serif;
+  }
+  
+  .bg-burgundy {
+    background-color: var(--burgundy);
+  }
+  
+  .text-burgundy {
+    color: var(--burgundy);
+  }
+  
+  .bg-noble-gold {
+    background-color: var(--noble-gold);
+  }
+  
+  .text-noble-gold {
+    color: var(--noble-gold);
+  }
+  
+  .bg-parchment {
+    background-color: var(--parchment);
+  }
+  
+  .text-parchment {
+    color: var(--parchment);
+  }
+  
+  .bg-historic-blue {
+    background-color: var(--historic-blue);
+  }
+  
+  .text-historic-blue {
+    color: var(--historic-blue);
+  }
+  
+  .bg-cross-red {
+    background-color: var(--cross-red);
+  }
+  
+  .text-cross-red {
+    color: var(--cross-red);
+  }
+  
+  .heraldic-pattern {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(212, 175, 55, 0.1),
+      rgba(212, 175, 55, 0.1) 10px,
+      transparent 10px,
+      transparent 20px
+    );
+  }
+  
+  .parchment-texture {
+    background-image: radial-gradient(circle at 100% 50%, transparent 20%, rgba(255,255,255,0.3) 21%, rgba(255,255,255,0.3) 34%, transparent 35%, transparent),
+                      linear-gradient(0deg, transparent 24%, rgba(255,255,255,0.05) 25%, rgba(255,255,255,0.05) 26%, transparent 27%, transparent 74%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05) 76%, transparent 77%, transparent);
+  }
+}
+
+/* Tree visualization styles */
+.tree-node {
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tree-node:hover {
+  transform: scale(1.05);
+}
+
+.tree-link {
+  fill: none;
+  stroke: var(--burgundy);
+  stroke-width: 2px;
+}
+
+.succession-node {
+  stroke: var(--noble-gold);
+  stroke-width: 3px;
+}
+
+.male-node {
+  fill: var(--historic-blue);
+}
+
+.female-node {
+  fill: var(--burgundy);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--burgundy);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--noble-gold);
+}

@@ -1,0 +1,58 @@
+import { Button } from "@/components/ui/button";
+import coatOfArms from "@assets/vapenskjöld_1752593493242.jpg";
+
+export function HeroSection() {
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  return (
+    <section id="home" className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      <div className="absolute inset-0 heraldic-pattern"></div>
+      <div className="relative z-10 text-center max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <div className="inline-block p-4 bg-white rounded-full shadow-2xl mb-6">
+            <img 
+              src={coatOfArms} 
+              alt="Gyllencreutz Family Coat of Arms" 
+              className="w-32 h-32 object-contain" 
+            />
+          </div>
+        </div>
+        
+        <h1 className="text-4xl md:text-6xl font-playfair font-bold text-burgundy mb-6">
+          The Noble House of<br />
+          <span className="text-noble-gold">Gyllencreutz</span>
+        </h1>
+        
+        <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
+          <em>Adliga ätten nr 54</em> - One of Sweden's oldest noble families, tracing our ancestry to Lars Tykesson, a Danish-born stable-master to the Duke of Holstein, and his son Tyke Larsson, who was ennobled in Sweden during the 1500s.
+        </p>
+        
+        <div className="bg-white bg-opacity-90 rounded-lg p-6 shadow-xl max-w-2xl mx-auto mb-8">
+          <blockquote className="text-gray-800 italic text-lg leading-relaxed">
+            "The noble family Gyllencreutz traces its ancestry to Lars Tykesson, a Danish-born stable-master to the Duke of Holstein, and his son Tyke Larsson, who was ennobled in Sweden during the 1500s."
+          </blockquote>
+        </div>
+        
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <Button
+            onClick={() => scrollToSection('tree')}
+            className="bg-burgundy hover:bg-red-900 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Explore Family Tree
+          </Button>
+          <Button
+            onClick={() => window.open('https://minerva.riddarhuset.se/att/gyllencreutz/', '_blank')}
+            className="bg-noble-gold hover:bg-yellow-600 text-white px-8 py-3 rounded-lg font-semibold transition-colors"
+          >
+            Riddarhuset Registry
+          </Button>
+        </div>
+      </div>
+    </section>
+  );
+}
