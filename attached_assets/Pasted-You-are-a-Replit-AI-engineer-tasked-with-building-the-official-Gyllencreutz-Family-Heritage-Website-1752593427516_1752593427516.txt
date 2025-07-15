@@ -1,0 +1,58 @@
+You are a Replit AI-engineer tasked with building the official *Gyllencreutz Family Heritage Website*. The Gyllencreutz family is one of Sweden’s oldest noble families, and this website should beautifully showcase their history, values, and legacy across centuries. Your task is to develop a modern, interactive experience using React, TypeScript, Tailwind CSS (ShadCN), and D3.js where relevant.
+
+---
+
+### 📚 Included Assets:
+1. **`data/Gyllencreutz_Ancestry_Flat_With_BiologicalSex.json`** — a flat data file of the Gyllencreutz family lineage suitable for tree rendering.
+2. **`Slutprodukt bok sista upplagan 10 feb 2024.pdf`** — a historical biography of Tyke Larsson, a key ancestor, covering 1500s Sweden.
+3. **Images:** family coat of arms (`vapenskjöld.jpg`), noble mark (`Adelsmärke från kopia 2.jpg`), and symbolic horse illustration (`2 Häst.jpg`).
+
+---
+
+### 🎯 Project Scope:
+
+#### 🔷 1. Interactive Ancestry Tree Page
+Build a modular component named `GyllencreutzTree.tsx` and route it under `/gyllencreutz-tree`. This should:
+- Load `Gyllencreutz_Ancestry_Flat_With_BiologicalSex.json` at runtime.
+- Convert the flat data into a nested tree using a helper function like `buildTree(flatData)` (based on the `Father` field).
+- Render using D3.js (`d3.hierarchy`, `d3.tree`).
+- Each node displays:
+  - Name
+  - Born & Died years
+  - Highlight succession sons (`IsSuccessionSon === true`)
+  - Style node based on `BiologicalSex`
+- Add interactive features:
+  - Search bar to filter and zoom to individuals
+  - Reset button to re-center and collapse
+  - Tooltip or side panel with full info (`Notes`, `AgeAtDeath`, etc.)
+
+#### 🔷 2. Homepage with Noble Introduction
+Create a welcoming homepage `/`:
+- Introduce the Gyllencreutz family as one of Sweden's oldest noble families.
+- Briefly mention their registration at Riddarhuset.
+- Include a tasteful section with the family coat of arms (`vapenskjöld.jpg`) and a short excerpt:
+  
+  > "The noble family Gyllencreutz (Adliga ätten nr 54) traces its ancestry to Lars Tykesson, a Danish-born stable-master to the Duke of Holstein, and his son Tyke Larsson, who was ennobled in Sweden during the 1500s."
+
+- Link to the Riddarhuset listing: [https://minerva.riddarhuset.se/att/gyllencreutz/](https://minerva.riddarhuset.se/att/gyllencreutz/)
+
+#### 🔷 3. “Legacy & Intrigue” Teaser Section
+On a separate `/legacy` page, create a teaser for the historical book **"Makt, intriger och krig"** by Claes Gyllencreutz:
+- Include the book cover and some selected, dramatic excerpts from the preface and early chapters (e.g., Lars Tykesson's service under Hertig Adolf of Holstein, Tyke’s journey to Sweden).
+- Write an engaging short summary and offer download or purchase links:
+  
+  > *"Discover the gripping story of Tyke Larsson — from his noble beginnings in Schleswig to his entanglements in Nordic wars, court politics, and noble life in 16th-century Sweden. This book is a window into a forgotten era of power, conflict, and family legacy."*
+
+- Link or refer to: `Slutprodukt bok sista upplagan 10 feb 2024.pdf`
+
+#### 🔷 4. Optional Pages
+Consider additional routes or sections such as:
+- `/gallery` with `vapenskjöld.jpg`, `Adelsmärkes` imagery, and `2 Häst.jpg` with light contextual captions.
+- `/about` page with info about the project's background, family members contributing, and technical credits.
+
+---
+
+### 📌 Constraints & Style:
+- React + TypeScript + Tailwind (ShadCN components)
+- Use modular design; no global CSS or DOM overrides
+- Follow clean, elegant, and slightly historical design (colors from the family crest, serif fonts, soft parchment-like background optional)
