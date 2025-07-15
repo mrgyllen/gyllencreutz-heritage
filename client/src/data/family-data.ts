@@ -24,7 +24,12 @@ export function buildFamilyTree(members: FamilyMember[]): FamilyTreeNode | null 
       const parent = memberMap.get(member.father);
       parent?.children.push(node);
     } else {
-      root = node;
+      // Set root to the member with external ID "0" (Lars Tygesson)
+      if (member.externalId === "0") {
+        root = node;
+      } else if (!root) {
+        root = node;
+      }
     }
   });
 
