@@ -39,7 +39,7 @@ export class MemStorage implements IStorage {
       
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = dirname(__filename);
-      const filePath = join(__dirname, 'Gyllencreutz_Ancestry_Flat_With_Monarchs_Combined_1752609117306.json');
+      const filePath = join(__dirname, '../attached_assets/Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json');
       
       const rawData = readFileSync(filePath, 'utf8');
       // Handle NaN values in JSON by replacing them with null
@@ -52,7 +52,7 @@ export class MemStorage implements IStorage {
         name: member.Name,
         born: member.Born === null ? null : member.Born,
         died: member.Died === null || member.Died === 9999 ? null : member.Died,
-        biologicalSex: member.Sex || 'Unknown',
+        biologicalSex: member.BiologicalSex || 'Unknown',
         notes: member.Notes || null,
         father: member.Father === null || member.Father === 'NaN' || member.Father === undefined ? null : member.Father,
         ageAtDeath: member.AgeAtDeath === null ? null : member.AgeAtDeath,
@@ -60,7 +60,21 @@ export class MemStorage implements IStorage {
         isSuccessionSon: member.IsSuccessionSon === null ? false : member.IsSuccessionSon,
         hasMaleChildren: member.HasMaleChildren === null ? false : member.HasMaleChildren,
         nobleBranch: member.NobleBranch === null || member.NobleBranch === 'NaN' || member.NobleBranch === undefined ? null : member.NobleBranch,
-        monarchDuringLife: Array.isArray(member.MonarchDuringLife) ? member.MonarchDuringLife : []
+        monarchDuringLife: (() => {
+          try {
+            if (typeof member.MonarchDuringLife === 'string') {
+              // Handle Python-style array format with single quotes
+              const cleanedString = member.MonarchDuringLife.replace(/'/g, '"');
+              return JSON.parse(cleanedString);
+            } else if (Array.isArray(member.MonarchDuringLife)) {
+              return member.MonarchDuringLife;
+            }
+            return [];
+          } catch (e) {
+            console.log('Failed to parse MonarchDuringLife for', member.Name, ':', member.MonarchDuringLife);
+            return [];
+          }
+        })()
       }));
       
       // Initialize family members

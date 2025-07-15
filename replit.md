@@ -41,10 +41,11 @@ Preferred communication style: Simple, everyday language.
 - Visual indicators for succession sons and biological sex
 
 ### Data Management
-- Family member records with fields: name, birth/death dates, biological sex, notes, father references
+- Family member records with fields: name, birth/death dates, biological sex, notes, father references, monarch information
 - Tree-building algorithm to convert flat data structure into hierarchical format
 - Search capabilities across names and notes
 - Type-safe data handling with Zod validation schemas
+- Updated to use cleaned final data files with corrected structure and "BiologicalSex" field naming
 
 ### User Interface
 - Single-page application with smooth scrolling navigation
@@ -100,3 +101,11 @@ Preferred communication style: Simple, everyday language.
 - Production: `npm run build && npm start` - Static file serving
 - Database: `DATABASE_URL` environment variable for PostgreSQL connection
 - Session: PostgreSQL session store configured for production scaling
+
+## Recent Changes (January 2025)
+- Updated to use cleaned final data files with corrected structure
+- Fixed father relationship processing to display complete family tree lineage
+- Renamed "Sex" field to "BiologicalSex" throughout the application
+- Added proper monarch information parsing for each family member
+- Successfully loaded 148 family members with complete genealogical connections
+- Verified modern descendants (1950-1980) are properly linked in the tree structure
