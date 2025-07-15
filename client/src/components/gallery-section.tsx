@@ -71,6 +71,89 @@ export function GallerySection() {
             </CardContent>
           </Card>
         </div>
+
+        <div className="mt-16">
+          <h3 className="text-2xl font-playfair font-bold text-burgundy mb-8 text-center">
+            Official Heraldic Archive
+          </h3>
+          <p className="text-center text-gray-600 mb-8">
+            From the Riddarhuset (House of Nobility) Archive - Official heraldic representations throughout history
+          </p>
+          
+          <div className="grid md:grid-cols-4 gap-6">
+            <Card className="bg-gray-50 shadow-lg">
+              <CardContent className="p-4 text-center">
+                <div className="mb-4">
+                  <img 
+                    src="https://minerva.riddarhuset.se/wp-content/uploads/2025/06/Gyllencreutz-A0054-v3-465x464.jpg" 
+                    alt="Gyllencreutz Heraldic Shield - SAK 2022"
+                    className="w-full h-32 object-contain rounded-lg" 
+                  />
+                </div>
+                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                  SAK 2022
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Modern heraldic representation
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-50 shadow-lg">
+              <CardContent className="p-4 text-center">
+                <div className="mb-4">
+                  <img 
+                    src="https://minerva.riddarhuset.se/wp-content/uploads/2024/05/A-0054-465x548.jpg" 
+                    alt="Gyllencreutz - Keyser's Coat of Arms Book, 1650"
+                    className="w-full h-32 object-contain rounded-lg" 
+                  />
+                </div>
+                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                  Keyser's Vapenbok
+                </h4>
+                <p className="text-xs text-gray-600">
+                  1650 heraldic record
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-50 shadow-lg">
+              <CardContent className="p-4 text-center">
+                <div className="mb-4">
+                  <img 
+                    src="https://minerva.riddarhuset.se/wp-content/uploads/2023/08/Gyllencreutz-A0054-v3-1-465x464.jpg" 
+                    alt="Gyllencreutz - Sweden's Noble Calendar"
+                    className="w-full h-32 object-contain rounded-lg" 
+                  />
+                </div>
+                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                  Sveriges Adelskalender
+                </h4>
+                <p className="text-xs text-gray-600">
+                  Noble calendar entry
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-50 shadow-lg">
+              <CardContent className="p-4 text-center">
+                <div className="mb-4">
+                  <img 
+                    src="https://minerva.riddarhuset.se/wp-content/uploads/2023/08/A-0054-465x591.jpg" 
+                    alt="Gyllencreutz - Stiernstedt and Klingspor's Coat of Arms Book, 1865"
+                    className="w-full h-32 object-contain rounded-lg" 
+                  />
+                </div>
+                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                  Stiernstedt & Klingspor
+                </h4>
+                <p className="text-xs text-gray-600">
+                  1865 heraldic compilation
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
     </section>
   );

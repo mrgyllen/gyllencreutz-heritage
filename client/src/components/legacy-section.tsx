@@ -7,10 +7,10 @@ export function LegacySection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-noble-gold mb-4">
-            Legacy & Intrigue
+            Makt, intriger och krig
           </h2>
           <p className="text-lg text-gray-300 max-w-2xl mx-auto">
-            Discover the gripping story of power, conflict, and family legacy in 16th-century Sweden through our historical biography.
+            En frälsemans levnadsöde under Wasatiden - A comprehensive historical biography by Claes Gyllencreutz
           </p>
         </div>
 
@@ -19,13 +19,23 @@ export function LegacySection() {
             {/* Book Cover */}
             <Card className="bg-gradient-to-br from-amber-800 to-amber-900 border-none shadow-2xl">
               <CardContent className="p-8 text-center">
-                <h3 className="text-2xl font-playfair font-bold text-noble-gold mb-4">
-                  Makt, intriger och krig
-                </h3>
-                <p className="text-lg text-amber-100 mb-6">
-                  En frälsemans levnadsöde under Wasatiden
-                </p>
-                <p className="text-amber-200 font-semibold">Claes Gyllencreutz</p>
+                <div className="bg-white p-6 rounded-lg shadow-inner mb-6">
+                  <img 
+                    src="https://image.bokus.com/images/9789198793543_383x_makt-intriger-och-krig-en-fralsemans-levnadsode-under-wasatiden" 
+                    alt="Makt, intriger och krig book cover"
+                    className="w-full max-w-xs mx-auto rounded-lg shadow-lg"
+                  />
+                </div>
+                <div className="text-center">
+                  <h3 className="text-2xl font-playfair font-bold text-noble-gold mb-2">
+                    Makt, intriger och krig
+                  </h3>
+                  <p className="text-lg text-amber-100 mb-4">
+                    En frälsemans levnadsöde under Wasatiden
+                  </p>
+                  <p className="text-amber-200 font-semibold mb-2">Claes Gyllencreutz</p>
+                  <p className="text-amber-300 text-sm">Inbunden • 304 sidor • 2024</p>
+                </div>
               </CardContent>
             </Card>
           </div>
@@ -36,27 +46,39 @@ export function LegacySection() {
                 <h3 className="text-xl font-playfair font-bold text-noble-gold mb-4">
                   The Story of Tyke Larsson
                 </h3>
-                <blockquote className="text-gray-300 italic text-lg leading-relaxed">
-                  "Discover the gripping story of Tyke Larsson — from his noble beginnings in Schleswig to his entanglements in Nordic wars, court politics, and noble life in 16th-century Sweden. This book is a window into a forgotten era of power, conflict, and family legacy."
-                </blockquote>
+                <p className="text-gray-300 leading-relaxed">
+                  Claes Gyllencreutz has written a family chronicle with ancestor Tyke Larsson (Gyllencreutz) at the center, which is also a piece of Swedish history. The Gyllencreutz family's fates are intertwined with the power-historical events in Sweden and the Nordic region.
+                </p>
               </CardContent>
             </Card>
 
             <Card className="bg-gray-800 border-gray-700">
               <CardContent className="p-6">
-                <h4 className="text-lg font-semibold text-noble-gold mb-3">From the Preface:</h4>
+                <h4 className="text-lg font-semibold text-noble-gold mb-3">Historical Context:</h4>
                 <p className="text-gray-300 leading-relaxed">
-                  Lars Tykesson served as stable-master under Duke Adolf of Holstein at Gottorp Castle. When he fell in battle at Dithmarschen in 1559, his widow Marina made the fateful decision to send their young son Tyke to Sweden, where he would eventually be ennobled and found one of the oldest noble houses in Swedish history.
+                  The events take place mainly in the provinces of Småland, Västergötland, Östergötland (Nordic Seven Years' War) and Stockholm. In the 1580s, he was employed by the Eastern Göta military area as a recruiter of soldiers and cavalry to Östan- and Westanstång in Östergötland. He later became councilor and kitchen master to Duke Magnus Vasa at Kungsbrogård near Vreta Monastery.
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gray-800 border-gray-700">
+              <CardContent className="p-6">
+                <h4 className="text-lg font-semibold text-noble-gold mb-3">Personal Life:</h4>
+                <p className="text-gray-300 leading-relaxed">
+                  Tyke married at his estate Wiby outside Östra Ryd south of Norrköping and had 10 children with two wives, Kirsten Trulsdotter and Brita Alfsdotter Ikorn. He was fortunate to become one of Duke Karl's favorites and received courier assignments during Karl's dispute with Hogenskild Bielke and later also with King Sigismund.
                 </p>
               </CardContent>
             </Card>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-noble-gold hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold transition-colors">
-                Download PDF
+              <Button 
+                className="bg-noble-gold hover:bg-yellow-600 text-black px-6 py-3 rounded-lg font-semibold transition-colors"
+                onClick={() => window.open('https://www.bokus.com/bok/9789198793543/makt-intriger-och-krig-en-fralsemans-levnadsode-under-wasatiden/', '_blank')}
+              >
+                View on Bokus
               </Button>
               <Button className="bg-burgundy hover:bg-red-800 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                Purchase Book
+                Contact Author
               </Button>
             </div>
           </div>

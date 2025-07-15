@@ -109,3 +109,7 @@ Preferred communication style: Simple, everyday language.
 - Added proper monarch information parsing for each family member
 - Successfully loaded 148 family members with complete genealogical connections
 - Verified modern descendants (1950-1980) are properly linked in the tree structure
+- Integrated official Riddarhuset (House of Nobility) information into About section
+- Added comprehensive book information for "Makt, intriger och krig" by Claes Gyllencreutz
+- Enhanced Heraldic Gallery with official heraldic images from Riddarhuset archive
+- Updated Hero section with authentic historical information from official sources

@@ -29,13 +29,14 @@ export function HeroSection() {
         </h1>
         
         <p className="text-lg md:text-xl text-gray-700 mb-8 max-w-3xl mx-auto leading-relaxed">
-          <em>Adliga ätten nr 54</em> - One of Sweden's oldest noble families, tracing our ancestry to Lars Tykesson, a Danish-born stable-master to the Duke of Holstein, and his son Tyke Larsson, who was ennobled in Sweden during the 1500s.
+          <em>Adliga ätten nr 54</em> - Ennobled January 26, 1594, and introduced to the House of Nobility in 1625. The family originates from Holstein with Lars Tykesson as the earliest known ancestor.
         </p>
         
         <div className="bg-white bg-opacity-90 rounded-lg p-6 shadow-xl max-w-2xl mx-auto mb-8">
           <blockquote className="text-gray-800 italic text-lg leading-relaxed">
-            "The noble family Gyllencreutz traces its ancestry to Lars Tykesson, a Danish-born stable-master to the Duke of Holstein, and his son Tyke Larsson, who was ennobled in Sweden during the 1500s."
+            "His son, Tyke Larsson, became court master to Duke Magnus of Östergötland and district judge in Vifolka hundred. He was ennobled on January 26, 1594, at Stockholm Castle by King Sigismund."
           </blockquote>
+          <p className="text-sm text-gray-600 mt-2">— Riddarhuset Official Archive</p>
         </div>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
