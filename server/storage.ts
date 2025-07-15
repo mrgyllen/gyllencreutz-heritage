@@ -54,12 +54,12 @@ export class MemStorage implements IStorage {
         died: member.Died === null || member.Died === 9999 ? null : member.Died,
         biologicalSex: member.Sex || 'Unknown',
         notes: member.Notes || null,
-        father: member.Father === null || isNaN(member.Father) || member.Father === 'NaN' ? null : member.Father,
+        father: member.Father === null || member.Father === 'NaN' || member.Father === undefined ? null : member.Father,
         ageAtDeath: member.AgeAtDeath === null ? null : member.AgeAtDeath,
         diedYoung: member.DiedYoung === null ? false : member.DiedYoung,
         isSuccessionSon: member.IsSuccessionSon === null ? false : member.IsSuccessionSon,
         hasMaleChildren: member.HasMaleChildren === null ? false : member.HasMaleChildren,
-        nobleBranch: member.NobleBranch === null || isNaN(member.NobleBranch) || member.NobleBranch === 'NaN' ? null : member.NobleBranch,
+        nobleBranch: member.NobleBranch === null || member.NobleBranch === 'NaN' || member.NobleBranch === undefined ? null : member.NobleBranch,
         monarchDuringLife: Array.isArray(member.MonarchDuringLife) ? member.MonarchDuringLife : []
       }));
       
