@@ -17,7 +17,7 @@ export function GallerySection() {
         </div>
 
         <div className="grid md:grid-cols-3 gap-8">
-          <Card className="bg-gray-50 shadow-lg">
+          <Card className="bg-parchment shadow-lg border-antique-brass/20">
             <CardContent className="p-6 text-center">
               <div className="mb-4">
                 <img 
@@ -26,16 +26,16 @@ export function GallerySection() {
                   className="w-full h-48 object-contain rounded-lg" 
                 />
               </div>
-              <h3 className="text-xl font-playfair font-bold text-burgundy mb-2">
+              <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
                 Family Coat of Arms
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 The official heraldic shield of the Gyllencreutz family, featuring the distinctive three crosses that symbolize faith, nobility, and heritage.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-50 shadow-lg">
+          <Card className="bg-parchment shadow-lg border-antique-brass/20">
             <CardContent className="p-6 text-center">
               <div className="mb-4">
                 <img 
@@ -44,16 +44,16 @@ export function GallerySection() {
                   className="w-full h-48 object-contain rounded-lg" 
                 />
               </div>
-              <h3 className="text-xl font-playfair font-bold text-burgundy mb-2">
+              <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
                 Noble Mark
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Historical noble mark (Adelsmärke) from the family archives, representing the official registration at Riddarhuset as nobility number 54.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-gray-50 shadow-lg">
+          <Card className="bg-parchment shadow-lg border-antique-brass/20">
             <CardContent className="p-6 text-center">
               <div className="mb-4">
                 <img 
@@ -62,10 +62,10 @@ export function GallerySection() {
                   className="w-full h-48 object-contain rounded-lg" 
                 />
               </div>
-              <h3 className="text-xl font-playfair font-bold text-burgundy mb-2">
+              <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
                 Noble Horseman
               </h3>
-              <p className="text-gray-600">
+              <p className="text-gray-700">
                 Historical illustration representing the noble military tradition of the family, reflecting their service to the Swedish crown.
               </p>
             </CardContent>
@@ -73,15 +73,15 @@ export function GallerySection() {
         </div>
 
         <div className="mt-16">
-          <h3 className="text-2xl font-playfair font-bold text-burgundy mb-8 text-center">
+          <h3 className="text-2xl font-playfair font-bold text-deep-forest mb-8 text-center">
             Official Heraldic Archive
           </h3>
-          <p className="text-center text-gray-600 mb-8">
+          <p className="text-center text-gray-700 mb-8">
             From the Riddarhuset (House of Nobility) Archive - Official heraldic representations throughout history
           </p>
           
           <div className="grid md:grid-cols-4 gap-6">
-            <Card className="bg-gray-50 shadow-lg">
+            <Card className="bg-parchment shadow-lg border-antique-brass/20">
               <CardContent className="p-4 text-center">
                 <div className="mb-4">
                   <img 
@@ -90,16 +90,16 @@ export function GallerySection() {
                     className="w-full h-32 object-contain rounded-lg" 
                   />
                 </div>
-                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                <h4 className="text-sm font-playfair font-bold text-deep-forest mb-2">
                   SAK 2022
                 </h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-700">
                   Modern heraldic representation
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-50 shadow-lg">
+            <Card className="bg-parchment shadow-lg border-antique-brass/20">
               <CardContent className="p-4 text-center">
                 <div className="mb-4">
                   <img 
@@ -108,16 +108,16 @@ export function GallerySection() {
                     className="w-full h-32 object-contain rounded-lg" 
                   />
                 </div>
-                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                <h4 className="text-sm font-playfair font-bold text-deep-forest mb-2">
                   Keyser's Vapenbok
                 </h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-700">
                   1650 heraldic record
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-50 shadow-lg">
+            <Card className="bg-parchment shadow-lg border-antique-brass/20">
               <CardContent className="p-4 text-center">
                 <div className="mb-4">
                   <img 
@@ -126,16 +126,16 @@ export function GallerySection() {
                     className="w-full h-32 object-contain rounded-lg" 
                   />
                 </div>
-                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                <h4 className="text-sm font-playfair font-bold text-deep-forest mb-2">
                   Sveriges Adelskalender
                 </h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-700">
                   Noble calendar entry
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-gray-50 shadow-lg">
+            <Card className="bg-parchment shadow-lg border-antique-brass/20">
               <CardContent className="p-4 text-center">
                 <div className="mb-4">
                   <img 
@@ -144,10 +144,10 @@ export function GallerySection() {
                     className="w-full h-32 object-contain rounded-lg" 
                   />
                 </div>
-                <h4 className="text-sm font-playfair font-bold text-burgundy mb-2">
+                <h4 className="text-sm font-playfair font-bold text-deep-forest mb-2">
                   Stiernstedt & Klingspor
                 </h4>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-gray-700">
                   1865 heraldic compilation
                 </p>
               </CardContent>

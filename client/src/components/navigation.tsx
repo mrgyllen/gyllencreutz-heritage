@@ -14,12 +14,12 @@ export function Navigation() {
   };
 
   return (
-    <nav className="bg-burgundy shadow-lg sticky top-0 z-50">
+    <nav className="bg-deep-forest shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <h1 className="text-noble-gold font-cinzel text-xl font-semibold">
+              <h1 className="text-antique-brass font-cinzel text-xl font-semibold">
                 GYLLENCREUTZ
               </h1>
             </div>
@@ -30,31 +30,31 @@ export function Navigation() {
             <div className="ml-10 flex items-baseline space-x-4">
               <button
                 onClick={() => scrollToSection('home')}
-                className="text-parchment hover:text-noble-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Home
               </button>
               <button
                 onClick={() => scrollToSection('tree')}
-                className="text-parchment hover:text-noble-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Family Tree
               </button>
               <button
                 onClick={() => scrollToSection('legacy')}
-                className="text-parchment hover:text-noble-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Legacy
               </button>
               <button
                 onClick={() => scrollToSection('gallery')}
-                className="text-parchment hover:text-noble-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 Gallery
               </button>
               <button
                 onClick={() => scrollToSection('about')}
-                className="text-parchment hover:text-noble-gold px-3 py-2 rounded-md text-sm font-medium transition-colors"
+                className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
                 About
               </button>
@@ -67,7 +67,7 @@ export function Navigation() {
               variant="ghost"
               size="icon"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-parchment hover:text-noble-gold"
+              className="text-warm-stone hover:text-antique-brass"
             >
               {isMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
             </Button>

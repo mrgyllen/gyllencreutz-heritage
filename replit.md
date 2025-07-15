@@ -7,6 +7,7 @@ This is a heritage website for the Gyllencreutz family, one of Sweden's oldest n
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that don't overtake content, reflecting historical authenticity without ostentation.
 
 ## System Architecture
 
@@ -113,3 +114,6 @@ Preferred communication style: Simple, everyday language.
 - Added comprehensive book information for "Makt, intriger och krig" by Claes Gyllencreutz
 - Enhanced Heraldic Gallery with official heraldic images from Riddarhuset archive
 - Updated Hero section with authentic historical information from official sources
+- Refined color scheme to authentic 1500-1700s Swedish nobility palette with muted, period-appropriate tones
+- Replaced modern burgundy/gold with subtle deep forest, antique brass, and warm stone colors
+- Updated all components to use historically-inspired color scheme that supports content rather than overwhelming it

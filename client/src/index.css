@@ -26,13 +26,16 @@
   --ring: hsl(20, 14.3%, 4.1%);
   --radius: 0.5rem;
   
-  /* Noble family colors */
-  --burgundy: hsl(345, 100%, 27%);
-  --noble-gold: hsl(45, 70%, 52%);
-  --parchment: hsl(60, 29%, 94%);
-  --silver: hsl(0, 0%, 75%);
-  --cross-red: hsl(348, 83%, 47%);
-  --historic-blue: hsl(224, 76%, 23%);
+  /* Swedish nobility colors (1500-1700s) */
+  --burgundy: hsl(355, 35%, 32%);
+  --noble-gold: hsl(42, 35%, 45%);
+  --parchment: hsl(48, 20%, 92%);
+  --silver: hsl(0, 0%, 68%);
+  --cross-red: hsl(358, 45%, 38%);
+  --historic-blue: hsl(220, 30%, 28%);
+  --warm-stone: hsl(35, 12%, 82%);
+  --deep-forest: hsl(150, 20%, 25%);
+  --antique-brass: hsl(38, 25%, 42%);
 }
 
 .dark {
@@ -117,13 +120,41 @@
     color: var(--cross-red);
   }
   
+  .bg-warm-stone {
+    background-color: var(--warm-stone);
+  }
+  
+  .text-warm-stone {
+    color: var(--warm-stone);
+  }
+  
+  .bg-deep-forest {
+    background-color: var(--deep-forest);
+  }
+  
+  .text-deep-forest {
+    color: var(--deep-forest);
+  }
+  
+  .bg-antique-brass {
+    background-color: var(--antique-brass);
+  }
+  
+  .text-antique-brass {
+    color: var(--antique-brass);
+  }
+  
   .heraldic-pattern {
+    background: linear-gradient(135deg, 
+      hsl(48, 20%, 92%) 0%,
+      hsl(35, 12%, 82%) 100%
+    );
     background-image: repeating-linear-gradient(
       45deg,
-      rgba(212, 175, 55, 0.1),
-      rgba(212, 175, 55, 0.1) 10px,
-      transparent 10px,
-      transparent 20px
+      rgba(104, 89, 68, 0.06),
+      rgba(104, 89, 68, 0.06) 12px,
+      transparent 12px,
+      transparent 24px
     );
   }
   
