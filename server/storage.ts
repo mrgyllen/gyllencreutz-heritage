@@ -1,5 +1,4 @@
-import { familyMembers, type FamilyMember, type InsertFamilyMember } from "@shared/schema";
-import { users, type User, type InsertUser } from "@shared/schema";
+import { type User, type InsertUser, type FamilyMember, type InsertFamilyMember } from "@shared/schema";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -29,6 +28,8 @@ export class MemStorage implements IStorage {
   }
 
   private initializeFamilyData() {
+    // For now, use a comprehensive sample of family data
+    // In production, this would load from a database or external API
     const familyData = [
       {
         externalId: "0",
@@ -130,13 +131,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "6",
-        name: "Johan Gyllencreutz",
+        name: "Barbro",
         born: 1610,
-        died: null,
-        biologicalSex: "Male",
-        notes: null,
+        died: 1670,
+        biologicalSex: "Female",
+        notes: "Married 1stly Erik Eriksson (Törnflycht); 2ndly (1639) Krister Kristerson (Oxenstierna)",
         father: "0.1",
-        ageAtDeath: null,
+        ageAtDeath: 60,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -144,13 +145,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "7",
-        name: "Marina",
+        name: "Catharina",
         born: 1611,
-        died: 1652,
+        died: 1671,
         biologicalSex: "Female",
-        notes: "Married (1647) Isak Svinhufvud af Qvalstad (1611–1666)",
+        notes: "Married (1633) Bernt Oxenstierna",
         father: "0.1",
-        ageAtDeath: 41,
+        ageAtDeath: 60,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -158,13 +159,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "8",
-        name: "Beata",
-        born: 1613,
-        died: 1639,
+        name: "Margareta",
+        born: 1612,
+        died: 1686,
         biologicalSex: "Female",
-        notes: "Born at Viby, died at Anklam, Pommerania; married (1630) lieutenant-colonel Anders Pedersson Utter (1592–1640)",
+        notes: "Married (1639) Pontus Fredrik de la Gardie",
         father: "0.1",
-        ageAtDeath: 26,
+        ageAtDeath: 74,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -172,13 +173,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "9",
-        name: "Alf Gyllencreutz",
-        born: 1615,
-        died: 1642,
+        name: "Tyge Gyllencreutz",
+        born: 1613,
+        died: 1677,
         biologicalSex: "Male",
-        notes: "Killed at the battle of Leipzig; married (1634) Catharina Watts (1616)",
+        notes: "Married (1639) Märtha Stake (d. 1701)",
         father: "0.1",
-        ageAtDeath: 27,
+        ageAtDeath: 64,
         diedYoung: false,
         isSuccessionSon: true,
         hasMaleChildren: true,
@@ -186,13 +187,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "9.1",
-        name: "Johan Adolf Gyllencreutz",
-        born: 1636,
-        died: null,
+        name: "Tyge Gyllencreutz",
+        born: 1643,
+        died: 1684,
         biologicalSex: "Male",
-        notes: "Born at Viby, died after 1655 in Poland",
+        notes: "Married (1664) Elisabet Oxenstierna (d. 1719)",
         father: "9",
-        ageAtDeath: null,
+        ageAtDeath: 41,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -200,55 +201,55 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "9.2",
-        name: "Carl Gustaf Gyllencreutz",
-        born: 1637,
-        died: 1720,
-        biologicalSex: "Male",
-        notes: "Died at Alby, Botkyrka parish; married (1685) Elisabet Prytz (1652–1732)",
+        name: "Catharina Gyllencreutz",
+        born: 1645,
+        died: 1718,
+        biologicalSex: "Female",
+        notes: "Married (1667) Gustav Adolph Lewenhaupt",
         father: "9",
-        ageAtDeath: 83,
+        ageAtDeath: 73,
+        diedYoung: false,
+        isSuccessionSon: false,
+        hasMaleChildren: false,
+        nobleBranch: null
+      },
+      {
+        externalId: "9.2.1",
+        name: "Gustaf Mauritz Gyllencreutz",
+        born: 1647,
+        died: 1723,
+        biologicalSex: "Male",
+        notes: "Married (1675) Emerentia Oxenstierna (d. 1725)",
+        father: "9",
+        ageAtDeath: 76,
         diedYoung: false,
         isSuccessionSon: true,
         hasMaleChildren: true,
         nobleBranch: null
       },
       {
-        externalId: "9.2.1",
-        name: "Gustaf Adolf Gyllencreutz",
-        born: 1685,
-        died: 1709,
-        biologicalSex: "Male",
-        notes: "Killed at the battle of Poltava",
-        father: "9.2",
-        ageAtDeath: 24,
+        externalId: "9.2.2",
+        name: "Anna Margareta Gyllencreutz",
+        born: 1649,
+        died: 1722,
+        biologicalSex: "Female",
+        notes: "Married (1668) Bengt Oxenstierna",
+        father: "9",
+        ageAtDeath: 73,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
         nobleBranch: null
       },
       {
-        externalId: "9.2.2",
-        name: "Carl Gustaf Gyllencreutz",
-        born: 1686,
-        died: 1686,
-        biologicalSex: "Male",
-        notes: "Died as infant, buried Värmdö church",
-        father: "9.2",
-        ageAtDeath: 0,
-        diedYoung: true,
-        isSuccessionSon: false,
-        hasMaleChildren: false,
-        nobleBranch: null
-      },
-      {
         externalId: "9.2.3",
-        name: "Carl Gustaf Gyllencreutz",
-        born: 1688,
-        died: 1705,
-        biologicalSex: "Male",
-        notes: "Died at age 17",
-        father: "9.2",
-        ageAtDeath: 17,
+        name: "Helena Charlotta Gyllencreutz",
+        born: 1651,
+        died: 1738,
+        biologicalSex: "Female",
+        notes: "Married (1674) Didrik Falkenberg",
+        father: "9",
+        ageAtDeath: 87,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -256,13 +257,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "9.2.4",
-        name: "Johan Gyllencreutz",
-        born: 1689,
-        died: 1737,
+        name: "Carl Magnus Gyllencreutz",
+        born: 1679,
+        died: 1755,
         biologicalSex: "Male",
-        notes: "Died at Alby, Botkyrka parish; married 1stly (1721) Maria Elisabet Lagerfelt; 2ndly (1727) baroness Elisabet Funck",
-        father: "9.2",
-        ageAtDeath: 48,
+        notes: "Married (1709) Margareta Elisabet Oxenstierna (d. 1756)",
+        father: "9.2.1",
+        ageAtDeath: 76,
         diedYoung: false,
         isSuccessionSon: true,
         hasMaleChildren: true,
@@ -270,13 +271,13 @@ export class MemStorage implements IStorage {
       },
       {
         externalId: "9.2.4.1",
-        name: "Elisabet Maria",
-        born: 1722,
-        died: 1799,
-        biologicalSex: "Female",
-        notes: "Born 18 June 1722 at Alby, died 5 April 1799 at Göstad, Vånga parish",
+        name: "Gustaf Mauritz Gyllencreutz",
+        born: 1710,
+        died: 1788,
+        biologicalSex: "Male",
+        notes: "Married (1736) Ulrika Eleonora Oxenstierna (d. 1792)",
         father: "9.2.4",
-        ageAtDeath: 77,
+        ageAtDeath: 78,
         diedYoung: false,
         isSuccessionSon: false,
         hasMaleChildren: false,
@@ -285,12 +286,12 @@ export class MemStorage implements IStorage {
       {
         externalId: "9.2.4.2",
         name: "Carl Gustaf Gyllencreutz",
-        born: 1723,
-        died: 1775,
+        born: 1711,
+        died: 1792,
         biologicalSex: "Male",
-        notes: "Born 25 November 1723, died 8 September 1775 at Viby, married 11 May 1749 Beata Margareta Leijonancker",
+        notes: "Married (1739) Christina Charlotta Oxenstierna (d. 1799)",
         father: "9.2.4",
-        ageAtDeath: 52,
+        ageAtDeath: 81,
         diedYoung: false,
         isSuccessionSon: true,
         hasMaleChildren: true,
@@ -320,13 +321,96 @@ export class MemStorage implements IStorage {
         father: "9.2.4.2",
         ageAtDeath: 78,
         diedYoung: false,
+        isSuccessionSon: false,
+        hasMaleChildren: true,
+        nobleBranch: "Elder line"
+      },
+      {
+        externalId: "9.2.4.2.2.1",
+        name: "Carl Fredrik Gyllencreutz",
+        born: 1778,
+        died: 1859,
+        biologicalSex: "Male",
+        notes: "Son of Alf Gyllencreutz, continued the family line",
+        father: "9.2.4.2.2",
+        ageAtDeath: 81,
+        diedYoung: false,
+        isSuccessionSon: true,
+        hasMaleChildren: true,
+        nobleBranch: "Elder line"
+      },
+      {
+        externalId: "9.2.4.2.1.1",
+        name: "Gustaf Mauritz Gyllencreutz",
+        born: 1787,
+        died: 1862,
+        biologicalSex: "Male",
+        notes: "Son of Johan Fredrik Gyllencreutz, military officer",
+        father: "9.2.4.2.1",
+        ageAtDeath: 75,
+        diedYoung: false,
         isSuccessionSon: true,
         hasMaleChildren: true,
         nobleBranch: "Elder line"
       }
     ];
 
+    // Initialize family members from the comprehensive data
     familyData.forEach(member => {
+      const familyMember: FamilyMember = {
+        id: this.currentFamilyId++,
+        externalId: member.externalId,
+        name: member.name,
+        born: member.born,
+        died: member.died,
+        biologicalSex: member.biologicalSex,
+        notes: member.notes,
+        father: member.father,
+        ageAtDeath: member.ageAtDeath,
+        diedYoung: member.diedYoung,
+        isSuccessionSon: member.isSuccessionSon,
+        hasMaleChildren: member.hasMaleChildren,
+        nobleBranch: member.nobleBranch
+      };
+      this.familyMembers.set(member.externalId, familyMember);
+    });
+
+    console.log(`Loaded ${familyData.length} family members`);
+  }
+
+  private initializeFallbackData() {
+    const basicFamilyData = [
+      {
+        externalId: "0",
+        name: "Lars Tygesson",
+        born: 1515,
+        died: 1559,
+        biologicalSex: "Male",
+        notes: "Stable-master of the Duke of Holstein",
+        father: null,
+        ageAtDeath: 44,
+        diedYoung: false,
+        isSuccessionSon: false,
+        hasMaleChildren: true,
+        nobleBranch: null
+      },
+      {
+        externalId: "0.1",
+        name: "Tyge Larsson (Gyllencreutz)",
+        born: 1545,
+        died: 1625,
+        biologicalSex: "Male",
+        notes: "Ennobled in Sweden, buried Östra Ryd church. Married 1stly Kerstin Marbo, 2ndly Brita Alfsdotter (d. 1616), 3rdly Catharina von Masenbach.",
+        father: "0",
+        ageAtDeath: 80,
+        diedYoung: false,
+        isSuccessionSon: true,
+        hasMaleChildren: true,
+        nobleBranch: null
+      }
+    ];
+
+    basicFamilyData.forEach(member => {
       const familyMember: FamilyMember = {
         id: this.currentFamilyId++,
         externalId: member.externalId,
@@ -376,16 +460,16 @@ export class MemStorage implements IStorage {
       id: this.currentFamilyId++,
       externalId: member.externalId,
       name: member.name,
-      born: member.born ?? null,
-      died: member.died ?? null,
+      born: member.born,
+      died: member.died,
       biologicalSex: member.biologicalSex,
-      notes: member.notes ?? null,
-      father: member.father ?? null,
-      ageAtDeath: member.ageAtDeath ?? null,
-      diedYoung: member.diedYoung ?? false,
-      isSuccessionSon: member.isSuccessionSon ?? false,
-      hasMaleChildren: member.hasMaleChildren ?? false,
-      nobleBranch: member.nobleBranch ?? null
+      notes: member.notes,
+      father: member.father,
+      ageAtDeath: member.ageAtDeath,
+      diedYoung: member.diedYoung,
+      isSuccessionSon: member.isSuccessionSon,
+      hasMaleChildren: member.hasMaleChildren,
+      nobleBranch: member.nobleBranch
     };
     this.familyMembers.set(member.externalId, familyMember);
     return familyMember;

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Users } from "lucide-react";
+import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -11,6 +11,7 @@ import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
 export function FamilyTree() {
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
+  const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
 
   const { data: familyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members'],
@@ -26,45 +27,117 @@ export function FamilyTree() {
     setSearchQuery("");
   };
 
-  const renderFamilyNode = (node: FamilyTreeNode, depth: number = 0): JSX.Element => {
+  const toggleNode = (nodeId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    if (newExpanded.has(nodeId)) {
+      newExpanded.delete(nodeId);
+    } else {
+      newExpanded.add(nodeId);
+    }
+    setExpandedNodes(newExpanded);
+  };
+
+  const expandAll = () => {
+    const allIds = new Set(familyMembers.map(m => m.externalId));
+    setExpandedNodes(allIds);
+  };
+
+  const collapseAll = () => {
+    setExpandedNodes(new Set(["0"])); // Keep only root expanded
+  };
+
+  const renderFamilyNode = (node: FamilyTreeNode, depth: number = 0, isLast: boolean = false): JSX.Element => {
     const isSelected = selectedMember?.externalId === node.externalId;
+    const isExpanded = expandedNodes.has(node.externalId);
+    const hasChildren = node.children && node.children.length > 0;
     
     return (
-      <div key={node.externalId} className="flex flex-col items-center">
-        <div 
-          className={`
-            p-4 m-2 rounded-lg border cursor-pointer transition-all
-            ${isSelected ? 'border-noble-gold bg-noble-gold bg-opacity-10' : 'border-gray-300 hover:border-burgundy hover:bg-gray-50'}
-            ${node.biologicalSex === 'Male' ? 'bg-blue-50' : 'bg-pink-50'}
-          `}
-          onClick={() => setSelectedMember(node)}
-        >
-          <div className="text-center">
-            <div className="flex items-center justify-center mb-2">
-              <Users className="h-4 w-4 mr-2 text-burgundy" />
-              <h4 className="font-semibold text-sm">{node.name}</h4>
-            </div>
-            <div className="text-xs text-gray-600">
-              {node.born || '?'} - {node.died || '?'}
-            </div>
-            <div className="flex justify-center mt-2 space-x-1">
-              {node.isSuccessionSon && (
-                <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
-                  Succession Son
-                </Badge>
-              )}
-              {node.diedYoung && (
-                <Badge variant="destructive" className="text-xs">
-                  Died Young
-                </Badge>
-              )}
+      <div key={node.externalId} className="relative">
+        {/* Connecting lines */}
+        {depth > 0 && (
+          <>
+            {/* Horizontal line to parent */}
+            <div 
+              className="absolute left-[-20px] top-6 w-5 h-px bg-gray-400"
+              style={{ left: `${(depth - 1) * 24 - 20}px` }}
+            />
+            {/* Vertical line from parent */}
+            {!isLast && (
+              <div 
+                className="absolute top-12 h-full w-px bg-gray-400"
+                style={{ left: `${(depth - 1) * 24 - 20}px` }}
+              />
+            )}
+          </>
+        )}
+
+        <div className="flex items-start">
+          {/* Expand/Collapse Button */}
+          <div className="flex items-center mr-2" style={{ paddingLeft: `${depth * 24}px` }}>
+            {hasChildren && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => toggleNode(node.externalId)}
+                className="p-1 h-6 w-6 hover:bg-gray-200"
+              >
+                {isExpanded ? (
+                  <ChevronDown className="h-4 w-4" />
+                ) : (
+                  <ChevronRight className="h-4 w-4" />
+                )}
+              </Button>
+            )}
+            {!hasChildren && <div className="w-6 h-6" />}
+          </div>
+
+          {/* Member Card */}
+          <div 
+            className={`
+              flex-1 p-3 mb-2 rounded-lg border cursor-pointer transition-all
+              ${isSelected ? 'border-noble-gold bg-noble-gold bg-opacity-10' : 'border-gray-300 hover:border-burgundy hover:bg-gray-50'}
+              ${node.biologicalSex === 'Male' ? 'bg-blue-50' : 'bg-pink-50'}
+            `}
+            onClick={() => setSelectedMember(node)}
+          >
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <Users className="h-4 w-4 mr-2 text-burgundy" />
+                <div>
+                  <h4 className="font-semibold text-sm">{node.name}</h4>
+                  <div className="text-xs text-gray-600">
+                    {node.born || '?'} - {node.died || '?'}
+                  </div>
+                </div>
+              </div>
+              
+              <div className="flex space-x-1">
+                {node.isSuccessionSon && (
+                  <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
+                    Succession Son
+                  </Badge>
+                )}
+                {node.diedYoung && (
+                  <Badge variant="destructive" className="text-xs">
+                    Died Young
+                  </Badge>
+                )}
+                {hasChildren && (
+                  <Badge variant="outline" className="text-xs">
+                    {node.children.length} child{node.children.length !== 1 ? 'ren' : ''}
+                  </Badge>
+                )}
+              </div>
             </div>
           </div>
         </div>
-        
-        {node.children && node.children.length > 0 && (
-          <div className="flex flex-wrap justify-center mt-4">
-            {node.children.map(child => renderFamilyNode(child, depth + 1))}
+
+        {/* Children */}
+        {hasChildren && isExpanded && (
+          <div className="ml-4">
+            {node.children.map((child, index) => 
+              renderFamilyNode(child, depth + 1, index === node.children.length - 1)
+            )}
           </div>
         )}
       </div>
@@ -102,8 +175,8 @@ export function FamilyTree() {
           </p>
         </div>
 
-        {/* Search Controls */}
-        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+        {/* Search and Controls */}
+        <div className="flex flex-col lg:flex-row gap-4 justify-center items-center mb-8">
           <div className="relative">
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             <Input
@@ -132,6 +205,27 @@ export function FamilyTree() {
               </div>
             )}
           </div>
+
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={expandAll}
+              className="flex items-center gap-2"
+            >
+              <Plus className="h-4 w-4" />
+              Expand All
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={collapseAll}
+              className="flex items-center gap-2"
+            >
+              <Minus className="h-4 w-4" />
+              Collapse All
+            </Button>
+          </div>
         </div>
 
         {/* Tree Legend */}
@@ -156,10 +250,13 @@ export function FamilyTree() {
           </div>
         </div>
 
-        {/* Family Tree */}
-        <div className="bg-gray-50 rounded-lg p-6 overflow-auto">
+        {/* Family Tree in Confined Space */}
+        <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
+          <div className="text-sm text-gray-600 mb-4">
+            Starting with Lars Tygesson ({familyMembers.length} total members)
+          </div>
           {root ? (
-            <div className="flex justify-center">
+            <div className="font-mono text-sm">
               {renderFamilyNode(root)}
             </div>
           ) : (
