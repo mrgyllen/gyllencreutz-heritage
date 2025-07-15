@@ -16,6 +16,7 @@ export const familyMembers = pgTable("family_members", {
   isSuccessionSon: boolean("is_succession_son").default(false),
   hasMaleChildren: boolean("has_male_children").default(false),
   nobleBranch: text("noble_branch"),
+  monarchDuringLife: text("monarch_during_life").array(),
 });
 
 export const insertFamilyMemberSchema = createInsertSchema(familyMembers).omit({

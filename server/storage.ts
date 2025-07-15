@@ -16,6 +16,7 @@ export class MemStorage implements IStorage {
   private familyMembers: Map<string, FamilyMember>;
   private currentUserId: number;
   private currentFamilyId: number;
+  private isInitialized: boolean = false;
 
   constructor() {
     this.users = new Map();
@@ -24,13 +25,61 @@ export class MemStorage implements IStorage {
     this.currentFamilyId = 1;
     
     // Initialize with family data
-    this.initializeFamilyData();
+    this.initializeFamilyData().catch((err) => {
+      console.error('Failed to initialize family data:', err);
+    });
   }
 
-  private initializeFamilyData() {
-    // For now, use a comprehensive sample of family data
-    // In production, this would load from a database or external API
-    const familyData = [
+  private async initializeFamilyData() {
+    // Load the complete family data from the flat JSON file
+    try {
+      const { readFileSync } = await import('fs');
+      const { fileURLToPath } = await import('url');
+      const { dirname, join } = await import('path');
+      
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const filePath = join(__dirname, 'Gyllencreutz_Ancestry_Flat_With_Monarchs_Combined_1752609117306.json');
+      
+      const rawData = readFileSync(filePath, 'utf8');
+      // Handle NaN values in JSON by replacing them with null
+      const cleanedData = rawData.replace(/: NaN/g, ': null');
+      const flatData = JSON.parse(cleanedData);
+      
+      // Convert JSON data to our format
+      const familyData = flatData.map((member: any) => ({
+        externalId: member.ID,
+        name: member.Name,
+        born: member.Born === null ? null : member.Born,
+        died: member.Died === null || member.Died === 9999 ? null : member.Died,
+        biologicalSex: member.Sex || 'Unknown',
+        notes: member.Notes || null,
+        father: member.Father === null || isNaN(member.Father) || member.Father === 'NaN' ? null : member.Father,
+        ageAtDeath: member.AgeAtDeath === null ? null : member.AgeAtDeath,
+        diedYoung: member.DiedYoung === null ? false : member.DiedYoung,
+        isSuccessionSon: member.IsSuccessionSon === null ? false : member.IsSuccessionSon,
+        hasMaleChildren: member.HasMaleChildren === null ? false : member.HasMaleChildren,
+        nobleBranch: member.NobleBranch === null || isNaN(member.NobleBranch) || member.NobleBranch === 'NaN' ? null : member.NobleBranch,
+        monarchDuringLife: Array.isArray(member.MonarchDuringLife) ? member.MonarchDuringLife : []
+      }));
+      
+      // Initialize family members
+      familyData.forEach((member: any) => {
+        const familyMember: FamilyMember = {
+          id: this.currentFamilyId++,
+          ...member
+        };
+        this.familyMembers.set(member.externalId, familyMember);
+      });
+      
+      console.log(`Loaded ${familyData.length} family members with complete monarchs data`);
+      this.isInitialized = true;
+      
+    } catch (error) {
+      console.error('Error loading family data from JSON:', error);
+      
+      // Fallback to basic data if JSON loading fails
+      const familyData = [
       {
         externalId: "0",
         name: "Lars Tygesson",
@@ -355,7 +404,7 @@ export class MemStorage implements IStorage {
       }
     ];
 
-    // Initialize family members from the comprehensive data
+    // Initialize family members from the fallback data
     familyData.forEach(member => {
       const familyMember: FamilyMember = {
         id: this.currentFamilyId++,
@@ -370,12 +419,15 @@ export class MemStorage implements IStorage {
         diedYoung: member.diedYoung,
         isSuccessionSon: member.isSuccessionSon,
         hasMaleChildren: member.hasMaleChildren,
-        nobleBranch: member.nobleBranch
+        nobleBranch: member.nobleBranch,
+        monarchDuringLife: []
       };
       this.familyMembers.set(member.externalId, familyMember);
     });
 
-    console.log(`Loaded ${familyData.length} family members`);
+    console.log(`Loaded ${familyData.length} family members from fallback data`);
+    this.isInitialized = true;
+    }
   }
 
   private initializeFallbackData() {
@@ -469,7 +521,8 @@ export class MemStorage implements IStorage {
       diedYoung: member.diedYoung,
       isSuccessionSon: member.isSuccessionSon,
       hasMaleChildren: member.hasMaleChildren,
-      nobleBranch: member.nobleBranch
+      nobleBranch: member.nobleBranch,
+      monarchDuringLife: member.monarchDuringLife || []
     };
     this.familyMembers.set(member.externalId, familyMember);
     return familyMember;

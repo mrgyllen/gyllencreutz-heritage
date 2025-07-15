@@ -12,6 +12,7 @@ export interface FamilyMember {
   isSuccessionSon: boolean;
   hasMaleChildren: boolean;
   nobleBranch: string | null;
+  monarchDuringLife: string[];
 }
 
 export interface FamilyTreeNode extends FamilyMember {

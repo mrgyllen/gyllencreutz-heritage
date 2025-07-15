@@ -111,7 +111,7 @@ export function FamilyTree() {
                 </div>
               </div>
               
-              <div className="flex space-x-1">
+              <div className="flex flex-wrap gap-1">
                 {node.isSuccessionSon && (
                   <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
                     Succession Son
@@ -120,6 +120,11 @@ export function FamilyTree() {
                 {node.diedYoung && (
                   <Badge variant="destructive" className="text-xs">
                     Died Young
+                  </Badge>
+                )}
+                {node.nobleBranch && (
+                  <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
+                    {node.nobleBranch}
                   </Badge>
                 )}
                 {hasChildren && (
@@ -253,7 +258,7 @@ export function FamilyTree() {
         {/* Family Tree in Confined Space */}
         <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
           <div className="text-sm text-gray-600 mb-4">
-            Starting with Lars Tygesson ({familyMembers.length} total members)
+            Starting with Lars Tygesson ({familyMembers.length} total members) - spanning from 1515 to 1980s
           </div>
           {root ? (
             <div className="font-mono text-sm">
@@ -303,6 +308,19 @@ export function FamilyTree() {
                     <span className="text-gray-600 ml-2">{selectedMember.nobleBranch || 'Main line'}</span>
                   </div>
                 </div>
+                
+                {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
+                  <div className="mb-4">
+                    <span className="font-semibold text-gray-700">Reigning Monarchs:</span>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {selectedMember.monarchDuringLife.map((monarch, index) => (
+                        <Badge key={index} variant="outline" className="text-xs bg-blue-50 text-blue-800">
+                          {monarch}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 
                 {selectedMember.notes && (
                   <div>
