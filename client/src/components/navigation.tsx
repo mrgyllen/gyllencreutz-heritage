@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LanguageToggle } from "@/components/language-toggle";
+import { useLanguage } from "@/contexts/language-context";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useLanguage();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -32,32 +35,33 @@ export function Navigation() {
                 onClick={() => scrollToSection('home')}
                 className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Home
+                {t('nav.home')}
               </button>
               <button
                 onClick={() => scrollToSection('tree')}
                 className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Family Tree
+                {t('nav.familyTree')}
               </button>
               <button
                 onClick={() => scrollToSection('legacy')}
                 className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Legacy
+                {t('nav.legacy')}
               </button>
               <button
                 onClick={() => scrollToSection('gallery')}
                 className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                Gallery
+                {t('nav.gallery')}
               </button>
               <button
                 onClick={() => scrollToSection('about')}
                 className="text-warm-stone hover:text-antique-brass px-3 py-2 rounded-md text-sm font-medium transition-colors"
               >
-                About
+                {t('nav.about')}
               </button>
+              <LanguageToggle />
             </div>
           </div>
           

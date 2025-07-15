@@ -1,16 +1,19 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/language-context";
 
 export function LegacySection() {
+  const { t } = useLanguage();
+  
   return (
     <section id="legacy" className="py-20 bg-deep-forest text-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-antique-brass mb-4">
-            Makt, intriger och krig
+            {t('legacy.title')}
           </h2>
           <p className="text-lg text-warm-stone max-w-2xl mx-auto">
-            En frälsemans levnadsöde under Wasatiden - A comprehensive historical biography by Claes Gyllencreutz
+            {t('legacy.subtitle')}
           </p>
         </div>
 

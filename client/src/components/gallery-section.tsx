@@ -2,17 +2,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import coatOfArms from "@assets/vapenskjöld_1752593493242.jpg";
 import nobleMark from "@assets/Adelsmärrke från kopia 2_1752593493242.jpg";
 import nobleHorseman from "@assets/2 Häst_1752593493242.jpg";
+import { useLanguage } from "@/contexts/language-context";
 
 export function GallerySection() {
+  const { t } = useLanguage();
+  
   return (
     <section id="gallery" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-burgundy mb-4">
-            Heraldic Gallery
+            {t('gallery.title')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore the visual heritage of the Gyllencreutz family through historical imagery and noble symbols.
+            {t('gallery.subtitle')}
           </p>
         </div>
 

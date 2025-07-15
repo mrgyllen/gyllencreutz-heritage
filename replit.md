@@ -117,3 +117,7 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Refined color scheme to authentic 1500-1700s Swedish nobility palette with muted, period-appropriate tones
 - Replaced modern burgundy/gold with subtle deep forest, antique brass, and warm stone colors
 - Updated all components to use historically-inspired color scheme that supports content rather than overwhelming it
+- Implemented comprehensive bilingual support with Swedish and English language switching functionality
+- Created language context system and toggle component for seamless language switching
+- Updated all major components (hero, about, legacy, gallery, navigation) with translation support
+- Maintained authentic historical content from Riddarhuset while adding multilingual accessibility

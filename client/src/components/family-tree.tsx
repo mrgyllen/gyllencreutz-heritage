@@ -7,8 +7,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buildFamilyTree } from "@/data/family-data";
 import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
+import { useLanguage } from "@/contexts/language-context";
 
 export function FamilyTree() {
+  const { t } = useLanguage();
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
@@ -172,11 +174,10 @@ export function FamilyTree() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-playfair font-bold text-burgundy mb-4">
-            Interactive Family Tree
+            {t('tree.title')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            Explore centuries of Gyllencreutz lineage through our interactive genealogy tree. 
-            Click on any family member to learn more about their life and contributions.
+            {t('tree.subtitle')}
           </p>
         </div>
 
@@ -186,7 +187,7 @@ export function FamilyTree() {
             <Search className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Search family members..."
+              placeholder={t('tree.search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-burgundy focus:border-transparent"
@@ -237,11 +238,11 @@ export function FamilyTree() {
         <div className="flex flex-wrap justify-center gap-6 mb-8">
           <div className="flex items-center">
             <div className="w-4 h-4 bg-blue-50 border border-blue-300 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">Male</span>
+            <span className="text-sm text-gray-600">{t('tree.member.male')}</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-pink-50 border border-pink-300 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">Female</span>
+            <span className="text-sm text-gray-600">{t('tree.member.female')}</span>
           </div>
           <div className="flex items-center">
             <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
