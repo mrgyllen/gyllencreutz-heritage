@@ -1,56 +1,43 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
 
-// Import royal portraits from local assets
-import gustavVasaPortrait from '/src/assets/royal-portraits/gustav-vasa.jpg';
-import erikXIVPortrait from '/src/assets/royal-portraits/erik-xiv.jpg';
-import johanIIIPortrait from '/src/assets/royal-portraits/johan-iii.jpg';
-import sigismundPortrait from '/src/assets/royal-portraits/sigismund.jpg';
-import karlIXPortrait from '/src/assets/royal-portraits/karl-ix.jpg';
-import gustavIIAdolfPortrait from '/src/assets/royal-portraits/gustav-ii-adolf.jpg';
-import kristinaPortrait from '/src/assets/royal-portraits/kristina.jpg';
-import karlXGustavPortrait from '/src/assets/royal-portraits/karl-x-gustav.jpg';
-import karlXIPortrait from '/src/assets/royal-portraits/karl-xi.jpg';
-import karlXIIPortrait from '/src/assets/royal-portraits/karl-xii.jpg';
-import ulrikaEleonoraPortrait from '/src/assets/royal-portraits/ulrika-eleonora.jpg';
-import fredrikIPortrait from '/src/assets/royal-portraits/fredrik-i.jpg';
-import adolfFredrikPortrait from '/src/assets/royal-portraits/adolf-fredrik.jpg';
-import gustavIIIPortrait from '/src/assets/royal-portraits/gustav-iii.jpg';
-import gustavIVAdolfPortrait from '/src/assets/royal-portraits/gustav-iv-adolf.jpg';
-import karlXIIIPortrait from '/src/assets/royal-portraits/karl-xiii.jpg';
-import karlXIVJohanPortrait from '/src/assets/royal-portraits/karl-xiv-johan.jpg';
-import oscarIPortrait from '/src/assets/royal-portraits/oscar-i.jpg';
-import karlXVPortrait from '/src/assets/royal-portraits/karl-xv.jpg';
-import oscarIIPortrait from '/src/assets/royal-portraits/oscar-ii.jpg';
-import gustavVPortrait from '/src/assets/royal-portraits/gustav-v.jpg';
-import gustavVIAdolfPortrait from '/src/assets/royal-portraits/gustav-vi-adolf.jpg';
-import carlXVIGustafPortrait from '/src/assets/royal-portraits/carl-xvi-gustav.jpg';
+// Try using import.meta.glob to load all portraits dynamically
+const portraitModules = import.meta.glob('/src/assets/royal-portraits/*.jpg', { eager: true });
 
-// Royal portrait mappings using local assets
+// Create a mapping of clean names to file paths
+const portraitPaths: Record<string, string> = {};
+Object.entries(portraitModules).forEach(([path, module]) => {
+  const filename = path.split('/').pop()?.replace('.jpg', '');
+  if (filename && module && typeof module === 'object' && 'default' in module) {
+    portraitPaths[filename] = (module as any).default;
+  }
+});
+
+// Royal portrait mappings using the dynamic imports
 export const RoyalPortraitAssets = {
-  'Gustav Vasa': gustavVasaPortrait,
-  'Erik XIV': erikXIVPortrait,
-  'Johan III': johanIIIPortrait,
-  'Sigismund': sigismundPortrait,
-  'Karl IX': karlIXPortrait,
-  'Gustav II Adolf': gustavIIAdolfPortrait,
-  'Kristina': kristinaPortrait,
-  'Karl X Gustav': karlXGustavPortrait,
-  'Karl XI': karlXIPortrait,
-  'Karl XII': karlXIIPortrait,
-  'Ulrika Eleonora': ulrikaEleonoraPortrait,
-  'Fredrik I': fredrikIPortrait,
-  'Adolf Fredrik': adolfFredrikPortrait,
-  'Gustav III': gustavIIIPortrait,
-  'Gustav IV Adolf': gustavIVAdolfPortrait,
-  'Karl XIII': karlXIIIPortrait,
-  'Karl XIV Johan': karlXIVJohanPortrait,
-  'Oscar I': oscarIPortrait,
-  'Karl XV': karlXVPortrait,
-  'Oscar II': oscarIIPortrait,
-  'Gustav V': gustavVPortrait,
-  'Gustav VI Adolf': gustavVIAdolfPortrait,
-  'Carl XVI Gustaf': carlXVIGustafPortrait
+  'Gustav Vasa': portraitPaths['gustav-vasa'],
+  'Erik XIV': portraitPaths['erik-xiv'],
+  'Johan III': portraitPaths['johan-iii'],
+  'Sigismund': portraitPaths['sigismund'],
+  'Karl IX': portraitPaths['karl-ix'],
+  'Gustav II Adolf': portraitPaths['gustav-ii-adolf'],
+  'Kristina': portraitPaths['kristina'],
+  'Karl X Gustav': portraitPaths['karl-x-gustav'],
+  'Karl XI': portraitPaths['karl-xi'],
+  'Karl XII': portraitPaths['karl-xii'],
+  'Ulrika Eleonora': portraitPaths['ulrika-eleonora'],
+  'Fredrik I': portraitPaths['fredrik-i'],
+  'Adolf Fredrik': portraitPaths['adolf-fredrik'],
+  'Gustav III': portraitPaths['gustav-iii'],
+  'Gustav IV Adolf': portraitPaths['gustav-iv-adolf'],
+  'Karl XIII': portraitPaths['karl-xiii'],
+  'Karl XIV Johan': portraitPaths['karl-xiv-johan'],
+  'Oscar I': portraitPaths['oscar-i'],
+  'Karl XV': portraitPaths['karl-xv'],
+  'Oscar II': portraitPaths['oscar-ii'],
+  'Gustav V': portraitPaths['gustav-v'],
+  'Gustav VI Adolf': portraitPaths['gustav-vi-adolf'],
+  'Carl XVI Gustaf': portraitPaths['carl-xvi-gustav']
 };
 
 interface RoyalPortraitProps {
