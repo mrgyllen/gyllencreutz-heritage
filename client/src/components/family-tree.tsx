@@ -54,31 +54,31 @@ export function FamilyTree() {
       case null:
       case '':
         return {
-          bg: 'bg-deep-forest opacity-10',
-          border: 'border-deep-forest border-2',
-          line: 'bg-deep-forest opacity-60',
-          text: 'text-deep-forest'
+          bg: 'bg-green-50 border-green-200',
+          border: 'border-green-400',
+          line: 'bg-green-600',
+          text: 'text-green-800'
         };
       case 'Elder line':
         return {
-          bg: 'bg-antique-brass opacity-20',
-          border: 'border-antique-brass border-2',
-          line: 'bg-antique-brass opacity-60',
-          text: 'text-antique-brass'
+          bg: 'bg-yellow-50 border-yellow-200',
+          border: 'border-yellow-500',
+          line: 'bg-yellow-600',
+          text: 'text-yellow-900'
         };
       case 'Younger line':
         return {
-          bg: 'bg-warm-stone opacity-30',
-          border: 'border-warm-stone border-2',
-          line: 'bg-warm-stone opacity-60',
-          text: 'text-warm-stone'
+          bg: 'bg-orange-50 border-orange-200',
+          border: 'border-orange-400',
+          line: 'bg-orange-600',
+          text: 'text-orange-800'
         };
       default:
         return {
-          bg: 'bg-deep-forest opacity-10',
-          border: 'border-deep-forest border-2',
-          line: 'bg-deep-forest opacity-60',
-          text: 'text-deep-forest'
+          bg: 'bg-green-50 border-green-200',
+          border: 'border-green-400',
+          line: 'bg-green-600',
+          text: 'text-green-800'
         };
     }
   };
@@ -286,19 +286,19 @@ export function FamilyTree() {
         {/* Tree Legend */}
         <div className="flex flex-wrap justify-center gap-6 mb-8">
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-deep-forest/10 border border-deep-forest/30 rounded mr-2"></div>
+            <div className="w-4 h-4 bg-green-50 border border-green-400 rounded mr-2"></div>
             <span className="text-sm text-gray-600">Main Branch</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-antique-brass/10 border border-antique-brass/30 rounded mr-2"></div>
+            <div className="w-4 h-4 bg-yellow-50 border border-yellow-500 rounded mr-2"></div>
             <span className="text-sm text-gray-600">Elder Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-warm-stone/20 border border-warm-stone/40 rounded mr-2"></div>
+            <div className="w-4 h-4 bg-orange-50 border border-orange-400 rounded mr-2"></div>
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <Badge variant="secondary" className="bg-antique-brass text-white text-xs">
+            <Badge variant="secondary" className="bg-amber-600 text-white text-xs">
               Succession Son
             </Badge>
           </div>
@@ -308,7 +308,7 @@ export function FamilyTree() {
             </Badge>
           </div>
           <div className="flex items-center">
-            <Crown className="h-4 w-4 text-antique-brass mr-2" />
+            <Crown className="h-4 w-4 text-yellow-600 mr-2" />
             <span className="text-sm text-gray-600">Reigning Monarchs</span>
           </div>
         </div>
