@@ -45,31 +45,66 @@ export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size 
   return (
     <div className={`${sizeClasses[size]} rounded-full overflow-hidden border border-blue-400 bg-blue-50 flex items-center justify-center`}>
       {portraitUrl ? (
-        <img 
-          src={portraitUrl} 
-          alt={monarchName} 
-          className="w-full h-full object-cover"
-          onError={(e) => {
-            // Fallback to crown icon if image fails to load
-            const target = e.currentTarget;
-            target.style.display = 'none';
-            const fallback = target.nextElementSibling as HTMLElement;
-            if (fallback) {
-              fallback.style.display = 'flex';
-            }
-          }}
-        />
-      ) : null}
-      <div className="hidden w-full h-full bg-blue-400 flex items-center justify-center">
-        <Crown className="w-1/2 h-1/2 text-white" />
-      </div>
+        <>
+          <img 
+            src={portraitUrl} 
+            alt={monarchName} 
+            className="w-full h-full object-cover"
+            onError={(e) => {
+              // Fallback to crown icon if image fails to load
+              console.log(`Failed to load portrait for: ${monarchName}`);
+              const target = e.currentTarget;
+              target.style.display = 'none';
+              const fallback = target.nextElementSibling as HTMLElement;
+              if (fallback) {
+                fallback.classList.remove('hidden');
+                fallback.style.display = 'flex';
+              }
+            }}
+          />
+          <div className="hidden w-full h-full bg-blue-400 flex items-center justify-center">
+            <Crown className="w-1/2 h-1/2 text-white" />
+          </div>
+        </>
+      ) : (
+        <div className="w-full h-full bg-blue-400 flex items-center justify-center">
+          <Crown className="w-1/2 h-1/2 text-white" />
+        </div>
+      )}
     </div>
   );
 };
 
 export const getRoyalPortrait = (monarchName: string, size: 'small' | 'medium' | 'large' = 'medium') => {
   // Remove years in parentheses and get clean name
-  const cleanName = monarchName.replace(/\s*\([^)]*\)/g, '').trim();
+  let cleanName = monarchName.replace(/\s*\([^)]*\)/g, '').trim();
+  
+  // Handle common name variations
+  const nameMapping: { [key: string]: string } = {
+    'Kristina (1632–1654)': 'Kristina',
+    'Kristina (1626–1689)': 'Kristina',
+    'Karl X Gustav (1654–1660)': 'Karl X Gustav',
+    'Karl XI (1660–1697)': 'Karl XI',
+    'Karl XII (1697–1718)': 'Karl XII',
+    'Ulrika Eleonora (1718–1720)': 'Ulrika Eleonora',
+    'Fredrik I (1720–1751)': 'Fredrik I',
+    'Adolf Fredrik (1751–1771)': 'Adolf Fredrik',
+    'Gustav III (1771–1792)': 'Gustav III',
+    'Gustav IV Adolf (1792–1809)': 'Gustav IV Adolf',
+    'Karl XIII (1809–1818)': 'Karl XIII',
+    'Karl XIV Johan (1818–1844)': 'Karl XIV Johan',
+    'Oscar I (1844–1859)': 'Oscar I',
+    'Karl XV (1859–1872)': 'Karl XV',
+    'Oscar II (1872–1907)': 'Oscar II',
+    'Gustav V (1907–1950)': 'Gustav V',
+    'Gustav VI Adolf (1950–1973)': 'Gustav VI Adolf',
+    'Carl XVI Gustaf (1973–)': 'Carl XVI Gustaf'
+  };
+  
+  // Check if we have a direct mapping first
+  if (nameMapping[monarchName]) {
+    cleanName = nameMapping[monarchName];
+  }
   
   return <RoyalPortrait monarchName={cleanName} size={size} />;
 };
