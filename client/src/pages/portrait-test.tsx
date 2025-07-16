@@ -57,7 +57,7 @@ export default function PortraitTest() {
                   Index: {index + 1}
                 </div>
                 <div className="text-xs text-red-600 mt-1">
-                  Asset: {RoyalPortraitAssets[cleanName] ? '✓' : '✗'}
+                  Asset: {RoyalPortraitAssets[cleanName as keyof typeof RoyalPortraitAssets] ? '✓' : '✗'}
                 </div>
               </div>
             );

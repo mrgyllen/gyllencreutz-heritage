@@ -1,49 +1,56 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
 
-// Try using import.meta.glob to load all portraits dynamically
-const portraitModules = import.meta.glob('/src/assets/royal-portraits/*.jpg', { eager: true });
+// Import all authentic royal portraits provided by the user
+import gustavVasaPortrait from '@assets/gustav-vasa_1752701617325.jpg';
+import erikXIVPortrait from '@assets/Erik_XIV_1561-300x300_1752701617325.jpg';
+import johanIIIPortrait from '@assets/joahn-III-300x300_1752701617325.jpg';
+import sigismundPortrait from '@assets/sigsmund-300x300_1752701586398.jpg';
+import karlIXPortrait from '@assets/Karl_IX-300x300_1752701586398.jpg';
+import gustavIIAdolfPortrait from '@assets/gustav-ii-adolf-portratt-300x300_1752701586398.jpg';
+import kristinaPortrait from '@assets/drottning-kristina-300x300_1752701586398.jpg';
+import karlXGustavPortrait from '@assets/Karl_X_Gustav-300x300_1752701586398.jpg';
+import karlXIPortrait from '@assets/Karl-XI-300x300_1752701586398.jpg';
+import karlXIIPortrait from '@assets/Karl-XII-NY-300x300_1752701586398.jpg';
+import ulrikaEleonoraPortrait from '@assets/Ulrika-Eleonora-d.-y.-241x300_1752701586398.jpg';
+import fredrikIPortrait from '@assets/Fredrik-I-kopia-300x300_1752701586398.jpg';
+import adolfFredrikPortrait from '@assets/adolf-fredrik-1_1752701586398.jpg';
+import gustavIIIPortrait from '@assets/gustav-III-2-300x300_1752701586398.jpg';
+import gustavIVAdolfPortrait from '@assets/Gustav-IV-Adolf.-kopiajpg-300x300_1752701586398.jpg';
+import karlXIIIPortrait from '@assets/Karl-XIII-1-300x300_1752701586398.jpg';
+import karlXIVJohanPortrait from '@assets/Karl_XIV_Johan-300x300_1752701586398.jpg';
+import oscarIPortrait from '@assets/oscar-I-kopia-300x300_1752701586398.jpg';
+import karlXVPortrait from '@assets/Karl-XV-nationalmuseum-300x300_1752701586398.jpg';
+import oscarIIPortrait from '@assets/Oscar-II-av-Sverige-300x300_1752701586398.jpg';
+import gustavVPortrait from '@assets/Gustav_V-300x300_1752701586397.jpg';
+import gustavVIAdolfPortrait from '@assets/Gustaf-VI-Adolf-2-300x300_1752701586397.jpg';
+import carlXVIGustavPortrait from '@assets/carl-gustaf-16-300x300_1752701586397.jpg';
 
-// Create a mapping of clean names to file paths
-const portraitPaths: Record<string, string> = {};
-Object.entries(portraitModules).forEach(([path, module]) => {
-  const filename = path.split('/').pop()?.replace('.jpg', '');
-  if (filename && module && typeof module === 'object' && 'default' in module) {
-    portraitPaths[filename] = (module as any).default;
-  }
-});
-
-// List of known working portrait files (actual JPG images)
-const workingPortraits = [
-  'erik-xiv', 'gustav-ii-adolf', 'gustav-vasa', 'gustav-v', 
-  'johan-iii', 'karl-ix', 'karl-x-gustav', 'karl-xiv-johan', 'sigismund'
-];
-
-// Royal portrait mappings - null values will use Crown fallback
+// Royal portrait mappings with all authentic portraits
 export const RoyalPortraitAssets = {
-  'Gustav Vasa': portraitPaths['gustav-vasa'],
-  'Erik XIV': portraitPaths['erik-xiv'],
-  'Johan III': portraitPaths['johan-iii'],
-  'Sigismund': portraitPaths['sigismund'],
-  'Karl IX': portraitPaths['karl-ix'],
-  'Gustav II Adolf': portraitPaths['gustav-ii-adolf'],
-  'Kristina': null, // Corrupted file - use Crown fallback
-  'Karl X Gustav': portraitPaths['karl-x-gustav'],
-  'Karl XI': null, // Corrupted file - use Crown fallback
-  'Karl XII': null, // Corrupted file - use Crown fallback
-  'Ulrika Eleonora': null, // Corrupted file - use Crown fallback
-  'Fredrik I': null, // Corrupted file - use Crown fallback
-  'Adolf Fredrik': null, // Corrupted file - use Crown fallback
-  'Gustav III': null, // Corrupted file - use Crown fallback
-  'Gustav IV Adolf': null, // Corrupted file - use Crown fallback
-  'Karl XIII': null, // Corrupted file - use Crown fallback
-  'Karl XIV Johan': portraitPaths['karl-xiv-johan'],
-  'Oscar I': null, // Corrupted file - use Crown fallback
-  'Karl XV': null, // Corrupted file - use Crown fallback
-  'Oscar II': null, // Corrupted file - use Crown fallback
-  'Gustav V': portraitPaths['gustav-v'],
-  'Gustav VI Adolf': null, // Corrupted file - use Crown fallback
-  'Carl XVI Gustaf': null // Corrupted file - use Crown fallback
+  'Gustav Vasa': gustavVasaPortrait,
+  'Erik XIV': erikXIVPortrait,
+  'Johan III': johanIIIPortrait,
+  'Sigismund': sigismundPortrait,
+  'Karl IX': karlIXPortrait,
+  'Gustav II Adolf': gustavIIAdolfPortrait,
+  'Kristina': kristinaPortrait,
+  'Karl X Gustav': karlXGustavPortrait,
+  'Karl XI': karlXIPortrait,
+  'Karl XII': karlXIIPortrait,
+  'Ulrika Eleonora': ulrikaEleonoraPortrait,
+  'Fredrik I': fredrikIPortrait,
+  'Adolf Fredrik': adolfFredrikPortrait,
+  'Gustav III': gustavIIIPortrait,
+  'Gustav IV Adolf': gustavIVAdolfPortrait,
+  'Karl XIII': karlXIIIPortrait,
+  'Karl XIV Johan': karlXIVJohanPortrait,
+  'Oscar I': oscarIPortrait,
+  'Karl XV': karlXVPortrait,
+  'Oscar II': oscarIIPortrait,
+  'Gustav V': gustavVPortrait,
+  'Gustav VI Adolf': gustavVIAdolfPortrait,
+  'Carl XVI Gustaf': carlXVIGustavPortrait
 };
 
 interface RoyalPortraitProps {
