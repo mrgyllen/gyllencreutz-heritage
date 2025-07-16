@@ -67,19 +67,14 @@ export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size 
 
   const portraitAsset = RoyalPortraitAssets[monarchName as keyof typeof RoyalPortraitAssets];
   
+  // Debug - always show the abbreviated text for now to see if this component is being used
+  const abbreviation = monarchName.split(' ').map(word => word.charAt(0)).join('').substring(0, 3);
+  
   return (
     <div className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-blue-400 bg-blue-50 relative`}>
-      {portraitAsset ? (
-        <img 
-          src={portraitAsset} 
-          alt={monarchName} 
-          className="w-full h-full object-cover"
-        />
-      ) : (
-        <div className="w-full h-full bg-blue-400 flex items-center justify-center">
-          <Crown className="w-1/2 h-1/2 text-white" />
-        </div>
-      )}
+      <div className="w-full h-full bg-blue-400 flex items-center justify-center">
+        <span className="text-white text-xs font-bold">{abbreviation}</span>
+      </div>
     </div>
   );
 };
