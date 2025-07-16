@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { buildFamilyTree } from "@/data/family-data";
 import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
 import { useLanguage } from "@/contexts/language-context";
-import { getMonarchPortrait } from "@/components/monarch-portraits";
+import { getRoyalPortrait } from "@/components/royal-portraits";
 
 export function FamilyTree() {
   const { t } = useLanguage();
@@ -133,7 +133,7 @@ export function FamilyTree() {
           <div 
             className={`
               flex-1 p-3 mb-2 rounded-lg border cursor-pointer transition-all
-              ${isSelected ? 'border-antique-brass bg-antique-brass bg-opacity-20' : `${branchColors.border} hover:${branchColors.border} hover:bg-opacity-30`}
+              ${isSelected ? 'border-blue-300 bg-blue-50' : `${branchColors.border} hover:${branchColors.border} hover:bg-opacity-30`}
               ${branchColors.bg}
             `}
             onClick={() => setSelectedMember(node)}
@@ -152,9 +152,16 @@ export function FamilyTree() {
               
               <div className="flex flex-wrap gap-1">
                 {node.isSuccessionSon && (
-                  <Badge variant="secondary" className="bg-antique-brass text-white text-xs">
-                    Succession Son
-                  </Badge>
+                  <div className="flex items-center justify-center w-5 h-5 bg-amber-100 border border-amber-400 rounded" title="Succession Son">
+                    <svg viewBox="0 0 20 20" className="w-3 h-3">
+                      {/* Gyllencreutz heraldic shield based on official coat of arms */}
+                      <path d="M10 2 L15 5 L15 12 L10 18 L5 12 L5 5 Z" fill="#d97706" stroke="#92400e" strokeWidth="0.5"/>
+                      {/* Cross pattern from the coat of arms */}
+                      <path d="M8 6 L12 6 L12 8 L8 8 Z M9 5 L11 5 L11 15 L9 15 Z" fill="#92400e"/>
+                      {/* Additional cross elements */}
+                      <path d="M8 12 L12 12 L12 14 L8 14 Z" fill="#92400e"/>
+                    </svg>
+                  </div>
                 )}
                 {node.diedYoung && (
                   <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">
@@ -378,9 +385,9 @@ export function FamilyTree() {
                         <div className="space-y-3">
                           {selectedMember.monarchDuringLife.map((monarch, index) => (
                             <div key={index} className="flex items-center gap-3 relative">
-                              {/* Timeline indicator */}
-                              <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-sm border-2 border-blue-600 relative z-10">
-                                <Crown className="h-3 w-3 text-white" />
+                              {/* Royal portrait */}
+                              <div className="relative z-10">
+                                {getRoyalPortrait(monarch, 'small')}
                               </div>
                               
                               {/* Monarch info */}
