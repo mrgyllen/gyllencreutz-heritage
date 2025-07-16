@@ -82,7 +82,7 @@ export function Navigation() {
       {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden">
-          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-burgundy">
+          <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-deep-forest">
             <button
               onClick={() => scrollToSection('home')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"

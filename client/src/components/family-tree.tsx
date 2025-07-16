@@ -154,7 +154,7 @@ export function FamilyTree() {
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-burgundy"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-deep-forest"></div>
       </div>
     );
   }
@@ -173,7 +173,7 @@ export function FamilyTree() {
     <section id="tree" className="py-20 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-burgundy mb-4">
+          <h2 className="text-3xl md:text-4xl font-playfair font-bold text-deep-forest mb-4">
             {t('tree.title')}
           </h2>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
@@ -190,7 +190,7 @@ export function FamilyTree() {
               placeholder={t('tree.search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-burgundy focus:border-transparent"
+              className="w-80 pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-deep-forest focus:border-transparent"
             />
             
             {/* Search Results */}

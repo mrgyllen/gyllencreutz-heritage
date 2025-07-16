@@ -80,7 +80,7 @@ export function LegacySection() {
               >
                 {t('legacy.button.bokus')}
               </Button>
-              <Button className="bg-burgundy hover:bg-burgundy/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
+              <Button className="bg-deep-forest hover:bg-deep-forest/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
                 {t('legacy.button.contact')}
               </Button>
             </div>
