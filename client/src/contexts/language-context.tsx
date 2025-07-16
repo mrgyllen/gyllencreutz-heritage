@@ -96,7 +96,7 @@ const translations = {
     'footer.externalLinks': 'Externa länkar',
     'footer.contact': 'Kontakt',
     'footer.riddarhuset': 'Riddarhuset register',
-    'footer.copyright': '© 2024 Gyllencreutz Familjarv. Alla rättigheter förbehållna.'
+    'footer.copyright': '© 2025 Gyllencreutz Familjarv. Alla rättigheter förbehållna.'
   },
   en: {
     // Navigation
@@ -183,7 +183,7 @@ const translations = {
     'footer.externalLinks': 'External Links',
     'footer.contact': 'Contact',
     'footer.riddarhuset': 'Riddarhuset Registry',
-    'footer.copyright': '© 2024 Gyllencreutz Family Heritage. All rights reserved.'
+    'footer.copyright': '© 2025 Gyllencreutz Family Heritage. All rights reserved.'
   }
 };
 
