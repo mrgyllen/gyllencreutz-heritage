@@ -13,7 +13,13 @@ Object.entries(portraitModules).forEach(([path, module]) => {
   }
 });
 
-// Royal portrait mappings using the dynamic imports
+// List of known working portrait files (actual JPG images)
+const workingPortraits = [
+  'erik-xiv', 'gustav-ii-adolf', 'gustav-vasa', 'gustav-v', 
+  'johan-iii', 'karl-ix', 'karl-x-gustav', 'karl-xiv-johan', 'sigismund'
+];
+
+// Royal portrait mappings using only working portraits
 export const RoyalPortraitAssets = {
   'Gustav Vasa': portraitPaths['gustav-vasa'],
   'Erik XIV': portraitPaths['erik-xiv'],
@@ -21,23 +27,23 @@ export const RoyalPortraitAssets = {
   'Sigismund': portraitPaths['sigismund'],
   'Karl IX': portraitPaths['karl-ix'],
   'Gustav II Adolf': portraitPaths['gustav-ii-adolf'],
-  'Kristina': portraitPaths['kristina'],
+  'Kristina': null, // HTML file - use fallback
   'Karl X Gustav': portraitPaths['karl-x-gustav'],
-  'Karl XI': portraitPaths['karl-xi'],
-  'Karl XII': portraitPaths['karl-xii'],
-  'Ulrika Eleonora': portraitPaths['ulrika-eleonora'],
-  'Fredrik I': portraitPaths['fredrik-i'],
-  'Adolf Fredrik': portraitPaths['adolf-fredrik'],
-  'Gustav III': portraitPaths['gustav-iii'],
-  'Gustav IV Adolf': portraitPaths['gustav-iv-adolf'],
-  'Karl XIII': portraitPaths['karl-xiii'],
+  'Karl XI': null, // HTML file - use fallback
+  'Karl XII': null, // HTML file - use fallback
+  'Ulrika Eleonora': null, // HTML file - use fallback
+  'Fredrik I': null, // HTML file - use fallback
+  'Adolf Fredrik': null, // HTML file - use fallback
+  'Gustav III': null, // HTML file - use fallback
+  'Gustav IV Adolf': null, // HTML file - use fallback
+  'Karl XIII': null, // HTML file - use fallback
   'Karl XIV Johan': portraitPaths['karl-xiv-johan'],
-  'Oscar I': portraitPaths['oscar-i'],
-  'Karl XV': portraitPaths['karl-xv'],
-  'Oscar II': portraitPaths['oscar-ii'],
+  'Oscar I': null, // HTML file - use fallback
+  'Karl XV': null, // HTML file - use fallback
+  'Oscar II': null, // HTML file - use fallback
   'Gustav V': portraitPaths['gustav-v'],
-  'Gustav VI Adolf': portraitPaths['gustav-vi-adolf'],
-  'Carl XVI Gustaf': portraitPaths['carl-xvi-gustav']
+  'Gustav VI Adolf': null, // HTML file - use fallback
+  'Carl XVI Gustaf': null // HTML file - use fallback
 };
 
 interface RoyalPortraitProps {

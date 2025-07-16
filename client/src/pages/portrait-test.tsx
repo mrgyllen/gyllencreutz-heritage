@@ -73,6 +73,58 @@ export default function PortraitTest() {
             <p><strong>Current Issue:</strong> Some show abbreviated text instead of portraits</p>
           </div>
         </div>
+
+        <div className="mt-8 bg-white p-6 rounded-lg shadow-md">
+          <h2 className="text-xl font-bold mb-4">File Mapping Debug</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <h3 className="font-semibold mb-2">Available Files:</h3>
+              <div className="text-xs text-gray-600 space-y-1 max-h-64 overflow-y-auto">
+                {Object.entries(RoyalPortraitAssets).map(([name, path]) => (
+                  <div key={name} className="flex justify-between items-center">
+                    <span className="truncate flex-1">{name}:</span>
+                    <span className={path ? 'text-green-600' : 'text-red-600'}>
+                      {path ? '✓' : '✗'}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="font-semibold mb-2">Raw File Test (First 12):</h3>
+              <div className="grid grid-cols-4 gap-2">
+                {Object.entries(RoyalPortraitAssets).slice(0, 12).map(([name, path]) => (
+                  <div key={name} className="text-center">
+                    <div className="w-12 h-12 rounded-full overflow-hidden border mx-auto mb-1">
+                      {path ? (
+                        <img 
+                          src={path} 
+                          alt={name}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            console.log(`Failed to load: ${name} - ${path}`);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                          <span className="text-xs">?</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="text-xs text-gray-600 truncate">{name.split(' ')[0]}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 text-xs text-gray-500">
+            <p><strong>Debug Note:</strong> Check browser console for image loading errors.</p>
+            <p><strong>File Paths:</strong> {Object.values(RoyalPortraitAssets).filter(Boolean).length} of {Object.keys(RoyalPortraitAssets).length} files have valid paths.</p>
+          </div>
+        </div>
       </div>
     </div>
   );
