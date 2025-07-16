@@ -1,30 +1,30 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
 
-// Import royal portraits from local assets (using relative path since @assets points to attached_assets)
-import gustavVasaPortrait from '../assets/royal-portraits/gustav-vasa.jpg';
-import erikXIVPortrait from '../assets/royal-portraits/erik-xiv.jpg';
-import johanIIIPortrait from '../assets/royal-portraits/johan-iii.jpg';
-import sigismundPortrait from '../assets/royal-portraits/sigismund.jpg';
-import karlIXPortrait from '../assets/royal-portraits/karl-ix.jpg';
-import gustavIIAdolfPortrait from '../assets/royal-portraits/gustav-ii-adolf.jpg';
-import kristinaPortrait from '../assets/royal-portraits/kristina.jpg';
-import karlXGustavPortrait from '../assets/royal-portraits/karl-x-gustav.jpg';
-import karlXIPortrait from '../assets/royal-portraits/karl-xi.jpg';
-import karlXIIPortrait from '../assets/royal-portraits/karl-xii.jpg';
-import ulrikaEleonoraPortrait from '../assets/royal-portraits/ulrika-eleonora.jpg';
-import fredrikIPortrait from '../assets/royal-portraits/fredrik-i.jpg';
-import adolfFredrikPortrait from '../assets/royal-portraits/adolf-fredrik.jpg';
-import gustavIIIPortrait from '../assets/royal-portraits/gustav-iii.jpg';
-import gustavIVAdolfPortrait from '../assets/royal-portraits/gustav-iv-adolf.jpg';
-import karlXIIIPortrait from '../assets/royal-portraits/karl-xiii.jpg';
-import karlXIVJohanPortrait from '../assets/royal-portraits/karl-xiv-johan.jpg';
-import oscarIPortrait from '../assets/royal-portraits/oscar-i.jpg';
-import karlXVPortrait from '../assets/royal-portraits/karl-xv.jpg';
-import oscarIIPortrait from '../assets/royal-portraits/oscar-ii.jpg';
-import gustavVPortrait from '../assets/royal-portraits/gustav-v.jpg';
-import gustavVIAdolfPortrait from '../assets/royal-portraits/gustav-vi-adolf.jpg';
-import carlXVIGustafPortrait from '../assets/royal-portraits/carl-xvi-gustav.jpg';
+// Import royal portraits from local assets
+import gustavVasaPortrait from '/src/assets/royal-portraits/gustav-vasa.jpg';
+import erikXIVPortrait from '/src/assets/royal-portraits/erik-xiv.jpg';
+import johanIIIPortrait from '/src/assets/royal-portraits/johan-iii.jpg';
+import sigismundPortrait from '/src/assets/royal-portraits/sigismund.jpg';
+import karlIXPortrait from '/src/assets/royal-portraits/karl-ix.jpg';
+import gustavIIAdolfPortrait from '/src/assets/royal-portraits/gustav-ii-adolf.jpg';
+import kristinaPortrait from '/src/assets/royal-portraits/kristina.jpg';
+import karlXGustavPortrait from '/src/assets/royal-portraits/karl-x-gustav.jpg';
+import karlXIPortrait from '/src/assets/royal-portraits/karl-xi.jpg';
+import karlXIIPortrait from '/src/assets/royal-portraits/karl-xii.jpg';
+import ulrikaEleonoraPortrait from '/src/assets/royal-portraits/ulrika-eleonora.jpg';
+import fredrikIPortrait from '/src/assets/royal-portraits/fredrik-i.jpg';
+import adolfFredrikPortrait from '/src/assets/royal-portraits/adolf-fredrik.jpg';
+import gustavIIIPortrait from '/src/assets/royal-portraits/gustav-iii.jpg';
+import gustavIVAdolfPortrait from '/src/assets/royal-portraits/gustav-iv-adolf.jpg';
+import karlXIIIPortrait from '/src/assets/royal-portraits/karl-xiii.jpg';
+import karlXIVJohanPortrait from '/src/assets/royal-portraits/karl-xiv-johan.jpg';
+import oscarIPortrait from '/src/assets/royal-portraits/oscar-i.jpg';
+import karlXVPortrait from '/src/assets/royal-portraits/karl-xv.jpg';
+import oscarIIPortrait from '/src/assets/royal-portraits/oscar-ii.jpg';
+import gustavVPortrait from '/src/assets/royal-portraits/gustav-v.jpg';
+import gustavVIAdolfPortrait from '/src/assets/royal-portraits/gustav-vi-adolf.jpg';
+import carlXVIGustafPortrait from '/src/assets/royal-portraits/carl-xvi-gustav.jpg';
 
 // Royal portrait mappings using local assets
 export const RoyalPortraitAssets = {
@@ -67,14 +67,19 @@ export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size 
 
   const portraitAsset = RoyalPortraitAssets[monarchName as keyof typeof RoyalPortraitAssets];
   
-  // Debug - always show the abbreviated text for now to see if this component is being used
-  const abbreviation = monarchName.split(' ').map(word => word.charAt(0)).join('').substring(0, 3);
-  
   return (
     <div className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-blue-400 bg-blue-50 relative`}>
-      <div className="w-full h-full bg-blue-400 flex items-center justify-center">
-        <span className="text-white text-xs font-bold">{abbreviation}</span>
-      </div>
+      {portraitAsset ? (
+        <img 
+          src={portraitAsset} 
+          alt={monarchName} 
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className="w-full h-full bg-blue-400 flex items-center justify-center">
+          <Crown className="w-1/2 h-1/2 text-white" />
+        </div>
+      )}
     </div>
   );
 };

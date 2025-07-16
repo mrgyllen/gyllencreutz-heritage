@@ -4,7 +4,6 @@ import { FamilyTree } from "@/components/family-tree";
 import { LegacySection } from "@/components/legacy-section";
 import { GallerySection } from "@/components/gallery-section";
 import { AboutSection } from "@/components/about-section";
-import { TestPortraits } from "@/components/test-portraits";
 import { useLanguage } from "@/contexts/language-context";
 
 export default function Home() {
@@ -14,7 +13,6 @@ export default function Home() {
     <div className="min-h-screen bg-parchment">
       <Navigation />
       <HeroSection />
-      <TestPortraits />
       <FamilyTree />
       <LegacySection />
       <GallerySection />
