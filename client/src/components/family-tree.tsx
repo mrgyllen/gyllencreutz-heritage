@@ -157,7 +157,7 @@ export function FamilyTree() {
                   </Badge>
                 )}
                 {node.diedYoung && (
-                  <Badge variant="destructive" className="text-xs">
+                  <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">
                     Died Young
                   </Badge>
                 )}
@@ -316,26 +316,26 @@ export function FamilyTree() {
         {/* Family Member Info Panel */}
         {selectedMember && (
           <div className="mt-8">
-            <Card className="max-w-2xl mx-auto">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-playfair font-bold text-deep-forest">
-                    {selectedMember.name}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setSelectedMember(null)}
-                    className="text-gray-400 hover:text-gray-600"
-                  >
-                    <X className="h-6 w-6" />
-                  </Button>
-                </div>
-                
-                <div className="grid grid-cols-3 gap-6">
-                  {/* Main info - left column */}
-                  <div className="col-span-2 space-y-4">
-                    <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Main info card */}
+              <div className="md:col-span-2">
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <h3 className="text-xl font-playfair font-bold text-deep-forest">
+                        {selectedMember.name}
+                      </h3>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setSelectedMember(null)}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <X className="h-6 w-6" />
+                      </Button>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                       <div>
                         <span className="font-semibold text-gray-700">{t('tree.member.born')}</span>
                         <span className="text-gray-600 ml-2">{selectedMember.born || 'Unknown'}</span>
@@ -360,38 +360,42 @@ export function FamilyTree() {
                         <p className="text-gray-600 mt-1">{selectedMember.notes}</p>
                       </div>
                     )}
-                  </div>
-                  
-                  {/* Monarch timeline - right column */}
-                  {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
-                    <div className="col-span-1 border-l border-gray-200 pl-4">
-                      <span className="font-semibold text-gray-700 text-sm">{t('tree.member.monarchs')}</span>
-                      <div className="mt-2 relative">
+                  </CardContent>
+                </Card>
+              </div>
+              
+              {/* Monarch timeline card */}
+              {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
+                <div className="md:col-span-1">
+                  <Card>
+                    <CardContent className="p-4">
+                      <h4 className="font-semibold text-gray-700 text-sm mb-3">{t('tree.member.monarchs')}</h4>
+                      <div className="relative">
                         {/* Timeline line */}
-                        <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-yellow-200"></div>
+                        <div className="absolute left-3 top-0 bottom-0 w-0.5 bg-blue-300"></div>
                         
                         {/* Timeline points */}
-                        <div className="space-y-2">
+                        <div className="space-y-3">
                           {selectedMember.monarchDuringLife.map((monarch, index) => (
-                            <div key={index} className="flex items-center gap-2 relative">
+                            <div key={index} className="flex items-center gap-3 relative">
                               {/* Timeline indicator */}
-                              <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm border border-yellow-500 relative z-10">
-                                <Crown className="h-2 w-2 text-white" />
+                              <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center shadow-sm border-2 border-blue-600 relative z-10">
+                                <Crown className="h-3 w-3 text-white" />
                               </div>
                               
                               {/* Monarch info */}
-                              <div className="bg-yellow-50 px-2 py-1 rounded text-xs text-yellow-800 border border-yellow-200">
+                              <div className="bg-blue-50 px-3 py-2 rounded-lg text-xs text-blue-800 border border-blue-200 flex-1">
                                 <span>{monarch}</span>
                               </div>
                             </div>
                           ))}
                         </div>
                       </div>
-                    </div>
-                  )}
+                    </CardContent>
+                  </Card>
                 </div>
-              </CardContent>
-            </Card>
+              )}
+            </div>
           </div>
         )}
       </div>
