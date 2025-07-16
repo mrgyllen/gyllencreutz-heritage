@@ -133,7 +133,7 @@ export function FamilyTree() {
           <div 
             className={`
               flex-1 p-3 mb-2 rounded-lg border cursor-pointer transition-all
-              ${isSelected ? 'border-blue-300 bg-blue-50' : `${branchColors.border} hover:${branchColors.border} hover:bg-opacity-30`}
+              ${isSelected ? 'border-blue-500 bg-blue-100 shadow-md' : `${branchColors.border} hover:${branchColors.border} hover:bg-opacity-30`}
               ${branchColors.bg}
             `}
             onClick={() => setSelectedMember(node)}
@@ -152,14 +152,25 @@ export function FamilyTree() {
               
               <div className="flex flex-wrap gap-1">
                 {node.isSuccessionSon && (
-                  <div className="flex items-center justify-center w-5 h-5 bg-amber-100 border border-amber-400 rounded" title="Succession Son">
-                    <svg viewBox="0 0 20 20" className="w-3 h-3">
-                      {/* Gyllencreutz heraldic shield based on official coat of arms */}
-                      <path d="M10 2 L15 5 L15 12 L10 18 L5 12 L5 5 Z" fill="#d97706" stroke="#92400e" strokeWidth="0.5"/>
-                      {/* Cross pattern from the coat of arms */}
-                      <path d="M8 6 L12 6 L12 8 L8 8 Z M9 5 L11 5 L11 15 L9 15 Z" fill="#92400e"/>
-                      {/* Additional cross elements */}
-                      <path d="M8 12 L12 12 L12 14 L8 14 Z" fill="#92400e"/>
+                  <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-amber-200 to-amber-300 border border-amber-500 rounded-sm shadow-sm" title="Succession Son">
+                    <svg viewBox="0 0 24 24" className="w-4 h-4">
+                      {/* Gyllencreutz heraldic shield - more detailed based on coat of arms */}
+                      <defs>
+                        <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: '#f59e0b', stopOpacity: 1 }} />
+                          <stop offset="100%" style={{ stopColor: '#d97706', stopOpacity: 1 }} />
+                        </linearGradient>
+                      </defs>
+                      {/* Shield outline */}
+                      <path d="M12 2 L18 5 L18 13 L12 22 L6 13 L6 5 Z" fill="url(#shieldGradient)" stroke="#92400e" strokeWidth="0.8"/>
+                      {/* Cross pattern - main vertical */}
+                      <path d="M10.5 4 L13.5 4 L13.5 20 L10.5 20 Z" fill="#92400e"/>
+                      {/* Cross pattern - horizontal bars */}
+                      <path d="M8 7 L16 7 L16 9 L8 9 Z" fill="#92400e"/>
+                      <path d="M8 13 L16 13 L16 15 L8 15 Z" fill="#92400e"/>
+                      {/* Small decorative elements */}
+                      <circle cx="12" cy="6" r="0.8" fill="#92400e"/>
+                      <circle cx="12" cy="18" r="0.8" fill="#92400e"/>
                     </svg>
                   </div>
                 )}
