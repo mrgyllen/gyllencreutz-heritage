@@ -44,7 +44,7 @@ export const MonarchPortraits = {
     </svg>
   ),
   
-  'John III': () => (
+  'Johan III': () => (
     <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
       <defs>
         <linearGradient id="johnFace" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -65,7 +65,7 @@ export const MonarchPortraits = {
     </svg>
   ),
   
-  'Charles IX': () => (
+  'Karl IX': () => (
     <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
       <defs>
         <linearGradient id="charlesFace" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -86,7 +86,7 @@ export const MonarchPortraits = {
     </svg>
   ),
   
-  'Gustavus Adolphus': () => (
+  'Gustav II Adolf': () => (
     <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
       <defs>
         <linearGradient id="gustavusFace" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -128,7 +128,7 @@ export const MonarchPortraits = {
     </svg>
   ),
   
-  'Charles X Gustav': () => (
+  'Karl X Gustav': () => (
     <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
       <defs>
         <linearGradient id="charlesXFace" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -149,7 +149,7 @@ export const MonarchPortraits = {
     </svg>
   ),
   
-  'Charles XI': () => (
+  'Karl XI': () => (
     <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
       <defs>
         <linearGradient id="charlesXIFace" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -168,11 +168,38 @@ export const MonarchPortraits = {
       <rect x="10" y="16" width="4" height="3" fill="#4b0082"/>
       <text x="12" y="26" textAnchor="middle" fontSize="6" fill="#2d4a2b" fontWeight="bold">C11</text>
     </svg>
+  ),
+  
+  'Karl XII': () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" className="inline-block">
+      <defs>
+        <linearGradient id="karlXIIFace" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: '#f4d4a8', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#e6c18a', stopOpacity: 1 }} />
+        </linearGradient>
+        <linearGradient id="karlXIICrown" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: '#ffd700', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#d4af37', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+      <circle cx="12" cy="12" r="11" fill="#2d4a2b" stroke="#d4af37" strokeWidth="1"/>
+      <circle cx="12" cy="10" r="6" fill="url(#karlXIIFace)"/>
+      <path d="M7,6 L12,4 L17,6 L16,8 L12,7 L8,8 Z" fill="url(#karlXIICrown)"/>
+      <circle cx="12" cy="6" r="1" fill="#ff1493"/>
+      <rect x="10" y="16" width="4" height="3" fill="#000080"/>
+      <text x="12" y="26" textAnchor="middle" fontSize="6" fill="#2d4a2b" fontWeight="bold">C12</text>
+    </svg>
   )
 };
 
 export const getMonarchPortrait = (monarchName: string) => {
-  const cleanName = monarchName.trim();
+  // Remove years in parentheses and get clean name
+  const cleanName = monarchName.replace(/\s*\([^)]*\)/g, '').trim();
+  
   const Portrait = MonarchPortraits[cleanName as keyof typeof MonarchPortraits];
-  return Portrait ? <Portrait /> : null;
+  return Portrait ? <Portrait /> : (
+    <div className="w-6 h-6 bg-antique-brass rounded-full flex items-center justify-center">
+      <span className="text-white text-xs font-bold">?</span>
+    </div>
+  );
 };

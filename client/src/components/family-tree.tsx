@@ -54,30 +54,30 @@ export function FamilyTree() {
       case null:
       case '':
         return {
-          bg: 'bg-deep-forest/10',
-          border: 'border-deep-forest/30',
-          line: 'bg-deep-forest/60',
+          bg: 'bg-deep-forest opacity-10',
+          border: 'border-deep-forest border-2',
+          line: 'bg-deep-forest opacity-60',
           text: 'text-deep-forest'
         };
       case 'Elder line':
         return {
-          bg: 'bg-antique-brass/10',
-          border: 'border-antique-brass/30',
-          line: 'bg-antique-brass/60',
+          bg: 'bg-antique-brass opacity-20',
+          border: 'border-antique-brass border-2',
+          line: 'bg-antique-brass opacity-60',
           text: 'text-antique-brass'
         };
       case 'Younger line':
         return {
-          bg: 'bg-warm-stone/20',
-          border: 'border-warm-stone/40',
-          line: 'bg-warm-stone/60',
+          bg: 'bg-warm-stone opacity-30',
+          border: 'border-warm-stone border-2',
+          line: 'bg-warm-stone opacity-60',
           text: 'text-warm-stone'
         };
       default:
         return {
-          bg: 'bg-deep-forest/10',
-          border: 'border-deep-forest/30',
-          line: 'bg-deep-forest/60',
+          bg: 'bg-deep-forest opacity-10',
+          border: 'border-deep-forest border-2',
+          line: 'bg-deep-forest opacity-60',
           text: 'text-deep-forest'
         };
     }
