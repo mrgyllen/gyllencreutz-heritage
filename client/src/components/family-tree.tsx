@@ -291,7 +291,7 @@ export function FamilyTree() {
             </Badge>
           </div>
           <div className="flex items-center">
-            <Badge variant="destructive" className="text-xs">
+            <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">
               Died Young
             </Badge>
           </div>
@@ -332,58 +332,64 @@ export function FamilyTree() {
                   </Button>
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-                  <div>
-                    <span className="font-semibold text-gray-700">{t('tree.member.born')}</span>
-                    <span className="text-gray-600 ml-2">{selectedMember.born || 'Unknown'}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-gray-700">{t('tree.member.died')}</span>
-                    <span className="text-gray-600 ml-2">{selectedMember.died || 'Unknown'}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-gray-700">{t('tree.member.age')}</span>
-                    <span className="text-gray-600 ml-2">{selectedMember.ageAtDeath || 'Unknown'}</span>
-                  </div>
-                  <div>
-                    <span className="font-semibold text-gray-700">Branch:</span>
-                    <span className="text-gray-600 ml-2">{selectedMember.nobleBranch || 'Main line'}</span>
-                  </div>
-                </div>
-                
-                {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
-                  <div className="mb-4">
-                    <span className="font-semibold text-gray-700">{t('tree.member.monarchs')}</span>
-                    <div className="mt-3 relative">
-                      {/* Timeline line */}
-                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-yellow-300"></div>
-                      
-                      {/* Timeline points */}
-                      <div className="space-y-3">
-                        {selectedMember.monarchDuringLife.map((monarch, index) => (
-                          <div key={index} className="flex items-center gap-4 relative">
-                            {/* Timeline indicator */}
-                            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center shadow-md border-2 border-yellow-600 relative z-10">
-                              <Crown className="h-4 w-4 text-white" />
-                            </div>
-                            
-                            {/* Monarch info */}
-                            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 px-4 py-2 rounded-lg flex-1 border border-yellow-200">
-                              <span className="text-sm font-medium text-yellow-900">{monarch}</span>
-                            </div>
-                          </div>
-                        ))}
+                <div className="grid grid-cols-3 gap-6">
+                  {/* Main info - left column */}
+                  <div className="col-span-2 space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="font-semibold text-gray-700">{t('tree.member.born')}</span>
+                        <span className="text-gray-600 ml-2">{selectedMember.born || 'Unknown'}</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">{t('tree.member.died')}</span>
+                        <span className="text-gray-600 ml-2">{selectedMember.died || 'Unknown'}</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">{t('tree.member.age')}</span>
+                        <span className="text-gray-600 ml-2">{selectedMember.ageAtDeath || 'Unknown'}</span>
+                      </div>
+                      <div>
+                        <span className="font-semibold text-gray-700">Branch:</span>
+                        <span className="text-gray-600 ml-2">{selectedMember.nobleBranch || 'Main line'}</span>
                       </div>
                     </div>
+                    
+                    {selectedMember.notes && (
+                      <div>
+                        <span className="font-semibold text-gray-700">{t('tree.member.notes')}</span>
+                        <p className="text-gray-600 mt-1">{selectedMember.notes}</p>
+                      </div>
+                    )}
                   </div>
-                )}
-                
-                {selectedMember.notes && (
-                  <div>
-                    <span className="font-semibold text-gray-700">{t('tree.member.notes')}</span>
-                    <p className="text-gray-600 mt-1">{selectedMember.notes}</p>
-                  </div>
-                )}
+                  
+                  {/* Monarch timeline - right column */}
+                  {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
+                    <div className="col-span-1 border-l border-gray-200 pl-4">
+                      <span className="font-semibold text-gray-700 text-sm">{t('tree.member.monarchs')}</span>
+                      <div className="mt-2 relative">
+                        {/* Timeline line */}
+                        <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-yellow-200"></div>
+                        
+                        {/* Timeline points */}
+                        <div className="space-y-2">
+                          {selectedMember.monarchDuringLife.map((monarch, index) => (
+                            <div key={index} className="flex items-center gap-2 relative">
+                              {/* Timeline indicator */}
+                              <div className="w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm border border-yellow-500 relative z-10">
+                                <Crown className="h-2 w-2 text-white" />
+                              </div>
+                              
+                              {/* Monarch info */}
+                              <div className="bg-yellow-50 px-2 py-1 rounded text-xs text-yellow-800 border border-yellow-200">
+                                <span>{monarch}</span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
               </CardContent>
             </Card>
           </div>
