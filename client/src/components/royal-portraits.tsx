@@ -1,31 +1,45 @@
 import React from 'react';
 import { Crown } from 'lucide-react';
 
-// Royal portrait URLs from Livrustkammaren (Swedish Royal Armory)
-export const RoyalPortraitUrls = {
-  'Gustav Vasa': 'https://livrustkammaren.se/wp-content/uploads/2021/05/gustav-vasa.jpg',
-  'Erik XIV': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Erik_XIV_1561-300x300.jpg',
-  'Johan III': 'https://livrustkammaren.se/wp-content/uploads/2021/05/joahn-III-300x300.jpg',
-  'Sigismund': 'https://livrustkammaren.se/wp-content/uploads/2021/05/sigsmund-300x300.jpg',
-  'Karl IX': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_IX-300x300.jpg',
-  'Gustav II Adolf': 'https://livrustkammaren.se/wp-content/uploads/2021/05/gustav-ii-adolf-portratt-eASe3SXlngtTAKeS7rfCmQ-1-300x300.jpg',
-  'Kristina': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Kristina_1626-1689_drottning_av_Sverige_-_Nationalmuseum_-_15051.tif-300x300.jpg',
-  'Karl X Gustav': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_X_Gustav-300x300.jpg',
-  'Karl XI': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_XI-300x300.jpg',
-  'Karl XII': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_XII-300x300.jpg',
-  'Ulrika Eleonora': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Ulrika_Eleonora-300x300.jpg',
-  'Fredrik I': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Fredrik_I-300x300.jpg',
-  'Adolf Fredrik': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Adolf_Fredrik-300x300.jpg',
-  'Gustav III': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Gustav_III-300x300.jpg',
-  'Gustav IV Adolf': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Gustav_IV_Adolf-300x300.jpg',
-  'Karl XIII': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_XIII-300x300.jpg',
-  'Karl XIV Johan': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_XIV_Johan-300x300.jpg',
-  'Oscar I': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Oscar_I-300x300.jpg',
-  'Karl XV': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Karl_XV-300x300.jpg',
-  'Oscar II': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Oscar_II-300x300.jpg',
-  'Gustav V': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Gustav_V-300x300.jpg',
-  'Gustav VI Adolf': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Gustav_VI_Adolf-300x300.jpg',
-  'Carl XVI Gustaf': 'https://livrustkammaren.se/wp-content/uploads/2021/05/Carl_XVI_Gustaf-300x300.jpg'
+// Create distinctive royal icons for each monarch instead of relying on external images
+const createRoyalIcon = (initial: string, color: string, bgColor: string) => (
+  <div className="w-full h-full flex items-center justify-center text-white font-bold text-xs relative">
+    <div className={`w-full h-full ${bgColor} rounded-full flex items-center justify-center border-2 ${color}`}>
+      <span className="text-white font-bold text-xs">{initial}</span>
+      <div className="absolute -top-1 -right-1 w-3 h-3">
+        <svg viewBox="0 0 24 24" className="w-full h-full">
+          <path d="M12 2 L15 8 L22 8 L17 13 L19 20 L12 16 L5 20 L7 13 L2 8 L9 8 Z" fill="#ffd700" stroke="#d4af37" strokeWidth="1"/>
+        </svg>
+      </div>
+    </div>
+  </div>
+);
+
+// Royal icons mapping with distinctive colors for each monarch
+export const RoyalIcons = {
+  'Gustav Vasa': () => createRoyalIcon('GV', 'border-red-600', 'bg-red-500'),
+  'Erik XIV': () => createRoyalIcon('E14', 'border-blue-600', 'bg-blue-500'),
+  'Johan III': () => createRoyalIcon('J3', 'border-purple-600', 'bg-purple-500'),
+  'Sigismund': () => createRoyalIcon('S', 'border-green-600', 'bg-green-500'),
+  'Karl IX': () => createRoyalIcon('K9', 'border-orange-600', 'bg-orange-500'),
+  'Gustav II Adolf': () => createRoyalIcon('GA', 'border-red-700', 'bg-red-600'),
+  'Kristina': () => createRoyalIcon('K', 'border-pink-600', 'bg-pink-500'),
+  'Karl X Gustav': () => createRoyalIcon('K10', 'border-teal-600', 'bg-teal-500'),
+  'Karl XI': () => createRoyalIcon('K11', 'border-indigo-600', 'bg-indigo-500'),
+  'Karl XII': () => createRoyalIcon('K12', 'border-violet-600', 'bg-violet-500'),
+  'Ulrika Eleonora': () => createRoyalIcon('UE', 'border-rose-600', 'bg-rose-500'),
+  'Fredrik I': () => createRoyalIcon('F1', 'border-cyan-600', 'bg-cyan-500'),
+  'Adolf Fredrik': () => createRoyalIcon('AF', 'border-amber-600', 'bg-amber-500'),
+  'Gustav III': () => createRoyalIcon('G3', 'border-lime-600', 'bg-lime-500'),
+  'Gustav IV Adolf': () => createRoyalIcon('G4', 'border-emerald-600', 'bg-emerald-500'),
+  'Karl XIII': () => createRoyalIcon('K13', 'border-sky-600', 'bg-sky-500'),
+  'Karl XIV Johan': () => createRoyalIcon('K14', 'border-blue-700', 'bg-blue-600'),
+  'Oscar I': () => createRoyalIcon('O1', 'border-purple-700', 'bg-purple-600'),
+  'Karl XV': () => createRoyalIcon('K15', 'border-pink-700', 'bg-pink-600'),
+  'Oscar II': () => createRoyalIcon('O2', 'border-red-800', 'bg-red-700'),
+  'Gustav V': () => createRoyalIcon('G5', 'border-green-700', 'bg-green-600'),
+  'Gustav VI Adolf': () => createRoyalIcon('G6', 'border-blue-800', 'bg-blue-700'),
+  'Carl XVI Gustaf': () => createRoyalIcon('CG', 'border-yellow-600', 'bg-yellow-500')
 };
 
 interface RoyalPortraitProps {
@@ -40,34 +54,14 @@ export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size 
     large: 'w-12 h-12'
   };
 
-  const portraitUrl = RoyalPortraitUrls[monarchName as keyof typeof RoyalPortraitUrls];
+  const RoyalIcon = RoyalIcons[monarchName as keyof typeof RoyalIcons];
 
   return (
-    <div className={`${sizeClasses[size]} rounded-full overflow-hidden border border-blue-400 bg-blue-50 flex items-center justify-center`}>
-      {portraitUrl ? (
-        <>
-          <img 
-            src={portraitUrl} 
-            alt={monarchName} 
-            className="w-full h-full object-cover"
-            onError={(e) => {
-              // Fallback to crown icon if image fails to load
-              console.log(`Failed to load portrait for: ${monarchName}`);
-              const target = e.currentTarget;
-              target.style.display = 'none';
-              const fallback = target.nextElementSibling as HTMLElement;
-              if (fallback) {
-                fallback.classList.remove('hidden');
-                fallback.style.display = 'flex';
-              }
-            }}
-          />
-          <div className="hidden w-full h-full bg-blue-400 flex items-center justify-center">
-            <Crown className="w-1/2 h-1/2 text-white" />
-          </div>
-        </>
+    <div className={`${sizeClasses[size]} rounded-full overflow-hidden relative`}>
+      {RoyalIcon ? (
+        <RoyalIcon />
       ) : (
-        <div className="w-full h-full bg-blue-400 flex items-center justify-center">
+        <div className="w-full h-full bg-blue-400 flex items-center justify-center border-2 border-blue-600 rounded-full">
           <Crown className="w-1/2 h-1/2 text-white" />
         </div>
       )}
