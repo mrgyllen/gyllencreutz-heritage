@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus } from "lucide-react";
+import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { buildFamilyTree } from "@/data/family-data";
 import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
 import { useLanguage } from "@/contexts/language-context";
+import { getMonarchPortrait } from "@/components/monarch-portraits";
 
 export function FamilyTree() {
   const { t } = useLanguage();
@@ -48,10 +49,45 @@ export function FamilyTree() {
     setExpandedNodes(new Set(["0"])); // Keep only root expanded
   };
 
+  const getBranchColors = (nobleBranch: string | null) => {
+    switch (nobleBranch) {
+      case null:
+      case '':
+        return {
+          bg: 'bg-deep-forest/10',
+          border: 'border-deep-forest/30',
+          line: 'bg-deep-forest/60',
+          text: 'text-deep-forest'
+        };
+      case 'Elder line':
+        return {
+          bg: 'bg-antique-brass/10',
+          border: 'border-antique-brass/30',
+          line: 'bg-antique-brass/60',
+          text: 'text-antique-brass'
+        };
+      case 'Younger line':
+        return {
+          bg: 'bg-warm-stone/20',
+          border: 'border-warm-stone/40',
+          line: 'bg-warm-stone/60',
+          text: 'text-warm-stone'
+        };
+      default:
+        return {
+          bg: 'bg-deep-forest/10',
+          border: 'border-deep-forest/30',
+          line: 'bg-deep-forest/60',
+          text: 'text-deep-forest'
+        };
+    }
+  };
+
   const renderFamilyNode = (node: FamilyTreeNode, depth: number = 0, isLast: boolean = false): JSX.Element => {
     const isSelected = selectedMember?.externalId === node.externalId;
     const isExpanded = expandedNodes.has(node.externalId);
     const hasChildren = node.children && node.children.length > 0;
+    const branchColors = getBranchColors(node.nobleBranch);
     
     return (
       <div key={node.externalId} className="relative">
@@ -60,13 +96,13 @@ export function FamilyTree() {
           <>
             {/* Horizontal line to parent */}
             <div 
-              className="absolute left-[-20px] top-6 w-5 h-px bg-gray-400"
+              className={`absolute left-[-20px] top-6 w-5 h-px ${branchColors.line}`}
               style={{ left: `${(depth - 1) * 24 - 20}px` }}
             />
             {/* Vertical line from parent */}
             {!isLast && (
               <div 
-                className="absolute top-12 h-full w-px bg-gray-400"
+                className={`absolute top-12 h-full w-px ${branchColors.line}`}
                 style={{ left: `${(depth - 1) * 24 - 20}px` }}
               />
             )}
@@ -97,25 +133,38 @@ export function FamilyTree() {
           <div 
             className={`
               flex-1 p-3 mb-2 rounded-lg border cursor-pointer transition-all
-              ${isSelected ? 'border-noble-gold bg-noble-gold bg-opacity-10' : 'border-gray-300 hover:border-burgundy hover:bg-gray-50'}
-              ${node.biologicalSex === 'Male' ? 'bg-blue-50' : 'bg-pink-50'}
+              ${isSelected ? 'border-antique-brass bg-antique-brass bg-opacity-20' : `${branchColors.border} hover:${branchColors.border} hover:bg-opacity-30`}
+              ${branchColors.bg}
             `}
             onClick={() => setSelectedMember(node)}
           >
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <Users className="h-4 w-4 mr-2 text-burgundy" />
+                <Users className={`h-4 w-4 mr-2 ${branchColors.text}`} />
                 <div>
                   <h4 className="font-semibold text-sm">{node.name}</h4>
                   <div className="text-xs text-gray-600">
                     {node.born || '?'} - {node.died || '?'}
                   </div>
+                  {/* Monarch portraits */}
+                  {node.monarchDuringLife && node.monarchDuringLife.length > 0 && (
+                    <div className="flex items-center gap-1 mt-1">
+                      <Crown className="h-3 w-3 text-antique-brass" />
+                      <div className="flex gap-1">
+                        {node.monarchDuringLife.map((monarch, idx) => (
+                          <div key={idx} className="flex items-center">
+                            {getMonarchPortrait(monarch)}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
               
               <div className="flex flex-wrap gap-1">
                 {node.isSuccessionSon && (
-                  <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
+                  <Badge variant="secondary" className="bg-antique-brass text-white text-xs">
                     Succession Son
                   </Badge>
                 )}
@@ -125,7 +174,7 @@ export function FamilyTree() {
                   </Badge>
                 )}
                 {node.nobleBranch && (
-                  <Badge variant="outline" className="text-xs bg-purple-100 text-purple-800">
+                  <Badge variant="outline" className={`text-xs ${branchColors.bg} ${branchColors.text} ${branchColors.border}`}>
                     {node.nobleBranch}
                   </Badge>
                 )}
@@ -237,15 +286,19 @@ export function FamilyTree() {
         {/* Tree Legend */}
         <div className="flex flex-wrap justify-center gap-6 mb-8">
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-blue-50 border border-blue-300 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">{t('tree.member.male')}</span>
+            <div className="w-4 h-4 bg-deep-forest/10 border border-deep-forest/30 rounded mr-2"></div>
+            <span className="text-sm text-gray-600">Main Branch</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-pink-50 border border-pink-300 rounded mr-2"></div>
-            <span className="text-sm text-gray-600">{t('tree.member.female')}</span>
+            <div className="w-4 h-4 bg-antique-brass/10 border border-antique-brass/30 rounded mr-2"></div>
+            <span className="text-sm text-gray-600">Elder Line</span>
           </div>
           <div className="flex items-center">
-            <Badge variant="secondary" className="bg-noble-gold text-white text-xs">
+            <div className="w-4 h-4 bg-warm-stone/20 border border-warm-stone/40 rounded mr-2"></div>
+            <span className="text-sm text-gray-600">Younger Line</span>
+          </div>
+          <div className="flex items-center">
+            <Badge variant="secondary" className="bg-antique-brass text-white text-xs">
               Succession Son
             </Badge>
           </div>
@@ -253,6 +306,10 @@ export function FamilyTree() {
             <Badge variant="destructive" className="text-xs">
               Died Young
             </Badge>
+          </div>
+          <div className="flex items-center">
+            <Crown className="h-4 w-4 text-antique-brass mr-2" />
+            <span className="text-sm text-gray-600">Reigning Monarchs</span>
           </div>
         </div>
 
@@ -278,7 +335,7 @@ export function FamilyTree() {
             <Card className="max-w-2xl mx-auto">
               <CardContent className="p-6">
                 <div className="flex items-start justify-between mb-4">
-                  <h3 className="text-xl font-playfair font-bold text-burgundy">
+                  <h3 className="text-xl font-playfair font-bold text-deep-forest">
                     {selectedMember.name}
                   </h3>
                   <Button
@@ -293,15 +350,15 @@ export function FamilyTree() {
                 
                 <div className="grid grid-cols-2 gap-4 text-sm mb-4">
                   <div>
-                    <span className="font-semibold text-gray-700">Born:</span>
+                    <span className="font-semibold text-gray-700">{t('tree.member.born')}</span>
                     <span className="text-gray-600 ml-2">{selectedMember.born || 'Unknown'}</span>
                   </div>
                   <div>
-                    <span className="font-semibold text-gray-700">Died:</span>
+                    <span className="font-semibold text-gray-700">{t('tree.member.died')}</span>
                     <span className="text-gray-600 ml-2">{selectedMember.died || 'Unknown'}</span>
                   </div>
                   <div>
-                    <span className="font-semibold text-gray-700">Age at Death:</span>
+                    <span className="font-semibold text-gray-700">{t('tree.member.age')}</span>
                     <span className="text-gray-600 ml-2">{selectedMember.ageAtDeath || 'Unknown'}</span>
                   </div>
                   <div>
@@ -312,12 +369,13 @@ export function FamilyTree() {
                 
                 {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
                   <div className="mb-4">
-                    <span className="font-semibold text-gray-700">Reigning Monarchs:</span>
-                    <div className="flex flex-wrap gap-1 mt-1">
+                    <span className="font-semibold text-gray-700">{t('tree.member.monarchs')}</span>
+                    <div className="flex flex-wrap gap-2 mt-2">
                       {selectedMember.monarchDuringLife.map((monarch, index) => (
-                        <Badge key={index} variant="outline" className="text-xs bg-blue-50 text-blue-800">
-                          {monarch}
-                        </Badge>
+                        <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
+                          {getMonarchPortrait(monarch)}
+                          <span className="text-sm text-gray-700">{monarch}</span>
+                        </div>
                       ))}
                     </div>
                   </div>
@@ -325,7 +383,7 @@ export function FamilyTree() {
                 
                 {selectedMember.notes && (
                   <div>
-                    <span className="font-semibold text-gray-700">Notes:</span>
+                    <span className="font-semibold text-gray-700">{t('tree.member.notes')}</span>
                     <p className="text-gray-600 mt-1">{selectedMember.notes}</p>
                   </div>
                 )}
