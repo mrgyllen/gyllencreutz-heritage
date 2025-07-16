@@ -19,7 +19,7 @@ const workingPortraits = [
   'johan-iii', 'karl-ix', 'karl-x-gustav', 'karl-xiv-johan', 'sigismund'
 ];
 
-// Royal portrait mappings using only working portraits
+// Royal portrait mappings - null values will use Crown fallback
 export const RoyalPortraitAssets = {
   'Gustav Vasa': portraitPaths['gustav-vasa'],
   'Erik XIV': portraitPaths['erik-xiv'],
@@ -27,23 +27,23 @@ export const RoyalPortraitAssets = {
   'Sigismund': portraitPaths['sigismund'],
   'Karl IX': portraitPaths['karl-ix'],
   'Gustav II Adolf': portraitPaths['gustav-ii-adolf'],
-  'Kristina': null, // HTML file - use fallback
+  'Kristina': null, // Corrupted file - use Crown fallback
   'Karl X Gustav': portraitPaths['karl-x-gustav'],
-  'Karl XI': null, // HTML file - use fallback
-  'Karl XII': null, // HTML file - use fallback
-  'Ulrika Eleonora': null, // HTML file - use fallback
-  'Fredrik I': null, // HTML file - use fallback
-  'Adolf Fredrik': null, // HTML file - use fallback
-  'Gustav III': null, // HTML file - use fallback
-  'Gustav IV Adolf': null, // HTML file - use fallback
-  'Karl XIII': null, // HTML file - use fallback
+  'Karl XI': null, // Corrupted file - use Crown fallback
+  'Karl XII': null, // Corrupted file - use Crown fallback
+  'Ulrika Eleonora': null, // Corrupted file - use Crown fallback
+  'Fredrik I': null, // Corrupted file - use Crown fallback
+  'Adolf Fredrik': null, // Corrupted file - use Crown fallback
+  'Gustav III': null, // Corrupted file - use Crown fallback
+  'Gustav IV Adolf': null, // Corrupted file - use Crown fallback
+  'Karl XIII': null, // Corrupted file - use Crown fallback
   'Karl XIV Johan': portraitPaths['karl-xiv-johan'],
-  'Oscar I': null, // HTML file - use fallback
-  'Karl XV': null, // HTML file - use fallback
-  'Oscar II': null, // HTML file - use fallback
+  'Oscar I': null, // Corrupted file - use Crown fallback
+  'Karl XV': null, // Corrupted file - use Crown fallback
+  'Oscar II': null, // Corrupted file - use Crown fallback
   'Gustav V': portraitPaths['gustav-v'],
-  'Gustav VI Adolf': null, // HTML file - use fallback
-  'Carl XVI Gustaf': null // HTML file - use fallback
+  'Gustav VI Adolf': null, // Corrupted file - use Crown fallback
+  'Carl XVI Gustaf': null // Corrupted file - use Crown fallback
 };
 
 interface RoyalPortraitProps {
