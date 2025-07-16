@@ -47,28 +47,28 @@ export function LegacySection() {
             <Card className="bg-historic-blue/80 border-antique-brass/30">
               <CardContent className="p-6">
                 <h3 className="text-xl font-playfair font-bold text-antique-brass mb-4">
-                  The Story of Tyke Larsson
+                  {t('legacy.story.title')}
                 </h3>
                 <p className="text-warm-stone leading-relaxed">
-                  Claes Gyllencreutz has written a family chronicle with ancestor Tyke Larsson (Gyllencreutz) at the center, which is also a piece of Swedish history. The Gyllencreutz family's fates are intertwined with the power-historical events in Sweden and the Nordic region.
+                  {t('legacy.story.text')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="bg-historic-blue/80 border-antique-brass/30">
               <CardContent className="p-6">
-                <h4 className="text-lg font-semibold text-antique-brass mb-3">Historical Context:</h4>
+                <h4 className="text-lg font-semibold text-antique-brass mb-3">{t('legacy.context.title')}</h4>
                 <p className="text-warm-stone leading-relaxed">
-                  The events take place mainly in the provinces of Småland, Västergötland, Östergötland (Nordic Seven Years' War) and Stockholm. In the 1580s, he was employed by the Eastern Göta military area as a recruiter of soldiers and cavalry to Östan- and Westanstång in Östergötland. He later became councilor and kitchen master to Duke Magnus Vasa at Kungsbrogård near Vreta Monastery.
+                  {t('legacy.context.text')}
                 </p>
               </CardContent>
             </Card>
 
             <Card className="bg-historic-blue/80 border-antique-brass/30">
               <CardContent className="p-6">
-                <h4 className="text-lg font-semibold text-antique-brass mb-3">Personal Life:</h4>
+                <h4 className="text-lg font-semibold text-antique-brass mb-3">{t('legacy.personal.title')}</h4>
                 <p className="text-warm-stone leading-relaxed">
-                  Tyke married at his estate Wiby outside Östra Ryd south of Norrköping and had 10 children with two wives, Kirsten Trulsdotter and Brita Alfsdotter Ikorn. He was fortunate to become one of Duke Karl's favorites and received courier assignments during Karl's dispute with Hogenskild Bielke and later also with King Sigismund.
+                  {t('legacy.personal.text')}
                 </p>
               </CardContent>
             </Card>
@@ -78,10 +78,10 @@ export function LegacySection() {
                 className="bg-antique-brass hover:bg-antique-brass/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors"
                 onClick={() => window.open('https://www.bokus.com/bok/9789198793543/makt-intriger-och-krig-en-fralsemans-levnadsode-under-wasatiden/', '_blank')}
               >
-                View on Bokus
+                {t('legacy.button.bokus')}
               </Button>
               <Button className="bg-burgundy hover:bg-burgundy/80 text-white px-6 py-3 rounded-lg font-semibold transition-colors">
-                Contact Author
+                {t('legacy.button.contact')}
               </Button>
             </div>
           </div>

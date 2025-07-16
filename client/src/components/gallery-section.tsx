@@ -30,10 +30,10 @@ export function GallerySection() {
                 />
               </div>
               <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
-                Family Coat of Arms
+                {t('gallery.coat.title')}
               </h3>
               <p className="text-gray-700">
-                The official heraldic shield of the Gyllencreutz family, featuring the distinctive three crosses that symbolize faith, nobility, and heritage.
+                {t('gallery.coat.description')}
               </p>
             </CardContent>
           </Card>
@@ -48,10 +48,10 @@ export function GallerySection() {
                 />
               </div>
               <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
-                Noble Mark
+                {t('gallery.mark.title')}
               </h3>
               <p className="text-gray-700">
-                Historical noble mark (Adelsmärke) from the family archives, representing the official registration at Riddarhuset as nobility number 54.
+                {t('gallery.mark.description')}
               </p>
             </CardContent>
           </Card>
@@ -66,10 +66,10 @@ export function GallerySection() {
                 />
               </div>
               <h3 className="text-xl font-playfair font-bold text-deep-forest mb-2">
-                Noble Horseman
+                {t('gallery.horseman.title')}
               </h3>
               <p className="text-gray-700">
-                Historical illustration representing the noble military tradition of the family, reflecting their service to the Swedish crown.
+                {t('gallery.horseman.description')}
               </p>
             </CardContent>
           </Card>
@@ -77,10 +77,10 @@ export function GallerySection() {
 
         <div className="mt-16">
           <h3 className="text-2xl font-playfair font-bold text-deep-forest mb-8 text-center">
-            Official Heraldic Archive
+            {t('gallery.archive.title')}
           </h3>
           <p className="text-center text-gray-700 mb-8">
-            From the Riddarhuset (House of Nobility) Archive - Official heraldic representations throughout history
+            {t('gallery.archive.subtitle')}
           </p>
           
           <div className="grid md:grid-cols-4 gap-6">
@@ -97,7 +97,7 @@ export function GallerySection() {
                   SAK 2022
                 </h4>
                 <p className="text-xs text-gray-700">
-                  Modern heraldic representation
+                  {t('gallery.archive.modern')}
                 </p>
               </CardContent>
             </Card>
@@ -115,7 +115,7 @@ export function GallerySection() {
                   Keyser's Vapenbok
                 </h4>
                 <p className="text-xs text-gray-700">
-                  1650 heraldic record
+                  {t('gallery.archive.keyser')}
                 </p>
               </CardContent>
             </Card>
@@ -133,7 +133,7 @@ export function GallerySection() {
                   Sveriges Adelskalender
                 </h4>
                 <p className="text-xs text-gray-700">
-                  Noble calendar entry
+                  {t('gallery.archive.calendar')}
                 </p>
               </CardContent>
             </Card>
@@ -151,7 +151,7 @@ export function GallerySection() {
                   Stiernstedt & Klingspor
                 </h4>
                 <p className="text-xs text-gray-700">
-                  1865 heraldic compilation
+                  {t('gallery.archive.stiernstedt')}
                 </p>
               </CardContent>
             </Card>

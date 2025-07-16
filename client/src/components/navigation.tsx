@@ -87,32 +87,35 @@ export function Navigation() {
               onClick={() => scrollToSection('home')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
             >
-              Home
+              {t('nav.home')}
             </button>
             <button
               onClick={() => scrollToSection('tree')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
             >
-              Family Tree
+              {t('nav.familyTree')}
             </button>
             <button
               onClick={() => scrollToSection('legacy')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
             >
-              Legacy
+              {t('nav.legacy')}
             </button>
             <button
               onClick={() => scrollToSection('gallery')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
             >
-              Gallery
+              {t('nav.gallery')}
             </button>
             <button
               onClick={() => scrollToSection('about')}
               className="text-parchment hover:text-noble-gold block px-3 py-2 rounded-md text-base font-medium w-full text-left transition-colors"
             >
-              About
+              {t('nav.about')}
             </button>
+            <div className="px-3 py-2">
+              <LanguageToggle />
+            </div>
           </div>
         </div>
       )}
