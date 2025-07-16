@@ -87,7 +87,16 @@ const translations = {
     'tree.member.notes': 'Anteckningar:',
     'tree.member.male': 'Man',
     'tree.member.female': 'Kvinna',
-    'tree.member.unknown': 'Okänt'
+    'tree.member.unknown': 'Okänt',
+    
+    // Footer Section
+    'footer.title': 'Gyllencreutz Arv',
+    'footer.description': 'Bevarar arvet från en av Sveriges äldsta adelsätter sedan 1500-talet.',
+    'footer.quickLinks': 'Snabblänkar',
+    'footer.externalLinks': 'Externa länkar',
+    'footer.contact': 'Kontakt',
+    'footer.riddarhuset': 'Riddarhuset register',
+    'footer.copyright': '© 2024 Gyllencreutz Familjarv. Alla rättigheter förbehållna.'
   },
   en: {
     // Navigation
@@ -165,7 +174,16 @@ const translations = {
     'tree.member.notes': 'Notes:',
     'tree.member.male': 'Male',
     'tree.member.female': 'Female',
-    'tree.member.unknown': 'Unknown'
+    'tree.member.unknown': 'Unknown',
+    
+    // Footer Section
+    'footer.title': 'Gyllencreutz Heritage',
+    'footer.description': 'Preserving the legacy of one of Sweden\'s oldest noble families since the 1500s.',
+    'footer.quickLinks': 'Quick Links',
+    'footer.externalLinks': 'External Links',
+    'footer.contact': 'Contact',
+    'footer.riddarhuset': 'Riddarhuset Registry',
+    'footer.copyright': '© 2024 Gyllencreutz Family Heritage. All rights reserved.'
   }
 };
 

@@ -4,8 +4,11 @@ import { FamilyTree } from "@/components/family-tree";
 import { LegacySection } from "@/components/legacy-section";
 import { GallerySection } from "@/components/gallery-section";
 import { AboutSection } from "@/components/about-section";
+import { useLanguage } from "@/contexts/language-context";
 
 export default function Home() {
+  const { t } = useLanguage();
+  
   return (
     <div className="min-h-screen bg-parchment">
       <Navigation />
@@ -16,45 +19,45 @@ export default function Home() {
       <AboutSection />
       
       {/* Footer */}
-      <footer className="bg-burgundy text-white py-12">
+      <footer className="bg-deep-forest text-white py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-3 gap-8">
             <div>
-              <h3 className="text-xl font-cinzel font-semibold text-noble-gold mb-4">
-                Gyllencreutz Heritage
+              <h3 className="text-xl font-cinzel font-semibold text-antique-brass mb-4">
+                {t('footer.title')}
               </h3>
-              <p className="text-gray-300">
-                Preserving the legacy of one of Sweden's oldest noble families since the 1500s.
+              <p className="text-parchment">
+                {t('footer.description')}
               </p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold text-noble-gold mb-4">Quick Links</h4>
-              <ul className="space-y-2 text-gray-300">
-                <li><a href="#home" className="hover:text-noble-gold transition-colors">Home</a></li>
-                <li><a href="#tree" className="hover:text-noble-gold transition-colors">Family Tree</a></li>
-                <li><a href="#legacy" className="hover:text-noble-gold transition-colors">Legacy</a></li>
-                <li><a href="#gallery" className="hover:text-noble-gold transition-colors">Gallery</a></li>
+              <h4 className="text-lg font-semibold text-antique-brass mb-4">{t('footer.quickLinks')}</h4>
+              <ul className="space-y-2 text-parchment">
+                <li><a href="#home" className="hover:text-antique-brass transition-colors">{t('nav.home')}</a></li>
+                <li><a href="#tree" className="hover:text-antique-brass transition-colors">{t('nav.familyTree')}</a></li>
+                <li><a href="#legacy" className="hover:text-antique-brass transition-colors">{t('nav.legacy')}</a></li>
+                <li><a href="#gallery" className="hover:text-antique-brass transition-colors">{t('nav.gallery')}</a></li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold text-noble-gold mb-4">External Links</h4>
-              <ul className="space-y-2 text-gray-300">
+              <h4 className="text-lg font-semibold text-antique-brass mb-4">{t('footer.externalLinks')}</h4>
+              <ul className="space-y-2 text-parchment">
                 <li>
                   <a 
                     href="https://minerva.riddarhuset.se/att/gyllencreutz/" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    className="hover:text-noble-gold transition-colors"
+                    className="hover:text-antique-brass transition-colors"
                   >
-                    Riddarhuset Registry
+                    {t('footer.riddarhuset')}
                   </a>
                 </li>
-                <li><a href="#" className="hover:text-noble-gold transition-colors">Contact</a></li>
+                <li><a href="#" className="hover:text-antique-brass transition-colors">{t('footer.contact')}</a></li>
               </ul>
             </div>
           </div>
-          <div className="mt-8 pt-8 border-t border-gray-700 text-center text-gray-300">
-            <p>&copy; 2024 Gyllencreutz Family Heritage. All rights reserved.</p>
+          <div className="mt-8 pt-8 border-t border-warm-stone/30 text-center text-parchment">
+            <p>{t('footer.copyright')}</p>
           </div>
         </div>
       </footer>
