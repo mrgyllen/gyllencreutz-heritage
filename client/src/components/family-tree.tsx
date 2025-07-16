@@ -146,19 +146,7 @@ export function FamilyTree() {
                   <div className="text-xs text-gray-600">
                     {node.born || '?'} - {node.died || '?'}
                   </div>
-                  {/* Monarch portraits */}
-                  {node.monarchDuringLife && node.monarchDuringLife.length > 0 && (
-                    <div className="flex items-center gap-1 mt-1">
-                      <Crown className="h-3 w-3 text-antique-brass" />
-                      <div className="flex gap-1">
-                        {node.monarchDuringLife.map((monarch, idx) => (
-                          <div key={idx} className="flex items-center">
-                            {getMonarchPortrait(monarch)}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+
                 </div>
               </div>
               
@@ -307,10 +295,6 @@ export function FamilyTree() {
               Died Young
             </Badge>
           </div>
-          <div className="flex items-center">
-            <Crown className="h-4 w-4 text-yellow-600 mr-2" />
-            <span className="text-sm text-gray-600">Reigning Monarchs</span>
-          </div>
         </div>
 
         {/* Family Tree in Confined Space */}
@@ -370,13 +354,26 @@ export function FamilyTree() {
                 {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
                   <div className="mb-4">
                     <span className="font-semibold text-gray-700">{t('tree.member.monarchs')}</span>
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {selectedMember.monarchDuringLife.map((monarch, index) => (
-                        <div key={index} className="flex items-center gap-2 bg-gray-50 px-3 py-2 rounded-lg">
-                          {getMonarchPortrait(monarch)}
-                          <span className="text-sm text-gray-700">{monarch}</span>
-                        </div>
-                      ))}
+                    <div className="mt-3 relative">
+                      {/* Timeline line */}
+                      <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-yellow-300"></div>
+                      
+                      {/* Timeline points */}
+                      <div className="space-y-3">
+                        {selectedMember.monarchDuringLife.map((monarch, index) => (
+                          <div key={index} className="flex items-center gap-4 relative">
+                            {/* Timeline indicator */}
+                            <div className="w-8 h-8 bg-yellow-500 rounded-full flex items-center justify-center shadow-md border-2 border-yellow-600 relative z-10">
+                              <Crown className="h-4 w-4 text-white" />
+                            </div>
+                            
+                            {/* Monarch info */}
+                            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 px-4 py-2 rounded-lg flex-1 border border-yellow-200">
+                              <span className="text-sm font-medium text-yellow-900">{monarch}</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
