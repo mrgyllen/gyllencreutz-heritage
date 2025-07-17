@@ -13,13 +13,14 @@ class FunctionStorage {
     loadData() {
         try {
             // Load the family data from the functions data directory
-            // Using path.resolve to ensure absolute path resolution works in Azure
-            const dataPath = path.resolve(__dirname, 'data', 'family-members.json');
+            // In Azure, __dirname is /functions/family-members, need to go to /functions/shared/data/
+            const dataPath = path.resolve(__dirname, '../shared/data', 'family-members.json');
             
             // Debug logging for Azure deployment
             console.log('Storage debug - __dirname:', __dirname);
             console.log('Storage debug - dataPath:', dataPath);
             console.log('Storage debug - file exists:', fs.existsSync(dataPath));
+            console.log('Storage debug - Corrected dataPath:', dataPath);
             
             console.log('Attempting to read family-members.json');
             const rawData = fs.readFileSync(dataPath, 'utf8');
