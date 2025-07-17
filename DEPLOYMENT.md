@@ -58,13 +58,13 @@ For static hosting platforms, deploy only the `dist/public/` directory contents.
 3. **Build Pipeline**
    Azure auto-generates a GitHub Action, but you need to update it for your project structure:
    
-   **Key Configuration Values:**
+   **Key Configuration Values to Update:**
    - **App location**: `/` (root directory)
    - **Output location**: `dist/public`
    - **Skip app build**: `true` (we build manually)
-   - **Build command**: `npm run build`
+   - **Build command**: `npm run build` (runs at root level)
    
-   The corrected GitHub Action is provided in `.github/workflows/azure-static-web-apps.yml`
+   Apply these settings to the Azure-generated workflow directly in GitHub.
 
 ### Netlify
 
