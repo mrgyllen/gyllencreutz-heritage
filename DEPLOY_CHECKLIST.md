@@ -1,7 +1,6 @@
 # Azure Static Web Apps Deployment Checklist
 
 ## Pre-Deployment
-- [ ] Prepare production HTML: `cp client/index.prod.html client/index.html`
 - [ ] Verify build works locally: `npm run build`
 - [ ] Check `dist/public/` contains all necessary files
 - [ ] Ensure `staticwebapp.config.json` is in project root
