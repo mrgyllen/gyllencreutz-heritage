@@ -11,12 +11,16 @@ This project now supports both Express API (for Replit development) and Azure Fu
 │   ├── host.json             # Functions runtime configuration
 │   ├── local.settings.json   # Local development settings
 │   ├── package.json          # Functions-specific dependencies
+│   ├── data/                 # JSON data files
+│   │   └── family-members.json  # Family genealogy data
 │   ├── family-members/       # GET /api/family-members
+│   │   └── index.js          # Function implementation (v4 model)
 │   ├── family-members-search/ # GET /api/family-members/search/{query}
+│   │   └── index.js          # Function implementation (v4 model)
+│   ├── debug-deployment/     # GET /api/debug-deployment
+│   │   └── index.js          # Deployment debugging endpoint
 │   └── shared/               # Shared storage logic
-│       ├── storage.js        # Data loading and search logic
-│       └── data/             # JSON data files
-│           └── family-members.json  # Family genealogy data
+│       └── storage.js        # Data loading and search logic
 └── client/                   # React frontend
 ```
 
@@ -83,9 +87,16 @@ No changes needed! The frontend will automatically use `/api/family-members` whi
 
 Both Express and Functions use the same data source:
 - **Express**: `server/storage.ts` loads from `attached_assets/`
-- **Functions**: `functions/shared/storage.js` loads from `functions/shared/data/`
+- **Functions**: `functions/shared/storage.js` loads from `functions/data/`
 
 Both implementations provide identical API responses. The Functions version includes the data file within the functions directory to ensure Azure deployment packages it correctly.
+
+## Azure Functions v4 Programming Model
+
+This project uses the Azure Functions v4 programming model with the `@azure/functions` package:
+- **No function.json files** - bindings are declared in code using `app.http()`
+- **Simplified structure** - each function is a single JavaScript file
+- **Built-in routing** - routes defined directly in the handler registration
 
 ## Key Benefits
 
