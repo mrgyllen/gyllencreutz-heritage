@@ -6,6 +6,7 @@ app.http('family-members-search', {
     authLevel: 'anonymous',
     route: 'family-members/search/{query}',
     handler: async (request, context) => {
+        context.log('TEST DEBUG - Search function was invoked');
         try {
             const query = request.params.query;
             if (!query) {
@@ -38,9 +39,9 @@ app.http('family-members-search', {
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({ 
-                    error: 'Internal server error',
-                    message: error.message,
-                    stack: error.stack 
+                    error: error.message,
+                    stack: error.stack,
+                    type: error.constructor.name
                 })
             };
         }

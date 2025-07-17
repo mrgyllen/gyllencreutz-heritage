@@ -6,6 +6,7 @@ app.http('family-members', {
     authLevel: 'anonymous',
     route: 'family-members',
     handler: async (request, context) => {
+        context.log('TEST DEBUG - Function was invoked');
         try {
             const members = await storage.getAllFamilyMembers();
             return {
@@ -26,9 +27,9 @@ app.http('family-members', {
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({ 
-                    error: 'Internal server error',
-                    message: error.message,
-                    stack: error.stack 
+                    error: error.message,
+                    stack: error.stack,
+                    type: error.constructor.name
                 })
             };
         }
