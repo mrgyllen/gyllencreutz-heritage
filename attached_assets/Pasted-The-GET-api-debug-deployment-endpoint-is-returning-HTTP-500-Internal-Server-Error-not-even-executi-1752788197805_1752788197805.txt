@@ -1,0 +1,71 @@
+The GET /api/debug-deployment endpoint is returning HTTP 500 Internal Server Error, not even executing successfully.
+
+That tells us:
+
+    The function exists, but something inside debug-deployment/index.js is failing immediately.
+
+    This confirms that the file system inspection logic is likely crashing, possibly due to incorrect path resolution, file system operations on non-existent paths, or unhandled exceptions.
+
+✅ Immediate Next Steps (What to Check)
+
+Please check this in your functions/debug-deployment/index.js:
+1. ✅ Wrap all fs and path operations in try/catch
+
+Right now, any uncaught error (e.g. fs.readdirSync() on a non-existent folder) can crash the function. Use this pattern instead:
+
+const { app } = require('@azure/functions');
+const fs = require('fs');
+const path = require('path');
+
+app.http('debug-deployment', {
+  methods: ['GET'],
+  authLevel: 'anonymous',
+  handler: async (request, context) => {
+    const logs = [];
+
+    try {
+      const dataPath = path.resolve(__dirname, '../shared/data/family-members.json');
+      logs.push(`__dirname: ${__dirname}`);
+      logs.push(`Resolved dataPath: ${dataPath}`);
+
+      const exists = fs.existsSync(dataPath);
+      logs.push(`File exists: ${exists}`);
+
+      let size = 0;
+      if (exists) {
+        const raw = fs.readFileSync(dataPath, 'utf8');
+        size = raw.length;
+        logs.push(`Read file, size: ${size}`);
+
+        const json = JSON.parse(raw);
+        logs.push(`Parsed JSON, records: ${json.length}`);
+      }
+
+      return {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+        body: { status: 'OK', logs }
+      };
+    } catch (err) {
+      context.log.error('DEBUG DEPLOYMENT ERROR:', err);
+      return {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: {
+          error: err.message,
+          stack: err.stack,
+          logs
+        }
+      };
+    }
+  }
+});
+
+2. ✅ Re-deploy with this safe version
+🔍 Why This Is Useful
+
+This will ensure:
+
+    You never get a blank 500 page again — you’ll get meaningful logs even if something fails.
+
+    It returns step-by-step debug output, so we can pinpoint whether it's a path, permission, or missing file issue.

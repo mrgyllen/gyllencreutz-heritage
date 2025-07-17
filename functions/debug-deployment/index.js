@@ -7,88 +7,58 @@ app.http('debug-deployment', {
     authLevel: 'anonymous',
     route: 'debug-deployment',
     handler: async (request, context) => {
-        context.log('DEBUG - Deployment debug endpoint called');
+        const logs = [];
+        
         try {
-            const currentDir = __dirname;
-            const sharedDir = path.resolve(currentDir, '../shared');
-            const dataDir = path.resolve(sharedDir, 'data');
-            const jsonFile = path.resolve(dataDir, 'family-members.json');
+            context.log('DEBUG - Deployment debug endpoint called');
+            logs.push('DEBUG - Deployment debug endpoint called');
+            
+            const dataPath = path.resolve(__dirname, '../shared/data/family-members.json');
+            logs.push(`__dirname: ${__dirname}`);
+            logs.push(`Resolved dataPath: ${dataPath}`);
 
-            const debugInfo = {
-                timestamp: new Date().toISOString(),
-                environment: {
-                    __dirname: currentDir,
-                    cwd: process.cwd(),
-                    nodeVersion: process.version
-                },
-                paths: {
-                    sharedDir: sharedDir,
-                    dataDir: dataDir,
-                    jsonFile: jsonFile
-                },
-                fileSystem: {
-                    sharedDirExists: fs.existsSync(sharedDir),
-                    dataDirExists: fs.existsSync(dataDir),
-                    jsonFileExists: fs.existsSync(jsonFile)
-                }
-            };
+            const exists = fs.existsSync(dataPath);
+            logs.push(`File exists: ${exists}`);
 
-            // Try to list directories
-            try {
-                debugInfo.fileSystem.functionsRoot = fs.readdirSync(path.resolve(currentDir, '..'));
-            } catch (e) {
-                debugInfo.fileSystem.functionsRootError = e.message;
-            }
-
-            try {
-                debugInfo.fileSystem.sharedContents = fs.readdirSync(sharedDir);
-            } catch (e) {
-                debugInfo.fileSystem.sharedContentsError = e.message;
-            }
-
-            try {
-                debugInfo.fileSystem.dataContents = fs.readdirSync(dataDir);
-            } catch (e) {
-                debugInfo.fileSystem.dataContentsError = e.message;
-            }
-
-            // Try to read the JSON file
-            if (fs.existsSync(jsonFile)) {
+            let size = 0;
+            if (exists) {
                 try {
-                    const stats = fs.statSync(jsonFile);
-                    debugInfo.fileSystem.jsonFileSize = stats.size;
-                    debugInfo.fileSystem.jsonFileModified = stats.mtime;
-                    
-                    const content = fs.readFileSync(jsonFile, 'utf8');
-                    debugInfo.fileSystem.jsonFileLength = content.length;
-                    debugInfo.fileSystem.jsonFilePreview = content.substring(0, 200) + '...';
-                    
-                    const parsed = JSON.parse(content);
-                    debugInfo.fileSystem.jsonRecordCount = parsed.length;
+                    const raw = fs.readFileSync(dataPath, 'utf8');
+                    size = raw.length;
+                    logs.push(`Read file, size: ${size}`);
+
+                    const json = JSON.parse(raw);
+                    logs.push(`Parsed JSON, records: ${json.length}`);
                 } catch (e) {
-                    debugInfo.fileSystem.jsonFileError = e.message;
+                    logs.push(`Error reading/parsing file: ${e.message}`);
                 }
             }
 
             return {
                 status: 200,
-                headers: {
+                headers: { 
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify(debugInfo, null, 2)
+                body: JSON.stringify({ 
+                    status: 'OK', 
+                    logs: logs,
+                    timestamp: new Date().toISOString()
+                })
             };
-        } catch (error) {
-            context.log.error('Debug endpoint error:', error);
+        } catch (err) {
+            context.log.error('DEBUG DEPLOYMENT ERROR:', err);
+            logs.push(`CRITICAL ERROR: ${err.message}`);
             return {
                 status: 500,
-                headers: {
+                headers: { 
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
                 body: JSON.stringify({
-                    error: error.message,
-                    stack: error.stack
+                    error: err.message,
+                    stack: err.stack,
+                    logs: logs
                 })
             };
         }
