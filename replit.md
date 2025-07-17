@@ -135,3 +135,6 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - All portraits now display correctly with proper fallback system and robust error handling
 - Portrait system ready for seamless integration throughout family tree and website components
 - Cleaned up all test pages, debug code, and unnecessary assets for production readiness
+- Implemented three-file HTML management system for development/production compatibility
+- Created index.dev.html (Replit), index.prod.html (external deployment), and index.html (CI-managed)
+- Updated deployment documentation and checklists to reflect new HTML management workflow

@@ -4,7 +4,12 @@ This guide covers deploying the Gyllencreutz Family Heritage Website to external
 
 ## Quick Start
 
-### 1. Build the Frontend
+### 1. Prepare Production HTML
+```bash
+cp client/index.prod.html client/index.html
+```
+
+### 2. Build the Frontend
 ```bash
 npm run build
 ```
@@ -13,7 +18,9 @@ This creates a production-ready build in `dist/public/` with:
 - Bundled JavaScript (`assets/index-*.js`)
 - CSS (`assets/index-*.css`)
 - All images and assets with hashed filenames
-- Proper `index.html` with correct script references
+- Proper `index.html` with Vite-injected script references
+
+**Note**: The project uses three HTML versions - see `HTML_MANAGEMENT.md` for details.
 
 ### 2. Deploy Static Files Only
 For static hosting platforms, deploy only the `dist/public/` directory contents.
