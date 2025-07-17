@@ -7,6 +7,9 @@
     "start": "func start",
     "build": "echo 'No build required for JavaScript functions'"
   },
+  "files": [
+    "shared/data/family-members.json"
+  ],
   "dependencies": {
     "@azure/functions": "^4.0.1"
   },

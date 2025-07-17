@@ -21,8 +21,13 @@ class FunctionStorage {
             console.log('Storage debug - dataPath:', dataPath);
             console.log('Storage debug - file exists:', fs.existsSync(dataPath));
             
+            console.log('Attempting to read family-members.json');
             const rawData = fs.readFileSync(dataPath, 'utf8');
+            console.log('Successfully read family-members.json, length:', rawData.length);
+            
+            console.log('Attempting to parse JSON data');
             const data = JSON.parse(rawData);
+            console.log('Successfully parsed JSON, records:', data.length);
             
             this.familyMembers = data.map((member, index) => ({
                 id: index + 1,

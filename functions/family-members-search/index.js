@@ -30,13 +30,18 @@ app.http('family-members-search', {
             };
         } catch (error) {
             context.log.error('Error searching family members:', error);
+            console.error('Family members search endpoint error:', error);
             return {
                 status: 500,
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*'
                 },
-                body: JSON.stringify({ error: 'Internal server error' })
+                body: JSON.stringify({ 
+                    error: 'Internal server error',
+                    message: error.message,
+                    stack: error.stack 
+                })
             };
         }
     }
