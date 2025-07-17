@@ -13,8 +13,8 @@ class FunctionStorage {
     loadData() {
         try {
             // Load the family data from the functions data directory
-            // In Azure, __dirname is /functions/family-members, need to go to /functions/shared/data/
-            const dataPath = path.resolve(__dirname, '../shared/data', 'family-members.json');
+            // In Azure, __dirname is /functions/family-members, need to go to /functions/data/
+            const dataPath = path.resolve(__dirname, '../data', 'family-members.json');
             
             // Debug logging for Azure deployment
             console.log('Storage debug - __dirname:', __dirname);

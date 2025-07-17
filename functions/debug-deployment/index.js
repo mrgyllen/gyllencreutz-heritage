@@ -13,7 +13,7 @@ app.http('debug-deployment', {
             context.log('DEBUG - Deployment debug endpoint called');
             logs.push('DEBUG - Deployment debug endpoint called');
             
-            const dataPath = path.resolve(__dirname, '../shared/data/family-members.json');
+            const dataPath = path.resolve(__dirname, '../data/family-members.json');
             logs.push(`__dirname: ${__dirname}`);
             logs.push(`Resolved dataPath: ${dataPath}`);
 
