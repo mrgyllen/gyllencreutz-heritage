@@ -103,6 +103,14 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Database: `DATABASE_URL` environment variable for PostgreSQL connection
 - Session: PostgreSQL session store configured for production scaling
 
+### External Deployment
+- Frontend build: `npm run build` creates production-ready static files in `dist/public/`
+- Static hosting: Deploy `dist/public/` contents to Azure Static Web Apps, Netlify, Vercel, or GitHub Pages
+- Build output: ~316KB JS (99KB gzipped), ~65KB CSS (12KB gzipped), ~1.4MB images
+- Configuration: `staticwebapp.config.json` provided for Azure Static Web Apps
+- SPA routing: Configured with fallback to `index.html` for proper client-side routing
+- Performance: Assets have hashed filenames for optimal caching and cache invalidation
+
 ## Recent Changes (January 2025)
 - Updated to use cleaned final data files with corrected structure
 - Fixed father relationship processing to display complete family tree lineage
