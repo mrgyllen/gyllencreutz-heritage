@@ -22,6 +22,14 @@ jobs:
         with:
           submodules: true
           lfs: false
+      
+      - name: Install dependencies and build (Vite)
+        run: |
+          cd client
+          npm install
+          npm run build
+        # Ensure build output ends up in ../dist as configured in vite.config.ts
+        
       - name: Install OIDC Client from Core Package
         run: npm install @actions/core@1.6.0 @actions/http-client
       - name: Get Id Token
