@@ -140,3 +140,5 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Implemented Azure Functions alongside Express API for Azure Static Web Apps compatibility
 - Created dual development environment: Express for Replit, Functions for Azure deployment
 - Maintained identical API endpoints and data structure across both backend implementations
+- Resolved Azure Functions v4 SDK compatibility issues by removing function.json files and using main.js naming convention
+- Simplified data file structure to functions/data/family-members.json for reliable Azure deployment

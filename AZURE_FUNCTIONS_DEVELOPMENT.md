@@ -14,11 +14,11 @@ This project now supports both Express API (for Replit development) and Azure Fu
 │   ├── data/                 # JSON data files
 │   │   └── family-members.json  # Family genealogy data
 │   ├── family-members/       # GET /api/family-members
-│   │   └── index.js          # Function implementation (v4 model)
+│   │   └── main.js           # Function implementation (v4 model)
 │   ├── family-members-search/ # GET /api/family-members/search/{query}
-│   │   └── index.js          # Function implementation (v4 model)
+│   │   └── main.js           # Function implementation (v4 model)
 │   ├── debug-deployment/     # GET /api/debug-deployment
-│   │   └── index.js          # Deployment debugging endpoint
+│   │   └── main.js           # Deployment debugging endpoint
 │   └── shared/               # Shared storage logic
 │       └── storage.js        # Data loading and search logic
 └── client/                   # React frontend
@@ -95,6 +95,7 @@ Both implementations provide identical API responses. The Functions version incl
 
 This project uses the Azure Functions v4 programming model with the `@azure/functions` package:
 - **No function.json files** - bindings are declared in code using `app.http()`
+- **main.js naming convention** - Azure automatically picks up main.js files
 - **Simplified structure** - each function is a single JavaScript file
 - **Built-in routing** - routes defined directly in the handler registration
 
