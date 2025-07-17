@@ -14,6 +14,9 @@ This project now supports both Express API (for Replit development) and Azure Fu
 │   ├── family-members/       # GET /api/family-members
 │   ├── family-members-search/ # GET /api/family-members/search/{query}
 │   └── shared/               # Shared storage logic
+│       ├── storage.js        # Data loading and search logic
+│       └── data/             # JSON data files
+│           └── family-members.json  # Family genealogy data
 └── client/                   # React frontend
 ```
 
@@ -80,9 +83,9 @@ No changes needed! The frontend will automatically use `/api/family-members` whi
 
 Both Express and Functions use the same data source:
 - **Express**: `server/storage.ts` loads from `attached_assets/`
-- **Functions**: `functions/shared/storage.js` loads from `attached_assets/`
+- **Functions**: `functions/shared/storage.js` loads from `functions/shared/data/`
 
-Both implementations provide identical API responses.
+Both implementations provide identical API responses. The Functions version includes the data file within the functions directory to ensure Azure deployment packages it correctly.
 
 ## Key Benefits
 
@@ -104,7 +107,9 @@ func --version  # Should show Azure Functions Core Tools version
 Functions include CORS headers for local development. Azure Static Web Apps handles CORS automatically.
 
 ### Data Loading Issues
-Both storage implementations load from the same JSON file. Ensure `attached_assets/Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json` exists.
+- **Express**: Loads from `attached_assets/Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json`
+- **Functions**: Loads from `functions/shared/data/family-members.json`
+- JSON file has been cleaned to remove `NaN` values for proper parsing
 
 ## Next Steps
 

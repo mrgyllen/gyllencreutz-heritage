@@ -12,8 +12,8 @@ class FunctionStorage {
 
     loadData() {
         try {
-            // Load the family data from the attached assets
-            const dataPath = path.join(__dirname, '../../attached_assets/Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json');
+            // Load the family data from the functions data directory
+            const dataPath = path.join(__dirname, './data/family-members.json');
             const rawData = fs.readFileSync(dataPath, 'utf8');
             const data = JSON.parse(rawData);
             
