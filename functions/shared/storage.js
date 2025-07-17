@@ -13,7 +13,14 @@ class FunctionStorage {
     loadData() {
         try {
             // Load the family data from the functions data directory
-            const dataPath = path.join(__dirname, './data/family-members.json');
+            // Using path.resolve to ensure absolute path resolution works in Azure
+            const dataPath = path.resolve(__dirname, 'data', 'family-members.json');
+            
+            // Debug logging for Azure deployment
+            console.log('Storage debug - __dirname:', __dirname);
+            console.log('Storage debug - dataPath:', dataPath);
+            console.log('Storage debug - file exists:', fs.existsSync(dataPath));
+            
             const rawData = fs.readFileSync(dataPath, 'utf8');
             const data = JSON.parse(rawData);
             
@@ -32,6 +39,13 @@ class FunctionStorage {
             }));
         } catch (error) {
             console.error('Error loading family data:', error);
+            console.error('Error details:', {
+                message: error.message,
+                code: error.code,
+                path: error.path,
+                __dirname: __dirname,
+                cwd: process.cwd()
+            });
             this.familyMembers = [];
         }
     }
