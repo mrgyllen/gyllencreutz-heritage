@@ -8,14 +8,16 @@
 ## Azure Static Web Apps Setup
 1. [ ] Create Azure Static Web App resource
 2. [ ] Connect to GitHub repository
-3. [ ] Set build configuration:
-   - **Build command**: `npm run build`
+3. [ ] Azure auto-generates GitHub Action (but needs correction)
+4. [ ] Replace the generated workflow with the corrected version from `.github/workflows/azure-static-web-apps.yml`
+5. [ ] Key settings in the corrected workflow:
    - **App location**: `/` (root)
    - **Output location**: `dist/public`
-   - **Skip app build**: No
+   - **Skip app build**: `true`
+   - **Build command**: `npm run build` (runs at root level)
 
 ## Deployment Configuration
-- [ ] Verify GitHub Actions workflow is created
+- [ ] Verify corrected GitHub Actions workflow is committed
 - [ ] Check deployment logs for any errors
 - [ ] Test deployment URL
 

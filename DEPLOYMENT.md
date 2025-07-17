@@ -56,33 +56,15 @@ For static hosting platforms, deploy only the `dist/public/` directory contents.
    ```
 
 3. **Build Pipeline**
-   ```yaml
-   # azure-static-web-apps.yml
-   name: Azure Static Web Apps CI/CD
+   Azure auto-generates a GitHub Action, but you need to update it for your project structure:
    
-   on:
-     push:
-       branches: [ main ]
+   **Key Configuration Values:**
+   - **App location**: `/` (root directory)
+   - **Output location**: `dist/public`
+   - **Skip app build**: `true` (we build manually)
+   - **Build command**: `npm run build`
    
-   jobs:
-     build_and_deploy:
-       runs-on: ubuntu-latest
-       steps:
-         - uses: actions/checkout@v2
-         - name: Setup Node
-           uses: actions/setup-node@v2
-           with:
-             node-version: '18'
-         - name: Install dependencies
-           run: npm ci
-         - name: Build
-           run: npm run build
-         - name: Deploy
-           uses: Azure/static-web-apps-deploy@v1
-           with:
-             app_location: "dist/public"
-             skip_app_build: true
-   ```
+   The corrected GitHub Action is provided in `.github/workflows/azure-static-web-apps.yml`
 
 ### Netlify
 
