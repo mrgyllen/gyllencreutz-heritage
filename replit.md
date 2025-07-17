@@ -137,3 +137,6 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Cleaned up all test pages, debug code, and unnecessary assets for production readiness
 - Configured single index.html file that works for both development and production deployment
 - Vite properly handles script injection during build process for external platforms
+- Implemented Azure Functions alongside Express API for Azure Static Web Apps compatibility
+- Created dual development environment: Express for Replit, Functions for Azure deployment
+- Maintained identical API endpoints and data structure across both backend implementations

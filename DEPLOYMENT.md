@@ -26,6 +26,7 @@ For static hosting platforms, deploy only the `dist/public/` directory contents.
    - Source: `dist/public/`
    - Build command: `npm run build`
    - Output location: `dist/public`
+   - API location: `functions` (for Azure Functions)
 
 2. **Azure Static Web Apps Configuration File**
    Create `staticwebapp.config.json` in the root:
@@ -60,6 +61,7 @@ For static hosting platforms, deploy only the `dist/public/` directory contents.
    
    **Key Configuration Values to Update:**
    - **App location**: `/` (root directory)
+   - **API location**: `functions` (for Azure Functions backend)
    - **Output location**: `dist/public`
    - **Skip app build**: `true` (we build manually)
    - **Build command**: `npm run build` (runs at root level)
