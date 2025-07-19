@@ -130,27 +130,7 @@ class FunctionStorage {
 5. **Integration Test**: Automated verification of API endpoints
 6. **Live Deployment**: Updated site available on custom domain
 
----
 
-## 🔄 Future Considerations
-
-### Database Migration Path
-- **Current**: JSON file storage for simplicity and rapid development
-- **Future**: Drizzle ORM configured for PostgreSQL migration when needed
-- **Schema**: Defined in `shared/schema.ts` for type safety
-- **Migration**: Seamless transition from JSON to database storage
-
-### Performance Optimization
-- **Caching**: Consider Redis for session management and data caching
-- **CDN**: Optimize static asset delivery for global users
-- **Search**: Potential integration with Azure Cognitive Search for advanced queries
-- **Analytics**: Application Insights for performance monitoring
-
-### Security Considerations
-- **Authentication**: Currently public; family member authentication may be added
-- **Rate Limiting**: Azure Functions provide built-in DDoS protection
-- **Data Privacy**: Genealogical data handling follows privacy best practices
-- **HTTPS**: Enforced through Azure Static Web Apps SSL certificates
 
 ---
 
