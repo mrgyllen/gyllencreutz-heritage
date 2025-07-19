@@ -77,9 +77,11 @@ All endpoints return JSON responses with consistent structure:
 ### Data Structure
 The JSON data contains flat records that are processed into hierarchical family relationships:
 - **Flat Structure**: Individual records with parent references
+- **Field Mapping**: JSON fields (Born, Died, MonarchDuringLife) mapped to frontend schema (born, died, monarchDuringLife)
 - **Hierarchical Processing**: Frontend converts to tree structure for visualization
 - **Search Indexing**: In-memory filtering by name and notes content
 - **Type Safety**: Data validation and transformation through shared schemas
+- **Monarch Data**: String arrays parsed from Python-style format to JavaScript arrays
 
 ### Storage Interface
 Both backend implementations use a common storage interface:

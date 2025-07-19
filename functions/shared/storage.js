@@ -40,14 +40,31 @@ class FunctionStorage {
                 id: index + 1,
                 externalId: member.ID || String(index),
                 name: member.Name || '',
-                birthDate: member.BirthDate || null,
-                deathDate: member.DeathDate || null,
+                born: member.Born || null,
+                died: member.Died || null,
                 biologicalSex: member.BiologicalSex || null,
                 notes: member.Notes || '',
                 father: member.Father || null,
-                monarch: member.Monarch || null,
-                monarchYears: member.MonarchYears || null,
-                successionSon: member.SuccessionSon || null
+                ageAtDeath: member.AgeAtDeath || null,
+                diedYoung: member.DiedYoung || false,
+                isSuccessionSon: member.IsSuccessionSon || false,
+                hasMaleChildren: member.HasMaleChildren || false,
+                nobleBranch: member.NobleBranch || null,
+                monarchDuringLife: (() => {
+                    try {
+                        if (typeof member.MonarchDuringLife === 'string') {
+                            // Handle Python-style array format with single quotes
+                            const cleanedString = member.MonarchDuringLife.replace(/'/g, '"');
+                            return JSON.parse(cleanedString);
+                        } else if (Array.isArray(member.MonarchDuringLife)) {
+                            return member.MonarchDuringLife;
+                        }
+                        return [];
+                    } catch (e) {
+                        console.log('Failed to parse MonarchDuringLife for', member.Name, ':', member.MonarchDuringLife);
+                        return [];
+                    }
+                })()
             }));
             
             console.log(`Loaded ${this.familyMembers.length} family members from ${dataPath}`);

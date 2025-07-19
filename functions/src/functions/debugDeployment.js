@@ -44,6 +44,12 @@ app.http('debugDeployment', {
                         diagnostics.dataInfo.fileSize = stats.size;
                         diagnostics.dataInfo.recordCount = json.length;
                         diagnostics.dataInfo.firstRecord = json[0] ? json[0].Name : 'No records';
+                        diagnostics.dataInfo.sampleFields = json[0] ? {
+                            Born: json[0].Born,
+                            Died: json[0].Died,
+                            MonarchDuringLife: json[0].MonarchDuringLife,
+                            IsSuccessionSon: json[0].IsSuccessionSon
+                        } : {};
                         diagnostics.status = 'success';
                         break;
                     } catch (e) {
