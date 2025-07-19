@@ -2,7 +2,7 @@
 
 ## Project Summary
 
-The Gyllencreutz Family Heritage Website is a comprehensive digital platform showcasing the genealogical history of one of Sweden's oldest noble families (Adliga ätten nr 54). The site features an interactive family tree visualization, historical content, authentic Swedish royal portraits, and bilingual support (Swedish/English). Built as a modern web application, it combines historical authenticity with cutting-edge technology to provide an immersive genealogical experience.
+The Gyllencreutz Family Heritage Website is a personal family website documenting the genealogical history of one of Sweden's oldest noble families (Adliga ätten nr 54). The site features an interactive family tree visualization, historical content, authentic Swedish royal portraits, and bilingual support (Swedish/English). Built entirely through vibe coding, it presents the family's rich heritage in an accessible digital format.
 
 ## Technologies
 
