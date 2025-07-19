@@ -1,22 +1,21 @@
 const { app } = require('@azure/functions');
-const { storage } = require('../shared/storage');
+const { storage } = require('../../shared/storage');
 
-app.http('family-members-search', {
+app.http('familyMembersSearch', {
     methods: ['GET'],
     authLevel: 'anonymous',
     route: 'family-members/search/{query}',
     handler: async (request, context) => {
-        context.log('TEST DEBUG - Search function was invoked');
         try {
             const query = request.params.query;
-            if (!query) {
+            if (!query || query.length < 2) {
                 return {
                     status: 400,
                     headers: {
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'
                     },
-                    body: JSON.stringify({ error: 'Query parameter is required' })
+                    body: JSON.stringify({ error: 'Query parameter must be at least 2 characters' })
                 };
             }
 
@@ -31,7 +30,6 @@ app.http('family-members-search', {
             };
         } catch (error) {
             context.log.error('Error searching family members:', error);
-            console.error('Family members search endpoint error:', error);
             return {
                 status: 500,
                 headers: {
@@ -40,8 +38,7 @@ app.http('family-members-search', {
                 },
                 body: JSON.stringify({ 
                     error: error.message,
-                    stack: error.stack,
-                    type: error.constructor.name
+                    details: 'Failed to search family members'
                 })
             };
         }

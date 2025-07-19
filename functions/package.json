@@ -2,13 +2,15 @@
   "name": "gyllencreutz-functions",
   "version": "1.0.0",
   "description": "Azure Functions for Gyllencreutz Family Heritage",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
     "start": "func start",
     "build": "echo 'No build required for JavaScript functions'"
   },
   "files": [
-    "data/family-members.json"
+    "src/**/*",
+    "shared/**/*",
+    "data/**/*"
   ],
   "dependencies": {
     "@azure/functions": "^4.0.1"

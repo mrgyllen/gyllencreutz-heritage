@@ -99,8 +99,8 @@ Claude is responsible for the backend architecture and data processing.
 
 ### Architecture Alignment
 - Follows `/docs/architecture-guidelines.md`
-- Uses Azure Functions v4 model without function.json files
-- Maintains clean separation between development and production backends
+- Uses Azure Functions v4 model with single entry point and modular function structure
+- Robust data loading with multiple fallback paths for reliable deployment
 - All changes to logic, data structure, or backend architecture must update that file accordingly
 
 ### Current API Endpoints
@@ -108,7 +108,7 @@ Claude is responsible for the backend architecture and data processing.
 - `GET /api/family-members/search/{query}` - Searches family members by name and notes
 - `GET /api/debug-deployment` - Deployment debugging and file system verification
 
-_Last updated: 2025-01-18_
+_Last updated: 2025-01-19_
 
 ---
 

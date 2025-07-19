@@ -1,12 +1,11 @@
 const { app } = require('@azure/functions');
-const { storage } = require('../shared/storage');
+const { storage } = require('../../shared/storage');
 
-app.http('family-members', {
+app.http('familyMembers', {
     methods: ['GET'],
     authLevel: 'anonymous',
     route: 'family-members',
     handler: async (request, context) => {
-        context.log('TEST DEBUG - Function was invoked');
         try {
             const members = await storage.getAllFamilyMembers();
             return {
@@ -19,7 +18,6 @@ app.http('family-members', {
             };
         } catch (error) {
             context.log.error('Error fetching family members:', error);
-            console.error('Family members endpoint error:', error);
             return {
                 status: 500,
                 headers: {
@@ -28,8 +26,7 @@ app.http('family-members', {
                 },
                 body: JSON.stringify({ 
                     error: error.message,
-                    stack: error.stack,
-                    type: error.constructor.name
+                    details: 'Failed to load family members data'
                 })
             };
         }

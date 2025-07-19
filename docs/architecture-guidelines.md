@@ -69,7 +69,8 @@ All endpoints return JSON responses with consistent structure:
 
 ### Data Loading Strategy
 - **Development**: Express server loads from `attached_assets/` directory
-- **Production**: Azure Functions load from `functions/data/` directory
+- **Production**: Azure Functions load from multiple possible paths for robust deployment
+- **Fallback Paths**: `functions/data/`, `data/`, and relative paths are all checked
 - **Initialization**: Data loaded once at startup and cached in memory
 - **Processing**: Raw JSON transformed into structured family member objects
 
@@ -101,7 +102,8 @@ class FunctionStorage {
 
 ### Azure Functions v4 Model
 - **Programming Model**: Code-based bindings using `@azure/functions` package
-- **File Convention**: Functions use `main.js` naming for automatic detection
+- **Entry Point**: Single `main.js` file imports all function handlers
+- **Function Structure**: Individual functions in `src/functions/` directory
 - **No Configuration Files**: Eliminates function.json files for simplified deployment
 - **Route Definition**: Routes defined in code using `app.http()` declarations
 
@@ -135,4 +137,4 @@ class FunctionStorage {
 ---
 
 _Maintained by Claude AI_  
-_Last updated: 2025-01-18_
+_Last updated: 2025-01-19_

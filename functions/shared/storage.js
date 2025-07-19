@@ -12,23 +12,29 @@ class FunctionStorage {
 
     loadData() {
         try {
-            // Load the family data from the functions data directory
-            // In Azure, __dirname is /functions/family-members, need to go to /functions/data/
-            const dataPath = path.resolve(__dirname, '../data', 'family-members.json');
+            // Try multiple possible data locations for robust deployment
+            const possiblePaths = [
+                path.resolve(__dirname, '../data/family-members.json'),
+                path.resolve(process.cwd(), 'data/family-members.json'),
+                path.resolve(process.cwd(), 'functions/data/family-members.json')
+            ];
             
-            // Debug logging for Azure deployment
-            console.log('Storage debug - __dirname:', __dirname);
-            console.log('Storage debug - dataPath:', dataPath);
-            console.log('Storage debug - file exists:', fs.existsSync(dataPath));
-            console.log('Storage debug - Corrected dataPath:', dataPath);
+            let dataPath = null;
+            let rawData = null;
             
-            console.log('Attempting to read family-members.json');
-            const rawData = fs.readFileSync(dataPath, 'utf8');
-            console.log('Successfully read family-members.json, length:', rawData.length);
+            for (const testPath of possiblePaths) {
+                if (fs.existsSync(testPath)) {
+                    dataPath = testPath;
+                    rawData = fs.readFileSync(testPath, 'utf8');
+                    break;
+                }
+            }
             
-            console.log('Attempting to parse JSON data');
+            if (!dataPath) {
+                throw new Error(`Data file not found. Searched paths: ${possiblePaths.join(', ')}`);
+            }
+            
             const data = JSON.parse(rawData);
-            console.log('Successfully parsed JSON, records:', data.length);
             
             this.familyMembers = data.map((member, index) => ({
                 id: index + 1,
@@ -43,15 +49,10 @@ class FunctionStorage {
                 monarchYears: member.MonarchYears || null,
                 successionSon: member.SuccessionSon || null
             }));
+            
+            console.log(`Loaded ${this.familyMembers.length} family members from ${dataPath}`);
         } catch (error) {
             console.error('Error loading family data:', error);
-            console.error('Error details:', {
-                message: error.message,
-                code: error.code,
-                path: error.path,
-                __dirname: __dirname,
-                cwd: process.cwd()
-            });
             this.familyMembers = [];
         }
     }
