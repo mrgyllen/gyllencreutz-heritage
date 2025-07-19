@@ -1,0 +1,71 @@
+From below descirption I'd like you to create a /docs/solution.md file. Also, there are references to other md files in the text below, I will create those files after this in separete conversations. 
+
+# 🤝 AI Collaboration Overview
+
+This project is collaboratively developed using **two AI systems**:
+
+- **Replit AI**: Responsible for UI/UX design, frontend code (React), and visual design systems.
+- **Claude AI**: Responsible for backend logic, architecture, API design, and data handling.
+
+- Include a short summary of the project
+- Mention what technologies the project uses.
+- Explain that the site is deployed on Azure Static Web Apps
+
+---
+
+## 📘 Collaboration Guidelines
+
+- Both AIs must read this `/docs/solution.md` file before working on the project.
+- Replit maintains `/docs/design-guidelines.md`.
+- Claude maintains `/docs/architecture-guidelines.md`.
+- Each AI must keep **its section of this file** up to date.
+- This file acts as the **source of truth** for overall solution intent, structure, and responsibilities.
+- Do **not** maintain a full changelog — instead, update the `_Last updated_` date at the end of your section when a change is made.
+
+---
+
+Use below structure but add/change/extend if you think something should be added here.
+
+## 🎨 Frontend (Replit's Responsibility)
+
+Replit is responsible for all frontend development and visual presentation.
+
+### Technologies
+- React (via Vite)
+- HTML, CSS (Tailwind or standard)
+- Component libraries (if applicable)
+
+### Responsibilities
+- Layout and component structure
+- Visual hierarchy and UX
+- Responsive design and accessibility
+- Integration with backend APIs
+
+### Design Alignment
+- Follows `/docs/design-guidelines.md`
+- All changes to visuals, styling, or component structure must reflect those guidelines
+
+_Last updated: YYYY-MM-DD_
+
+---
+
+## ⚙️ Backend (Claude's Responsibility)
+
+Claude is responsible for the backend architecture and data processing.
+
+### Technologies
+- Azure Functions (Node.js v4 model)
+- JSON data loading and search
+- GitHub-based CI/CD via Azure Static Web Apps
+
+### Responsibilities
+- Define and maintain API endpoints
+- Load and parse family tree JSON data
+- Handle logic for data retrieval and filtering
+- Support Replit’s data requirements
+
+### Architecture Alignment
+- Follows `/docs/architecture-guidelines.md`
+- All changes to logic or backend structure must update that file accordingly
+
+_Last updated: YYYY-MM-DD_
