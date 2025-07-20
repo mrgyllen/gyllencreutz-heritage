@@ -121,6 +121,7 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - refactor(Claude): update generation member display to use tree structure matching Detail View format
 - fix(Claude): isolate generation filtering to only affect Generation view, not Detail/Tree views
 - feat(Claude): add branch-specific generation filtering (All/Main/Elder/Younger lines)
+- fix(Claude): correct Younger line filter to include main succession line before branch split
 
 ## Previous Changes
 - Updated to use cleaned final data files with corrected structure
