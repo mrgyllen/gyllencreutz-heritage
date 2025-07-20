@@ -39,24 +39,21 @@ export function filterMembersByBranch(members: FamilyMember[], branchFilter: 'al
   }
   
   if (branchFilter === 'elder') {
-    // Main line + Elder line
+    // Elder line: members explicitly marked as Elder line + early family members (before branch split) + succession sons
     return members.filter(m => 
-      m.isSuccessionSon || 
-      m.externalId === '0' ||
       m.nobleBranch === 'Elder line' ||
-      m.nobleBranch === null ||
-      m.nobleBranch === ''
+      (m.nobleBranch === null || m.nobleBranch === '') ||
+      m.isSuccessionSon ||
+      m.externalId === '0'
     );
   }
   
   if (branchFilter === 'younger') {
-    // Main line + Younger line  
+    // Younger line: only members explicitly marked as Younger line + core family members before split
     return members.filter(m => 
-      m.isSuccessionSon || 
-      m.externalId === '0' ||
       m.nobleBranch === 'Younger line' ||
-      m.nobleBranch === null ||
-      m.nobleBranch === ''
+      m.isSuccessionSon ||
+      m.externalId === '0'
     );
   }
   
