@@ -74,6 +74,7 @@ Replit is responsible for all frontend development and visual presentation.
 - Maintains authentic 1500-1700s Swedish nobility aesthetic
 - Uses subtle, muted color palette that supports content
 - All changes to visuals, styling, or component structure must reflect those guidelines
+- Follow git commit format: `<type>(Replit): <description>` for all changes (see docs/git-commit-guidelines.md)
 
 _Last updated: 2025-01-19_
 
@@ -104,6 +105,7 @@ Claude is responsible for the backend architecture and data processing.
 - Uses Azure Functions v4 model with single entry point and modular function structure
 - Robust data loading with multiple fallback paths for reliable deployment
 - All changes to logic, data structure, or backend architecture must update that file accordingly
+- Follow git commit format: `<type>(Claude): <description>` for all changes (see docs/git-commit-guidelines.md)
 
 ### Current API Endpoints
 - `GET /api/family-members` - Returns all family members with complete genealogical data
