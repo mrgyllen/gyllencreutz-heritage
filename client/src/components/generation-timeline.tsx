@@ -30,36 +30,36 @@ export const GenerationTimeline: React.FC<GenerationTimelineProps> = ({
           </Badge>
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-2">
           {generationStats.map((stats) => (
             <div
               key={stats.generation}
-              className={`p-3 rounded-lg border transition-all cursor-pointer ${
+              className={`p-2 rounded-lg border transition-all cursor-pointer ${
                 selectedGeneration === stats.generation
                   ? 'bg-antique-brass/20 border-antique-brass ring-1 ring-antique-brass'
                   : 'bg-parchment hover:bg-warm-stone/30 border-warm-stone/50'
               }`}
               onClick={() => onGenerationSelect?.(stats.generation)}
             >
-              <div className="flex items-center justify-between mb-2">
-                <span className="font-semibold text-deep-forest">
+              <div className="flex items-center justify-between mb-1">
+                <span className="font-semibold text-deep-forest text-sm">
                   Gen {stats.generation}
                 </span>
                 {stats.successionSons > 0 && (
-                  <Crown className="h-4 w-4 text-antique-brass" />
+                  <Crown className="h-3 w-3 text-antique-brass" />
                 )}
               </div>
               
-              <div className="space-y-1 text-xs text-gray-600">
+              <div className="space-y-0.5 text-xs text-gray-600">
                 <div className="flex items-center gap-1">
-                  <Users className="h-3 w-3" />
-                  <span>{stats.count} members</span>
+                  <Users className="h-2 w-2" />
+                  <span>{stats.count}</span>
                 </div>
                 
                 {stats.timeSpan.earliest && (
                   <div className="flex items-center gap-1">
-                    <Clock className="h-3 w-3" />
-                    <span>
+                    <Clock className="h-2 w-2" />
+                    <span className="truncate">
                       {stats.timeSpan.earliest}
                       {stats.timeSpan.latest && stats.timeSpan.latest !== stats.timeSpan.earliest 
                         ? `-${stats.timeSpan.latest}` 
@@ -69,8 +69,8 @@ export const GenerationTimeline: React.FC<GenerationTimelineProps> = ({
                 )}
                 
                 {stats.avgLifespan && (
-                  <div className="text-gray-500">
-                    Avg: {stats.avgLifespan} years
+                  <div className="text-gray-500 truncate">
+                    ~{stats.avgLifespan}y
                   </div>
                 )}
               </div>

@@ -392,14 +392,66 @@ export function FamilyTree() {
             
             {/* Generation Tree Display */}
             {selectedGeneration && (
-              <div className="mt-6">
-                <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
+              <div className="mt-4">
+                <div className="bg-gray-50 rounded-lg p-4 border">
                   <div className="text-sm text-gray-600 mb-4">
-                    Generation {selectedGeneration} members ({filteredMembers.length} total)
+                    Generation {selectedGeneration} - {filteredMembers.length} members
                   </div>
-                  {root ? (
-                    <div className="font-mono text-sm">
-                      {renderFamilyNode(root)}
+                  
+                  {filteredMembers.length > 0 ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {filteredMembers.map((member) => (
+                        <div
+                          key={member.externalId}
+                          className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                            selectedMember?.externalId === member.externalId
+                              ? 'bg-antique-brass/20 border-antique-brass'
+                              : 'bg-white hover:bg-warm-stone/30 border-warm-stone/50'
+                          }`}
+                          onClick={() => setSelectedMember(member)}
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <h4 className="font-semibold text-deep-forest text-sm leading-tight">
+                              {member.name}
+                            </h4>
+                            {member.isSuccessionSon && (
+                              <div className="flex-shrink-0 ml-2">
+                                {getSuccessionIcon()}
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="text-xs text-gray-600 space-y-1">
+                            <div className="flex justify-between">
+                              <span>Born:</span>
+                              <span>{member.born || '?'}</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Died:</span>
+                              <span>{member.died || '?'}</span>
+                            </div>
+                            {member.ageAtDeath && (
+                              <div className="flex justify-between">
+                                <span>Age:</span>
+                                <span>{member.ageAtDeath}</span>
+                              </div>
+                            )}
+                          </div>
+                          
+                          <div className="flex flex-wrap gap-1 mt-2">
+                            {member.diedYoung && (
+                              <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">
+                                Died Young
+                              </Badge>
+                            )}
+                            {member.biologicalSex && (
+                              <Badge variant="outline" className="text-xs">
+                                {member.biologicalSex}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="text-center py-8">
