@@ -119,6 +119,8 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - style(Claude): compact generation timeline layout with responsive grid (2-8 columns)
 - feat(Claude): implement generation-specific member display with card-based layout for better visualization
 - refactor(Claude): update generation member display to use tree structure matching Detail View format
+- fix(Claude): isolate generation filtering to only affect Generation view, not Detail/Tree views
+- feat(Claude): add branch-specific generation filtering (All/Main/Elder/Younger lines)
 
 ## Previous Changes
 - Updated to use cleaned final data files with corrected structure

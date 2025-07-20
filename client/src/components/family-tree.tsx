@@ -12,7 +12,8 @@ import { getRoyalPortrait } from "@/components/royal-portraits";
 import { getSuccessionIcon } from "@/components/family-coat-of-arms";
 import { InteractiveTreeView } from "@/components/interactive-tree-view";
 import { GenerationTimeline } from "@/components/generation-timeline";
-import { addGenerationData, calculateGenerationStats } from "@/utils/generation-calculator";
+import { addGenerationData, calculateGenerationStats, filterMembersByBranch } from "@/utils/generation-calculator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export function FamilyTree() {
   const { t } = useLanguage();
@@ -21,6 +22,7 @@ export function FamilyTree() {
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
   const [viewMode, setViewMode] = useState<'detail' | 'tree' | 'generations'>('detail'); // Toggle between detail list, tree view, and generations view
   const [selectedGeneration, setSelectedGeneration] = useState<number | undefined>(undefined);
+  const [branchFilter, setBranchFilter] = useState<'all' | 'main' | 'elder' | 'younger'>('all');
 
   const { data: rawFamilyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members'],
@@ -28,7 +30,7 @@ export function FamilyTree() {
 
   // Add generation data to family members
   const familyMembers = addGenerationData(rawFamilyMembers);
-  const generationStats = calculateGenerationStats(familyMembers);
+  const generationStats = calculateGenerationStats(familyMembers, branchFilter);
 
   const { data: searchResults = [] } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members/search', searchQuery],
@@ -59,9 +61,18 @@ export function FamilyTree() {
     setExpandedNodes(new Set(["0"])); // Keep only root expanded
   };
 
-  const filteredMembers = selectedGeneration 
-    ? familyMembers.filter(m => m.generation === selectedGeneration)
-    : familyMembers;
+  // Only filter for generation view, other views should see all members
+  let filteredMembers = familyMembers;
+  
+  if (viewMode === 'generations') {
+    // Apply branch filter first for generation view
+    filteredMembers = filterMembersByBranch(familyMembers, branchFilter);
+    
+    // Then filter by selected generation if any
+    if (selectedGeneration) {
+      filteredMembers = filteredMembers.filter(m => m.generation === selectedGeneration);
+    }
+  }
 
   const getBranchColors = (nobleBranch: string | null) => {
     switch (nobleBranch) {
@@ -383,6 +394,24 @@ export function FamilyTree() {
           </div>
         ) : (
           <div>
+            {/* Branch Filter for Generation View */}
+            <div className="flex justify-center mb-4">
+              <div className="flex items-center gap-3">
+                <label className="text-sm font-medium text-gray-700">View Branch:</label>
+                <Select value={branchFilter} onValueChange={(value: 'all' | 'main' | 'elder' | 'younger') => setBranchFilter(value)}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Branches</SelectItem>
+                    <SelectItem value="main">Main Line Only</SelectItem>
+                    <SelectItem value="elder">Elder Line</SelectItem>
+                    <SelectItem value="younger">Younger Line</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            
             {/* Generation Timeline */}
             <GenerationTimeline
               generationStats={generationStats}

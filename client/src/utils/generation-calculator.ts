@@ -30,11 +30,45 @@ export interface GenerationStats {
   successionSons: number;
 }
 
-export function calculateGenerationStats(members: FamilyMember[]): GenerationStats[] {
+export function filterMembersByBranch(members: FamilyMember[], branchFilter: 'all' | 'main' | 'elder' | 'younger'): FamilyMember[] {
+  if (branchFilter === 'all') return members;
+  
+  if (branchFilter === 'main') {
+    // Main line: only succession sons and their direct ancestors/descendants
+    return members.filter(m => m.isSuccessionSon || m.externalId === '0');
+  }
+  
+  if (branchFilter === 'elder') {
+    // Main line + Elder line
+    return members.filter(m => 
+      m.isSuccessionSon || 
+      m.externalId === '0' ||
+      m.nobleBranch === 'Elder line' ||
+      m.nobleBranch === null ||
+      m.nobleBranch === ''
+    );
+  }
+  
+  if (branchFilter === 'younger') {
+    // Main line + Younger line  
+    return members.filter(m => 
+      m.isSuccessionSon || 
+      m.externalId === '0' ||
+      m.nobleBranch === 'Younger line' ||
+      m.nobleBranch === null ||
+      m.nobleBranch === ''
+    );
+  }
+  
+  return members;
+}
+
+export function calculateGenerationStats(members: FamilyMember[], branchFilter: 'all' | 'main' | 'elder' | 'younger' = 'all'): GenerationStats[] {
+  const filteredMembers = filterMembersByBranch(members, branchFilter);
   const generationMap = new Map<number, FamilyMember[]>();
   
-  // Group members by generation
-  members.forEach(member => {
+  // Group filtered members by generation
+  filteredMembers.forEach(member => {
     const gen = member.generation || calculateGeneration(member.externalId);
     if (!generationMap.has(gen)) {
       generationMap.set(gen, []);
