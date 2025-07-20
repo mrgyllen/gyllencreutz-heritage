@@ -398,9 +398,45 @@ export function FamilyTree() {
                     Generation {selectedGeneration} - {filteredMembers.length} members
                   </div>
                   
-                  {root ? (
+                  {filteredMembers.length > 0 ? (
                     <div className="font-mono text-sm">
-                      {renderFamilyNode(root)}
+                      {filteredMembers.map((member, index) => (
+                        <div key={member.externalId} className="mb-4 p-3 bg-white rounded border">
+                          <div 
+                            className="cursor-pointer hover:bg-warm-stone/20 p-2 rounded transition-colors"
+                            onClick={() => setSelectedMember(member)}
+                          >
+                            <div className="flex items-center gap-2">
+                              {member.isSuccessionSon && (
+                                <div className="flex-shrink-0">
+                                  {getSuccessionIcon()}
+                                </div>
+                              )}
+                              <span className="font-semibold text-deep-forest">
+                                {member.name}
+                              </span>
+                              <span className="text-sm text-gray-600">
+                                ({member.born || '?'} - {member.died || '?'})
+                              </span>
+                              {member.ageAtDeath && (
+                                <span className="text-sm text-gray-500">
+                                  Age {member.ageAtDeath}
+                                </span>
+                              )}
+                            </div>
+                            {member.notes && (
+                              <div className="text-sm text-gray-600 mt-1 pl-6">
+                                {member.notes}
+                              </div>
+                            )}
+                            {member.nobleBranch && (
+                              <Badge variant="outline" className="mt-1 ml-6 text-xs">
+                                {member.nobleBranch}
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   ) : (
                     <div className="text-center py-8">
