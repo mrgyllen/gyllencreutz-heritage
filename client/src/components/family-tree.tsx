@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus, Crown } from "lucide-react";
+import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus, Crown, TreePine, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -9,12 +9,15 @@ import { buildFamilyTree } from "@/data/family-data";
 import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
 import { useLanguage } from "@/contexts/language-context";
 import { getRoyalPortrait } from "@/components/royal-portraits";
+import { getSuccessionIcon } from "@/components/family-coat-of-arms";
+import { InteractiveTreeView } from "@/components/interactive-tree-view";
 
 export function FamilyTree() {
   const { t } = useLanguage();
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
+  const [viewMode, setViewMode] = useState<'detail' | 'tree'>('detail'); // Toggle between detail list and tree view
 
   const { data: familyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members'],
@@ -151,29 +154,7 @@ export function FamilyTree() {
               </div>
               
               <div className="flex flex-wrap gap-1">
-                {node.isSuccessionSon && (
-                  <div className="flex items-center justify-center w-6 h-6 bg-gradient-to-br from-amber-200 to-amber-300 border border-amber-500 rounded-sm shadow-sm" title="Succession Son">
-                    <svg viewBox="0 0 24 24" className="w-4 h-4">
-                      {/* Gyllencreutz heraldic shield - more detailed based on coat of arms */}
-                      <defs>
-                        <linearGradient id="shieldGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" style={{ stopColor: '#f59e0b', stopOpacity: 1 }} />
-                          <stop offset="100%" style={{ stopColor: '#d97706', stopOpacity: 1 }} />
-                        </linearGradient>
-                      </defs>
-                      {/* Shield outline */}
-                      <path d="M12 2 L18 5 L18 13 L12 22 L6 13 L6 5 Z" fill="url(#shieldGradient)" stroke="#92400e" strokeWidth="0.8"/>
-                      {/* Cross pattern - main vertical */}
-                      <path d="M10.5 4 L13.5 4 L13.5 20 L10.5 20 Z" fill="#92400e"/>
-                      {/* Cross pattern - horizontal bars */}
-                      <path d="M8 7 L16 7 L16 9 L8 9 Z" fill="#92400e"/>
-                      <path d="M8 13 L16 13 L16 15 L8 15 Z" fill="#92400e"/>
-                      {/* Small decorative elements */}
-                      <circle cx="12" cy="6" r="0.8" fill="#92400e"/>
-                      <circle cx="12" cy="18" r="0.8" fill="#92400e"/>
-                    </svg>
-                  </div>
-                )}
+                {node.isSuccessionSon && getSuccessionIcon('small')}
                 {node.diedYoung && (
                   <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">
                     Died Young
@@ -268,24 +249,51 @@ export function FamilyTree() {
           </div>
 
           <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={expandAll}
-              className="flex items-center gap-2"
-            >
-              <Plus className="h-4 w-4" />
-              Expand All
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={collapseAll}
-              className="flex items-center gap-2"
-            >
-              <Minus className="h-4 w-4" />
-              Collapse All
-            </Button>
+            {/* View Toggle */}
+            <div className="flex border rounded-lg overflow-hidden">
+              <Button
+                variant={viewMode === 'detail' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('detail')}
+                className="flex items-center gap-2 rounded-r-none border-r-0"
+              >
+                <List className="h-4 w-4" />
+                Detail View
+              </Button>
+              <Button
+                variant={viewMode === 'tree' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('tree')}
+                className="flex items-center gap-2 rounded-l-none"
+              >
+                <TreePine className="h-4 w-4" />
+                Tree View
+              </Button>
+            </div>
+            
+            {/* Detail View Controls */}
+            {viewMode === 'detail' && (
+              <>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={expandAll}
+                  className="flex items-center gap-2"
+                >
+                  <Plus className="h-4 w-4" />
+                  Expand All
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={collapseAll}
+                  className="flex items-center gap-2"
+                >
+                  <Minus className="h-4 w-4" />
+                  Collapse All
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
@@ -315,21 +323,40 @@ export function FamilyTree() {
           </div>
         </div>
 
-        {/* Family Tree in Confined Space */}
-        <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
-          <div className="text-sm text-gray-600 mb-4">
-            Starting with Lars Tygesson ({familyMembers.length} total members) - spanning from 1515 to 1980s
+        {/* Family Tree Display */}
+        {viewMode === 'detail' ? (
+          <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
+            <div className="text-sm text-gray-600 mb-4">
+              Starting with Lars Tygesson ({familyMembers.length} total members) - spanning from 1515 to 1980s
+            </div>
+            {root ? (
+              <div className="font-mono text-sm">
+                {renderFamilyNode(root)}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <p className="text-gray-600">No family tree data available</p>
+              </div>
+            )}
           </div>
-          {root ? (
-            <div className="font-mono text-sm">
-              {renderFamilyNode(root)}
+        ) : (
+          <div>
+            <div className="text-sm text-gray-600 mb-4 text-center">
+              Interactive Family Tree - Use mouse to pan and zoom. Click members for details.
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <p className="text-gray-600">No family tree data available</p>
-            </div>
-          )}
-        </div>
+            {root ? (
+              <InteractiveTreeView 
+                root={root}
+                onMemberSelect={(member: FamilyTreeNode) => setSelectedMember(member)}
+                selectedMember={selectedMember as FamilyTreeNode | null}
+              />
+            ) : (
+              <div className="text-center py-8 bg-gray-50 rounded-lg border">
+                <p className="text-gray-600">No family tree data available</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Family Member Info Panel */}
         {selectedMember && (

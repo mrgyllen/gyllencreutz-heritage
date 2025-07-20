@@ -120,8 +120,12 @@ The overall tone is scholarly, respectful, and dignified—appropriate for docum
 ### Interactive Features
 - **Search**: Real-time search with smooth result appearance
 - **Language Toggle**: Seamless switching between Swedish and English
-- **Family Tree Navigation**: Intuitive zoom, pan, and selection interactions
+- **Family Tree Navigation**: 
+  - Dual view modes: Detail View (collapsible list) and Tree View (interactive D3.js)
+  - Zoom, pan, and selection interactions in Tree View
+  - Authentic family coat of arms for succession son indicators
 - **Image Gallery**: Elegant lightbox or modal presentations for portraits
+- **Tree Controls**: Zoom in/out, reset view, and fit-to-screen functionality
 
 ### Accessibility Behaviors
 - **Keyboard Navigation**: Full keyboard accessibility for all interactive elements
@@ -135,6 +139,8 @@ The overall tone is scholarly, respectful, and dignified—appropriate for docum
 
 ### Image Treatment
 - **Historical Portraits**: Maintain authentic aspect ratios with subtle framing
+- **Family Coat of Arms**: Use authentic heraldic image for succession son indicators with amber/gold styling
+- **Royal Portraits**: High-quality circular masking with royal blue borders for monarch timeline
 - **Family Crests**: Display with appropriate reverence and sizing
 - **Document Scans**: Present clearly with zoom capabilities when needed
 - **Modern Photos**: Style consistently with historical content
@@ -153,4 +159,4 @@ The overall tone is scholarly, respectful, and dignified—appropriate for docum
 
 ---
 
-_Last updated: 2025-01-18_
+_Last updated: 2025-01-19_
