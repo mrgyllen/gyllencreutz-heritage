@@ -19,7 +19,7 @@ export function FamilyTree() {
   const [selectedMember, setSelectedMember] = useState<FamilyMember | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
-  const [viewMode, setViewMode] = useState<'detail' | 'tree'>('detail'); // Toggle between detail list and tree view
+  const [viewMode, setViewMode] = useState<'detail' | 'tree' | 'generations'>('detail'); // Toggle between detail list, tree view, and generations view
   const [selectedGeneration, setSelectedGeneration] = useState<number | undefined>(undefined);
 
   const { data: rawFamilyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
@@ -105,14 +105,7 @@ export function FamilyTree() {
     
     return (
       <div key={node.externalId} className="relative">
-        {/* Generation Label */}
-        {depth === 0 && (
-          <div className="flex items-center mb-2">
-            <div className="bg-deep-forest text-white px-2 py-1 rounded text-xs font-medium">
-              Generation {node.generation || 1}
-            </div>
-          </div>
-        )}
+
         
         {/* Connecting lines */}
         {depth > 0 && (
@@ -285,15 +278,24 @@ export function FamilyTree() {
                 variant={viewMode === 'tree' ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setViewMode('tree')}
-                className="flex items-center gap-2 rounded-l-none"
+                className="flex items-center gap-2 rounded-none border-r-0"
               >
                 <TreePine className="h-4 w-4" />
                 Tree View
               </Button>
+              <Button
+                variant={viewMode === 'generations' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => setViewMode('generations')}
+                className="flex items-center gap-2 rounded-l-none"
+              >
+                <Users className="h-4 w-4" />
+                Generations
+              </Button>
             </div>
             
             {/* Detail View Controls */}
-            {viewMode === 'detail' && (
+            {(viewMode === 'detail' || viewMode === 'generations') && (
               <>
                 <Button
                   variant="outline"
@@ -318,12 +320,7 @@ export function FamilyTree() {
           </div>
         </div>
 
-        {/* Generation Timeline */}
-        <GenerationTimeline
-          generationStats={generationStats}
-          selectedGeneration={selectedGeneration}
-          onGenerationSelect={(gen) => setSelectedGeneration(gen === selectedGeneration ? undefined : gen)}
-        />
+
 
         {/* Tree Legend */}
         <div className="flex flex-wrap justify-center gap-6 mb-8">
@@ -367,7 +364,7 @@ export function FamilyTree() {
               </div>
             )}
           </div>
-        ) : (
+        ) : viewMode === 'tree' ? (
           <div>
             <div className="text-sm text-gray-600 mb-4 text-center">
               Interactive Family Tree - Use mouse to pan and zoom. Click members for details.
@@ -381,6 +378,43 @@ export function FamilyTree() {
             ) : (
               <div className="text-center py-8 bg-gray-50 rounded-lg border">
                 <p className="text-gray-600">No family tree data available</p>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div>
+            {/* Generation Timeline */}
+            <GenerationTimeline
+              generationStats={generationStats}
+              selectedGeneration={selectedGeneration}
+              onGenerationSelect={(gen) => setSelectedGeneration(gen === selectedGeneration ? undefined : gen)}
+            />
+            
+            {/* Generation Tree Display */}
+            {selectedGeneration && (
+              <div className="mt-6">
+                <div className="bg-gray-50 rounded-lg p-6 max-h-96 overflow-y-auto border">
+                  <div className="text-sm text-gray-600 mb-4">
+                    Generation {selectedGeneration} members ({filteredMembers.length} total)
+                  </div>
+                  {root ? (
+                    <div className="font-mono text-sm">
+                      {renderFamilyNode(root)}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8">
+                      <p className="text-gray-600">No family members found for this generation</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+            
+            {!selectedGeneration && (
+              <div className="text-center py-12">
+                <Users className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-700 mb-2">Select a Generation</h3>
+                <p className="text-gray-500">Click on any generation card above to view family members from that time period</p>
               </div>
             )}
           </div>
