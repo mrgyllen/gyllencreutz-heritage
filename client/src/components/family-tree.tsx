@@ -11,6 +11,8 @@ import { useLanguage } from "@/contexts/language-context";
 import { getRoyalPortrait } from "@/components/royal-portraits";
 import { getSuccessionIcon } from "@/components/family-coat-of-arms";
 import { InteractiveTreeView } from "@/components/interactive-tree-view";
+import { GenerationTimeline } from "@/components/generation-timeline";
+import { addGenerationData, calculateGenerationStats } from "@/utils/generation-calculator";
 
 export function FamilyTree() {
   const { t } = useLanguage();
@@ -18,10 +20,15 @@ export function FamilyTree() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedNodes, setExpandedNodes] = useState<Set<string>>(new Set(["0"])); // Start with Lars Tygesson expanded
   const [viewMode, setViewMode] = useState<'detail' | 'tree'>('detail'); // Toggle between detail list and tree view
+  const [selectedGeneration, setSelectedGeneration] = useState<number | undefined>(undefined);
 
-  const { data: familyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
+  const { data: rawFamilyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members'],
   });
+
+  // Add generation data to family members
+  const familyMembers = addGenerationData(rawFamilyMembers);
+  const generationStats = calculateGenerationStats(familyMembers);
 
   const { data: searchResults = [] } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members/search', searchQuery],
@@ -51,6 +58,10 @@ export function FamilyTree() {
   const collapseAll = () => {
     setExpandedNodes(new Set(["0"])); // Keep only root expanded
   };
+
+  const filteredMembers = selectedGeneration 
+    ? familyMembers.filter(m => m.generation === selectedGeneration)
+    : familyMembers;
 
   const getBranchColors = (nobleBranch: string | null) => {
     switch (nobleBranch) {
@@ -94,6 +105,15 @@ export function FamilyTree() {
     
     return (
       <div key={node.externalId} className="relative">
+        {/* Generation Label */}
+        {depth === 0 && (
+          <div className="flex items-center mb-2">
+            <div className="bg-deep-forest text-white px-2 py-1 rounded text-xs font-medium">
+              Generation {node.generation || 1}
+            </div>
+          </div>
+        )}
+        
         {/* Connecting lines */}
         {depth > 0 && (
           <>
@@ -203,7 +223,8 @@ export function FamilyTree() {
     );
   }
 
-  const root = buildFamilyTree(familyMembers);
+  // Create family tree from filtered data  
+  const root = filteredMembers.length > 0 ? buildFamilyTree(filteredMembers) : null;
 
   return (
     <section id="tree" className="py-20 bg-white">
@@ -296,6 +317,13 @@ export function FamilyTree() {
             )}
           </div>
         </div>
+
+        {/* Generation Timeline */}
+        <GenerationTimeline
+          generationStats={generationStats}
+          selectedGeneration={selectedGeneration}
+          onGenerationSelect={(gen) => setSelectedGeneration(gen === selectedGeneration ? undefined : gen)}
+        />
 
         {/* Tree Legend */}
         <div className="flex flex-wrap justify-center gap-6 mb-8">

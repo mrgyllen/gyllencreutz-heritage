@@ -13,6 +13,7 @@ export interface FamilyMember {
   hasMaleChildren: boolean;
   nobleBranch: string | null;
   monarchDuringLife: string[];
+  generation?: number;
 }
 
 export interface FamilyTreeNode extends FamilyMember {

@@ -88,6 +88,8 @@ const translations = {
     'tree.member.male': 'Man',
     'tree.member.female': 'Kvinna',
     'tree.member.unknown': 'Okänt',
+    'tree.generations.timeline': 'Generationer Tidslinje',
+    'tree.generations.total': 'generationer',
     
     // Footer Section
     'footer.title': 'Gyllencreutz Arv',
@@ -175,6 +177,8 @@ const translations = {
     'tree.member.male': 'Male',
     'tree.member.female': 'Female',
     'tree.member.unknown': 'Unknown',
+    'tree.generations.timeline': 'Generation Timeline',
+    'tree.generations.total': 'generations',
     
     // Footer Section
     'footer.title': 'Gyllencreutz Heritage',
