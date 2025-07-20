@@ -145,4 +145,5 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Enhanced family tree visualization with dual view modes: Detail View (collapsible list) and Tree View (interactive D3.js)
 - Integrated authentic Gyllencreutz family coat of arms for succession son indicators, replacing generic SVG
 - Implemented zoomable and pannable tree visualization with D3.js including zoom controls and fit-to-screen functionality
+- Added organizational chart-style connectors with clean horizontal/vertical lines and junction dots for professional genealogical presentation
 - Created comprehensive documentation framework with solution.md, design-guidelines.md, and architecture-guidelines.md

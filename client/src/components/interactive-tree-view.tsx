@@ -23,7 +23,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
   
   const nodeWidth = 200;
   const nodeHeight = 80;
-  const levelHeight = 120;
+  const levelHeight = 140; // Increased for org chart style spacing
 
   useEffect(() => {
     if (!svgRef.current || !root) return;
@@ -38,7 +38,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
     const hierarchy = d3.hierarchy(root);
     const treeLayout = d3.tree<FamilyTreeNode>()
       .size([width - 100, height - 100])
-      .nodeSize([nodeWidth + 40, levelHeight]);
+      .nodeSize([nodeWidth + 60, levelHeight + 40]); // More space for org chart connectors
 
     const treeData = treeLayout(hierarchy);
 
@@ -58,19 +58,60 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       .attr('class', 'tree-group')
       .attr('transform', `translate(${width/2},50)`);
 
-    // Create links (family connections)
+    // Create organizational chart-style links (family connections)
     const links = g.selectAll('.link')
       .data(treeData.links())
       .enter()
-      .append('path')
-      .attr('class', 'link')
-      .attr('d', d3.linkVertical<any, d3.HierarchyPointNode<FamilyTreeNode>>()
-        .x(d => d.x)
-        .y(d => d.y)
-      )
-      .style('fill', 'none')
-      .style('stroke', '#8B7355')
-      .style('stroke-width', '2px');
+      .append('g')
+      .attr('class', 'link-group');
+
+    // Draw organizational chart connectors
+    links.each(function(d) {
+      const linkGroup = d3.select(this);
+      const source = d.source;
+      const target = d.target;
+      
+      // Vertical line from parent
+      linkGroup.append('line')
+        .attr('x1', source.x)
+        .attr('y1', source.y + nodeHeight/2)
+        .attr('x2', source.x)
+        .attr('y2', source.y + nodeHeight/2 + 30)
+        .style('stroke', '#8B7355')
+        .style('stroke-width', '2px');
+      
+      // Horizontal connecting line to child
+      linkGroup.append('line')
+        .attr('x1', source.x)
+        .attr('y1', source.y + nodeHeight/2 + 30)
+        .attr('x2', target.x)
+        .attr('y2', source.y + nodeHeight/2 + 30)
+        .style('stroke', '#8B7355')
+        .style('stroke-width', '2px');
+      
+      // Vertical line down to child
+      linkGroup.append('line')
+        .attr('x1', target.x)
+        .attr('y1', source.y + nodeHeight/2 + 30)
+        .attr('x2', target.x)
+        .attr('y2', target.y - nodeHeight/2)
+        .style('stroke', '#8B7355')
+        .style('stroke-width', '2px');
+    });
+
+    // Add connection dots at joints for visual clarity
+    links.each(function(d) {
+      const linkGroup = d3.select(this);
+      const source = d.source;
+      const target = d.target;
+      
+      // Dot at the horizontal junction
+      linkGroup.append('circle')
+        .attr('cx', target.x)
+        .attr('cy', source.y + nodeHeight/2 + 30)
+        .attr('r', 3)
+        .style('fill', '#8B7355');
+    });
 
     // Create node groups
     const nodes = g.selectAll('.node')
