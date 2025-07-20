@@ -49,11 +49,11 @@ export function filterMembersByBranch(members: FamilyMember[], branchFilter: 'al
   }
   
   if (branchFilter === 'younger') {
-    // Younger line: only members explicitly marked as Younger line + core family members before split
+    // Younger line: only members explicitly marked as Younger line + root ancestor
+    // Do NOT include succession sons as they may belong to Elder line
     return members.filter(m => 
       m.nobleBranch === 'Younger line' ||
-      m.isSuccessionSon ||
-      m.externalId === '0'
+      m.externalId === '0'  // Only include the root ancestor
     );
   }
   
