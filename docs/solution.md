@@ -60,10 +60,11 @@ Replit is responsible for all frontend development and visual presentation.
 
 ### Responsibilities
 - Layout and component structure for all pages
-- Interactive family tree visualization with dual view modes (Detail/Tree)
+- Interactive family tree visualization with three view modes (Detail/Tree/Generations)
 - D3.js-powered zoomable and pannable tree visualization
+- Generation timeline with enhanced visual design and branch filtering
 - Authentic family coat of arms integration for succession indicators
-- Visual hierarchy and user experience design
+- Visual hierarchy and user experience design with Swedish nobility aesthetics
 - Responsive design and accessibility features
 - Integration with backend API endpoints
 - Bilingual language switching interface

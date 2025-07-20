@@ -73,6 +73,15 @@ The overall tone is scholarly, respectful, and dignified—appropriate for docum
 - **Images**: Soft drop shadows and subtle frames to enhance historical photographs
 - **Text Blocks**: Generous padding and line height for comfortable reading
 - **Lists**: Clean, well-spaced with appropriate indentation
+
+### Generation Timeline Styling
+- **Timeline Cards**: Gradient backgrounds from parchment to white with rounded corners (12px)
+- **Interactive States**: Hover effects with scale transforms (105%) and enhanced shadows
+- **Selected States**: Antique brass borders with ring effects and gradient highlights
+- **Typography Mix**: Playfair Display for generation numbers, Inter for statistics, monospace for dates
+- **Visual Hierarchy**: Color-coded dots, enhanced crown icons with sparkles for multiple succession sons
+- **Background Elements**: Subtle gradient timeline connecting all cards with warm stone to antique brass
+- **Responsive Design**: Cards maintain consistent visual appeal across all screen sizes (2-8 columns)
 - **Tables**: Minimal styling with alternating row colors for readability
 
 ---

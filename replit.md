@@ -114,14 +114,15 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 ## Recent Changes (January 2025)
 
 ### Generation Visualization System (January 20, 2025)
-- feat(Claude): add comprehensive generation visualization with timeline cards and member filtering
-- refactor(Claude): restructure family tree view modes to include Detail | Tree | Generations
-- style(Claude): compact generation timeline layout with responsive grid (2-8 columns)
-- feat(Claude): implement generation-specific member display with card-based layout for better visualization
-- refactor(Claude): update generation member display to use tree structure matching Detail View format
-- fix(Claude): isolate generation filtering to only affect Generation view, not Detail/Tree views
-- feat(Claude): add branch-specific generation filtering (All/Main/Elder/Younger lines)
-- fix(Claude): correct Younger line filter to include main succession line before branch split
+- feat(Replit): add comprehensive generation visualization with timeline cards and member filtering
+- refactor(Replit): restructure family tree view modes to include Detail | Tree | Generations
+- style(Replit): compact generation timeline layout with responsive grid (2-8 columns)
+- feat(Replit): implement generation-specific member display with card-based layout for better visualization
+- refactor(Replit): update generation member display to use tree structure matching Detail View format
+- fix(Replit): isolate generation filtering to only affect Generation view, not Detail/Tree views
+- feat(Replit): add branch-specific generation filtering (All/Main/Elder/Younger lines)
+- fix(Replit): correct Younger line filter to include main succession line before branch split
+- style(Replit): enhance generation timeline visual design with gradients, typography, and interactive effects
 
 ## Previous Changes
 - Updated to use cleaned final data files with corrected structure
@@ -166,3 +167,6 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - **Interactive Filtering**: Click timeline cards to filter family tree to specific generations
 - **Responsive Layout**: Generation cards adapt from 2 columns on mobile to 8 on large screens for space efficiency
 - **Member Cards**: Card-based display for generation members with key details and status indicators
+- **Visual Design**: Enhanced timeline with TreePine icons, gradient backgrounds, hover animations, and Swedish nobility styling
+- **Enhanced Cards**: Rounded corners, drop shadows, scale effects, and antique brass highlights for selected states
+- **Crown Indicators**: Larger crowns with sparkles for generations with multiple succession sons
