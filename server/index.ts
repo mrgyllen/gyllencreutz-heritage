@@ -1,10 +1,14 @@
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { setupVite, serveStatic, log } from "./vite";
+import { initializeGitHubSync } from "./storage";
 import dotenv from "dotenv";
 
 // Load environment variables from .env file
 dotenv.config();
+
+// Initialize GitHub sync after dotenv loads environment variables
+initializeGitHubSync();
 
 const app = express();
 app.use(express.json());

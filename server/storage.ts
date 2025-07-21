@@ -6,6 +6,11 @@ let gitHubSync: GitHubSync | null = null;
 
 // Function to initialize GitHub sync (called after env vars are loaded)
 function initializeGitHubSync() {
+  console.log('🔍 Checking environment variables:');
+  console.log('  GITHUB_TOKEN:', process.env.GITHUB_TOKEN ? 'SET' : 'MISSING');
+  console.log('  GITHUB_REPO_OWNER:', process.env.GITHUB_REPO_OWNER || 'MISSING');
+  console.log('  GITHUB_REPO_NAME:', process.env.GITHUB_REPO_NAME || 'MISSING');
+  
   if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME) {
     gitHubSync = new GitHubSync({
       token: process.env.GITHUB_TOKEN,
@@ -771,10 +776,10 @@ export class MemStorage implements IStorage {
   }
 }
 
-// Initialize GitHub sync after environment variables are loaded
-initializeGitHubSync();
-
 export const storage = new MemStorage();
 
-// Export GitHub sync instance for use in routes
+// Export GitHub sync instance for use in routes  
 export { gitHubSync };
+
+// Export the initialization function for use in main server file
+export { initializeGitHubSync };
