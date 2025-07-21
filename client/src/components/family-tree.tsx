@@ -9,7 +9,7 @@ import { buildFamilyTree } from "@/data/family-data";
 import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
 import { useLanguage } from "@/contexts/language-context";
 import { getRoyalPortrait } from "@/components/royal-portraits";
-import { getSuccessionIcon } from "@/components/family-coat-of-arms";
+import { getSuccessionIcon, FamilyCoatOfArms } from "@/components/family-coat-of-arms";
 import { InteractiveTreeView } from "@/components/interactive-tree-view";
 import { GenerationTimeline } from "@/components/generation-timeline";
 import { addGenerationData, calculateGenerationStats, filterMembersByBranch } from "@/utils/generation-calculator";
@@ -381,35 +381,8 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-5 h-6 mr-2 flex items-center justify-center relative">
-              <svg width="22" height="26" viewBox="0 0 22 26" className="drop-shadow-md">
-                {/* Outer shield border */}
-                <path d="M11 1 L2 5 L2 16 Q11 25 20 16 L20 5 Z" fill="#2d1810" stroke="#1a0f08" strokeWidth="1"/>
-                {/* Gold border */}
-                <path d="M11 2 L3 5.5 L3 15.5 Q11 24 19 15.5 L19 5.5 Z" fill="#d4af37" stroke="#b8941f" strokeWidth="0.5"/>
-                {/* Inner shield field - clean white/silver */}
-                <path d="M11 3.5 L4.5 6.5 L4.5 14.5 Q11 22.5 17.5 14.5 L17.5 6.5 Z" fill="#ffffff" stroke="#f0f0f0" strokeWidth="0.2"/>
-                {/* Three crosses pattée arrangement */}
-                <g>
-                  {/* Top left cross */}
-                  <g transform="translate(8, 8)">
-                    <path d="M 0 -2.5 L -0.7 -1.8 L -0.4 -1.8 L -0.4 1.8 L -0.7 1.8 L 0 2.5 L 0.7 1.8 L 0.4 1.8 L 0.4 -1.8 L 0.7 -1.8 Z M -2.5 0 L -1.8 -0.7 L -1.8 -0.4 L 1.8 -0.4 L 1.8 -0.7 L 2.5 0 L 1.8 0.7 L 1.8 0.4 L -1.8 0.4 L -1.8 0.7 Z" 
-                          fill="#dc2626" stroke="#b91c1c" strokeWidth="0.15"/>
-                  </g>
-                  {/* Top right cross */}
-                  <g transform="translate(14, 8)">
-                    <path d="M 0 -2.5 L -0.7 -1.8 L -0.4 -1.8 L -0.4 1.8 L -0.7 1.8 L 0 2.5 L 0.7 1.8 L 0.4 1.8 L 0.4 -1.8 L 0.7 -1.8 Z M -2.5 0 L -1.8 -0.7 L -1.8 -0.4 L 1.8 -0.4 L 1.8 -0.7 L 2.5 0 L 1.8 0.7 L 1.8 0.4 L -1.8 0.4 L -1.8 0.7 Z" 
-                          fill="#dc2626" stroke="#b91c1c" strokeWidth="0.15"/>
-                  </g>
-                  {/* Bottom center cross */}
-                  <g transform="translate(11, 16)">
-                    <path d="M 0 -2.5 L -0.7 -1.8 L -0.4 -1.8 L -0.4 1.8 L -0.7 1.8 L 0 2.5 L 0.7 1.8 L 0.4 1.8 L 0.4 -1.8 L 0.7 -1.8 Z M -2.5 0 L -1.8 -0.7 L -1.8 -0.4 L 1.8 -0.4 L 1.8 -0.7 L 2.5 0 L 1.8 0.7 L 1.8 0.4 L -1.8 0.4 L -1.8 0.7 Z" 
-                          fill="#dc2626" stroke="#b91c1c" strokeWidth="0.15"/>
-                  </g>
-                </g>
-              </svg>
-            </div>
-            <span className="text-sm text-gray-600">Succession Son</span>
+            <FamilyCoatOfArms size="small" />
+            <span className="text-sm text-gray-600 ml-2">Succession Son</span>
           </div>
           <div className="flex items-center">
             <div className="w-4 h-4 bg-sky-100 border border-sky-400 rounded-full mr-2 flex items-center justify-center">

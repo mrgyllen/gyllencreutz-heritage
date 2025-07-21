@@ -221,107 +221,40 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Gyllencreutz Coat of Arms for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const shieldWidth = 22;
-        const shieldHeight = 26;
-        const markX = nodeWidth/2 - shieldWidth - 6; // 6px padding from right edge  
-        const markY = nodeHeight/2 - shieldHeight - 6; // 6px padding from bottom edge
+        const iconSize = 24;
+        const markX = nodeWidth/2 - iconSize - 6; // 6px padding from right edge  
+        const markY = nodeHeight/2 - iconSize - 6; // 6px padding from bottom edge
         
-        // Create authentic heraldic shield based on family coat of arms
-        const markGroup = node.append('g')
-          .attr('transform', `translate(${markX}, ${markY})`)
+        // Use foreignObject to embed the existing FamilyCoatOfArms React component
+        const foreignObject = node.append('foreignObject')
+          .attr('x', markX)
+          .attr('y', markY)
+          .attr('width', iconSize)
+          .attr('height', iconSize)
           .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))');
         
-        // Outer shield border (black/dark brown)
-        const outerShieldPath = `
-          M ${shieldWidth/2} 1
-          L 2 5
-          L 2 16
-          Q ${shieldWidth/2} ${shieldHeight-1} ${shieldWidth-2} 16
-          L ${shieldWidth-2} 5
-          Z
-        `;
+        // Create container div
+        const div = foreignObject.append('xhtml:div')
+          .style('width', `${iconSize}px`)
+          .style('height', `${iconSize}px`)
+          .style('display', 'flex')
+          .style('align-items', 'center')
+          .style('justify-content', 'center');
         
-        markGroup.append('path')
-          .attr('d', outerShieldPath)
-          .style('fill', '#2d1810')
-          .style('stroke', '#1a0f08')
-          .style('stroke-width', 1);
+        // Add the coat of arms - since we can't use React in D3, create the equivalent HTML
+        const coatContainer = div.append('xhtml:div')
+          .attr('class', 'w-6 h-6 flex items-center justify-center bg-gradient-to-br from-amber-200 to-amber-300 border border-amber-500 rounded-sm shadow-sm overflow-hidden relative')
+          .style('width', `${iconSize}px`)
+          .style('height', `${iconSize}px`);
         
-        // Gold border layer
-        const goldBorderPath = `
-          M ${shieldWidth/2} 2
-          L 3 5.5
-          L 3 15.5
-          Q ${shieldWidth/2} ${shieldHeight-2} ${shieldWidth-3} 15.5
-          L ${shieldWidth-3} 5.5
-          Z
-        `;
-        
-        markGroup.append('path')
-          .attr('d', goldBorderPath)
-          .style('fill', '#d4af37')
-          .style('stroke', '#b8941f')
-          .style('stroke-width', 0.5);
-        
-        // Inner shield field (silver/white)
-        const innerShieldPath = `
-          M ${shieldWidth/2} 3.5
-          L 4.5 6.5
-          L 4.5 14.5
-          Q ${shieldWidth/2} ${shieldHeight-3.5} ${shieldWidth-4.5} 14.5
-          L ${shieldWidth-4.5} 6.5
-          Z
-        `;
-        
-        markGroup.append('path')
-          .attr('d', innerShieldPath)
-          .style('fill', '#ffffff')
-          .style('stroke', '#f0f0f0')
-          .style('stroke-width', 0.2);
-        
-        // Three crosses pattée arrangement like authentic Gyllencreutz arms
-        const crossPositions = [
-          { x: shieldWidth/2 - 3, y: 8 },    // Top left
-          { x: shieldWidth/2 + 3, y: 8 },    // Top right  
-          { x: shieldWidth/2, y: 16 }        // Bottom center
-        ];
-        
-        crossPositions.forEach(pos => {
-          const crossGroup = markGroup.append('g')
-            .attr('transform', `translate(${pos.x}, ${pos.y})`);
-          
-          // Create small cross pattée with flared ends
-          const crossPath = `
-            M 0 -2.5
-            L -0.7 -1.8
-            L -0.4 -1.8
-            L -0.4 1.8
-            L -0.7 1.8
-            L 0 2.5
-            L 0.7 1.8
-            L 0.4 1.8
-            L 0.4 -1.8
-            L 0.7 -1.8
-            Z
-            M -2.5 0
-            L -1.8 -0.7
-            L -1.8 -0.4
-            L 1.8 -0.4
-            L 1.8 -0.7
-            L 2.5 0
-            L 1.8 0.7
-            L 1.8 0.4
-            L -1.8 0.4
-            L -1.8 0.7
-            Z
-          `;
-          
-          crossGroup.append('path')
-            .attr('d', crossPath)
-            .style('fill', '#dc2626')
-            .style('stroke', '#b91c1c')
-            .style('stroke-width', 0.15);
-        });
+        coatContainer.append('xhtml:img')
+          .attr('src', '/attached_assets/vapenskjöld_1752593493242.jpg')
+          .attr('alt', 'Gyllencreutz Family Coat of Arms')
+          .attr('class', 'w-full h-full object-cover object-center')
+          .style('width', '100%')
+          .style('height', '100%')
+          .style('object-fit', 'cover')
+          .style('object-position', 'center');
       }
       
       // Died Young indicator (bottom area)
