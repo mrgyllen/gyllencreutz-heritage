@@ -1,19 +1,21 @@
 import { type User, type InsertUser, type FamilyMember, type InsertFamilyMember } from "@shared/schema";
 import { GitHubSync } from "./github-sync";
 
-// GitHub sync instance (will be initialized if environment variables are present)
+// GitHub sync instance (will be initialized later)
 let gitHubSync: GitHubSync | null = null;
 
-// Initialize GitHub sync if credentials are available
-if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME) {
-  gitHubSync = new GitHubSync({
-    token: process.env.GITHUB_TOKEN,
-    owner: process.env.GITHUB_REPO_OWNER,
-    repo: process.env.GITHUB_REPO_NAME
-  });
-  console.log('✅ GitHub sync initialized');
-} else {
-  console.log('⚠️ GitHub sync disabled - missing environment variables');
+// Function to initialize GitHub sync (called after env vars are loaded)
+function initializeGitHubSync() {
+  if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME) {
+    gitHubSync = new GitHubSync({
+      token: process.env.GITHUB_TOKEN,
+      owner: process.env.GITHUB_REPO_OWNER,
+      repo: process.env.GITHUB_REPO_NAME
+    });
+    console.log('✅ GitHub sync initialized');
+  } else {
+    console.log('⚠️ GitHub sync disabled - missing environment variables');
+  }
 }
 
 export interface IStorage {
@@ -768,6 +770,9 @@ export class MemStorage implements IStorage {
     }
   }
 }
+
+// Initialize GitHub sync after environment variables are loaded
+initializeGitHubSync();
 
 export const storage = new MemStorage();
 
