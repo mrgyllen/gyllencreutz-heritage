@@ -17,13 +17,17 @@ interface FamilyMember {
   id: number;
   externalId: string;
   name: string;
-  birth?: string;
-  death?: string;
+  born?: number;
+  died?: number;
   biologicalSex?: string;
   notes?: string;
   father?: string;
-  monarch?: string;
+  monarchDuringLife?: any[];
   isSuccessionSon?: boolean;
+  ageAtDeath?: number;
+  diedYoung?: boolean;
+  hasMaleChildren?: boolean;
+  nobleBranch?: string;
 }
 
 export function Admin() {
@@ -151,15 +155,19 @@ export function Admin() {
   );
 
   const handleSubmit = (formData: FormData, isNew: boolean = false) => {
+    const bornValue = formData.get('born') as string;
+    const diedValue = formData.get('died') as string;
+    const monarchValue = formData.get('monarchDuringLife') as string;
+    
     const memberData = {
       externalId: formData.get('externalId') as string,
       name: formData.get('name') as string,
-      birth: formData.get('birth') as string || undefined,
-      death: formData.get('death') as string || undefined,
+      born: bornValue ? parseInt(bornValue) : undefined,
+      died: diedValue ? parseInt(diedValue) : undefined,
       biologicalSex: formData.get('biologicalSex') as string || undefined,
       notes: formData.get('notes') as string || undefined,
       father: formData.get('father') as string || undefined,
-      monarch: formData.get('monarch') as string || undefined,
+      monarchDuringLife: monarchValue ? [monarchValue] : undefined,
       isSuccessionSon: formData.get('isSuccessionSon') === 'on',
     };
 
@@ -339,7 +347,7 @@ export function Admin() {
         <Card>
           <CardContent className="p-4">
             <div className="text-2xl font-bold">
-              {new Set(familyMembers.map(m => m.monarch).filter(Boolean)).size}
+              {new Set(familyMembers.flatMap(m => m.monarchDuringLife || []).filter(Boolean)).size}
             </div>
             <div className="text-sm text-muted-foreground">Unique Monarchs</div>
           </CardContent>
@@ -362,11 +370,13 @@ export function Admin() {
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm text-muted-foreground">
-                    {member.birth && <div>Born: {member.birth}</div>}
-                    {member.death && <div>Died: {member.death}</div>}
+                    {member.born && <div>Born: {member.born}</div>}
+                    {member.died && <div>Died: {member.died}</div>}
                     {member.biologicalSex && <div>Sex: {member.biologicalSex}</div>}
                     {member.father && <div>Father: {member.father}</div>}
-                    {member.monarch && <div>Monarch: {member.monarch}</div>}
+                    {member.monarchDuringLife && member.monarchDuringLife.length > 0 && (
+                      <div>Monarch: {Array.isArray(member.monarchDuringLife) ? member.monarchDuringLife.join(', ') : member.monarchDuringLife}</div>
+                    )}
                   </div>
                   
                   {member.notes && (
@@ -446,19 +456,21 @@ export function Admin() {
               
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="birth">Birth Year</Label>
+                  <Label htmlFor="born">Birth Year</Label>
                   <Input
-                    id="birth"
-                    name="birth"
-                    defaultValue={editingMember?.birth || ''}
+                    id="born"
+                    name="born"
+                    type="number"
+                    defaultValue={editingMember?.born || ''}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="death">Death Year</Label>
+                  <Label htmlFor="died">Death Year</Label>
                   <Input
-                    id="death"
-                    name="death"
-                    defaultValue={editingMember?.death || ''}
+                    id="died"
+                    name="died"
+                    type="number"
+                    defaultValue={editingMember?.died || ''}
                   />
                 </div>
                 <div>
@@ -485,11 +497,15 @@ export function Admin() {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="monarch">Monarch</Label>
+                  <Label htmlFor="monarchDuringLife">Monarch During Life</Label>
                   <Input
-                    id="monarch"
-                    name="monarch"
-                    defaultValue={editingMember?.monarch || ''}
+                    id="monarchDuringLife"
+                    name="monarchDuringLife"
+                    defaultValue={editingMember?.monarchDuringLife ? 
+                      (Array.isArray(editingMember.monarchDuringLife) ? 
+                        editingMember.monarchDuringLife.join(', ') : 
+                        editingMember.monarchDuringLife) : ''}
+                    placeholder="Gustav Vasa (1523–1560)"
                   />
                 </div>
               </div>
