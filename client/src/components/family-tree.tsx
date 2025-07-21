@@ -383,10 +383,10 @@ export function FamilyTree() {
           <div className="flex items-center">
             <div className="w-4 h-4 mr-2 flex items-center justify-center relative">
               <svg width="16" height="16" viewBox="0 0 16 16" className="drop-shadow-sm">
-                {/* Concept 3: Interlocking Heritage Rings */}
-                <circle cx="8" cy="8" r="7" fill="#fef3c7" stroke="#d97706" strokeWidth="1"/>
-                <circle cx="6" cy="7" r="3" fill="none" stroke="#b45309" strokeWidth="1.5"/>
-                <circle cx="10" cy="9" r="3" fill="none" stroke="#d97706" strokeWidth="1.5"/>
+                {/* Concept 3: Interlocking Heritage Rings (refined) */}
+                <circle cx="8" cy="8" r="7" fill="#fef3c7" stroke="#d97706" strokeWidth="0.8"/>
+                <circle cx="5.5" cy="7" r="3.5" fill="none" stroke="#b45309" strokeWidth="1"/>
+                <circle cx="10.5" cy="9" r="3.5" fill="none" stroke="#d97706" strokeWidth="1"/>
               </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>

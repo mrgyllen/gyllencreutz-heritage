@@ -243,8 +243,8 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         const iconCenterX = rightX - 10;
         const iconCenterY = badgeY;
         
-        // Switch between concepts - currently showing Concept 1
-        const concept: 1 | 2 | 3 = 1; // Change this to 1, 2, or 3 to test different designs
+        // Switch between concepts - currently showing Concept 3 (Interlocking Rings)
+        const concept: 1 | 2 | 3 = 3; // Change this to 1, 2, or 3 to test different designs
         
         if (concept === 1) {
           // CONCEPT 1: Family Tree Branch
@@ -338,7 +338,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
             .style('fill', '#92400e');
             
         } else if (concept === 3) {
-          // CONCEPT 3: Interlocking Heritage Rings
+          // CONCEPT 3: Interlocking Heritage Rings (refined with thinner rings)
           node.append('circle')
             .attr('cx', iconCenterX)
             .attr('cy', iconCenterY)
@@ -347,23 +347,23 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
             .style('stroke', '#d97706')
             .style('stroke-width', 1.2);
           
-          // First ring
+          // First ring (left, slightly higher)
           node.append('circle')
-            .attr('cx', iconCenterX - 2)
+            .attr('cx', iconCenterX - 2.5)
             .attr('cy', iconCenterY - 1)
-            .attr('r', 3)
+            .attr('r', 3.5)
             .style('fill', 'none')
             .style('stroke', '#b45309')
-            .style('stroke-width', 2);
+            .style('stroke-width', 1.2);
           
-          // Second interlocking ring
+          // Second interlocking ring (right, slightly lower)
           node.append('circle')
-            .attr('cx', iconCenterX + 2)
+            .attr('cx', iconCenterX + 2.5)
             .attr('cy', iconCenterY + 1)
-            .attr('r', 3)
+            .attr('r', 3.5)
             .style('fill', 'none')
             .style('stroke', '#d97706')
-            .style('stroke-width', 2);
+            .style('stroke-width', 1.2);
         }
         
         rightX -= 22;
