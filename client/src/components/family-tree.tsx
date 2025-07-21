@@ -381,8 +381,8 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 bg-amber-300 border border-amber-500 rounded mr-2 flex items-center justify-center">
-              <div className="w-2 h-2 bg-amber-800 rounded-sm"></div>
+            <div className="w-5 h-5 bg-gradient-to-b from-yellow-100 to-amber-400 border border-amber-600 rounded-full mr-2 flex items-center justify-center">
+              <span className="text-xs text-amber-800">♔</span>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
           </div>

@@ -55,6 +55,24 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     svg.call(zoom);
 
+    // Define gradient for crown effect
+    const defs = svg.append('defs');
+    
+    const crownGradient = defs.append('linearGradient')
+      .attr('id', 'crownGradient')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '0%')
+      .attr('y2', '100%');
+    
+    crownGradient.append('stop')
+      .attr('offset', '0%')
+      .attr('stop-color', '#fef3c7');
+    
+    crownGradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#f59e0b');
+
     // Create main group
     const g = svg.append('g')
       .attr('class', 'tree-group')
@@ -218,27 +236,45 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Succession heraldic icon (top-right area)
       if (d.data.isSuccessionSon) {
-        // Create heraldic coat of arms background
-        node.append('rect')
-          .attr('x', rightX - 18)
-          .attr('y', badgeY - 9)
-          .attr('width', 18)
-          .attr('height', 18)
-          .attr('rx', 2)
-          .style('fill', '#fbbf24')
-          .style('stroke', '#d97706')
+        // Create elegant crown symbol
+        const crownCenterX = rightX - 10;
+        const crownCenterY = badgeY;
+        
+        // Crown base circle
+        node.append('circle')
+          .attr('cx', crownCenterX)
+          .attr('cy', crownCenterY)
+          .attr('r', 9)
+          .style('fill', 'url(#crownGradient)')
+          .style('stroke', '#b45309')
           .style('stroke-width', 1.5);
         
-        // Add simplified heraldic symbol (shield shape)
+        // Crown points (simplified royal crown)
+        const crownPath = `
+          M ${crownCenterX - 6} ${crownCenterY + 1}
+          L ${crownCenterX - 4} ${crownCenterY - 4}
+          L ${crownCenterX - 2} ${crownCenterY}
+          L ${crownCenterX} ${crownCenterY - 5}
+          L ${crownCenterX + 2} ${crownCenterY}
+          L ${crownCenterX + 4} ${crownCenterY - 4}
+          L ${crownCenterX + 6} ${crownCenterY + 1}
+          Z
+        `;
+        
         node.append('path')
-          .attr('d', `M ${rightX - 9} ${badgeY - 6} 
-                     L ${rightX - 15} ${badgeY - 3} 
-                     L ${rightX - 15} ${badgeY + 3} 
-                     Q ${rightX - 9} ${badgeY + 6} ${rightX - 3} ${badgeY + 3} 
-                     L ${rightX - 3} ${badgeY - 3} Z`)
-          .style('fill', '#92400e')
-          .style('stroke', '#451a03')
-          .style('stroke-width', 0.5);
+          .attr('d', crownPath)
+          .style('fill', '#fbbf24')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 0.8);
+        
+        // Crown jewels (small dots)
+        [-2, 0, 2].forEach(offset => {
+          node.append('circle')
+            .attr('cx', crownCenterX + offset)
+            .attr('cy', crownCenterY + 2)
+            .attr('r', 0.8)
+            .style('fill', '#dc2626');
+        });
         
         rightX -= 25;
       }
