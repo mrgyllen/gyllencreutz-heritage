@@ -11,12 +11,14 @@ interface InteractiveTreeViewProps {
   root: FamilyTreeNode;
   onMemberSelect: (member: FamilyTreeNode) => void;
   selectedMember: FamilyTreeNode | null;
+  highlightMember?: string; // External ID to highlight and center on
 }
 
 export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
   root,
   onMemberSelect,
-  selectedMember
+  selectedMember,
+  highlightMember
 }) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
@@ -134,7 +136,10 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       .attr('height', nodeHeight)
       .attr('rx', 8)
       .style('fill', (d: d3.HierarchyPointNode<FamilyTreeNode>) => {
-        if (selectedMember && d.data.externalId === selectedMember.externalId) {
+        const isSelected = selectedMember && d.data.externalId === selectedMember.externalId;
+        const isHighlighted = highlightMember && d.data.externalId === highlightMember;
+        
+        if (isSelected || isHighlighted) {
           return '#dbeafe'; // blue-100
         }
         switch (d.data.nobleBranch) {
@@ -144,7 +149,10 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         }
       })
       .style('stroke', (d: d3.HierarchyPointNode<FamilyTreeNode>) => {
-        if (selectedMember && d.data.externalId === selectedMember.externalId) {
+        const isSelected = selectedMember && d.data.externalId === selectedMember.externalId;
+        const isHighlighted = highlightMember && d.data.externalId === highlightMember;
+        
+        if (isSelected || isHighlighted) {
           return '#3b82f6'; // blue-500
         }
         switch (d.data.nobleBranch) {
@@ -153,7 +161,11 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
           default: return '#22c55e'; // green-500
         }
       })
-      .style('stroke-width', 2);
+      .style('stroke-width', (d: d3.HierarchyPointNode<FamilyTreeNode>) => {
+        const isSelected = selectedMember && d.data.externalId === selectedMember.externalId;
+        const isHighlighted = highlightMember && d.data.externalId === highlightMember;
+        return (isSelected || isHighlighted) ? 3 : 2;
+      });
 
     // Add member names
     nodes.append('text')
@@ -210,7 +222,24 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
     // Store zoom instance for external controls
     (svg.node() as any).__zoom__ = zoom;
 
-  }, [root, selectedMember, onMemberSelect]);
+    // Auto-center on highlighted member
+    if (highlightMember) {
+      const highlightedNode = treeData.descendants().find(d => d.data.externalId === highlightMember);
+      if (highlightedNode) {
+        const scale = 1.2;
+        const x = width / 2 - highlightedNode.x * scale;
+        const y = height / 2 - highlightedNode.y * scale;
+        
+        svg.transition()
+          .duration(1000)
+          .call(
+            zoom.transform,
+            d3.zoomIdentity.translate(x, y).scale(scale)
+          );
+      }
+    }
+
+  }, [root, selectedMember, onMemberSelect, highlightMember]);
 
   const handleZoomIn = () => {
     if (svgRef.current) {

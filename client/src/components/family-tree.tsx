@@ -40,6 +40,39 @@ export function FamilyTree() {
   const handleSearch = (member: FamilyMember) => {
     setSelectedMember(member);
     setSearchQuery("");
+    // Switch to tree view and expand path to the selected member
+    setViewMode('tree');
+    expandPathToMember(member.externalId);
+  };
+
+  const expandPathToMember = (externalId: string) => {
+    const newExpanded = new Set(expandedNodes);
+    
+    // Find the member and all their ancestors
+    const member = familyMembers.find(m => m.externalId === externalId);
+    if (!member) return;
+    
+    // Add the member itself
+    newExpanded.add(externalId);
+    
+    // Expand all ancestors by working up the family tree
+    const expandAncestors = (memberId: string) => {
+      const currentMember = familyMembers.find(m => m.externalId === memberId);
+      if (!currentMember) return;
+      
+      newExpanded.add(memberId);
+      
+      // Find parent and expand them too
+      if (currentMember.father) {
+        const parent = familyMembers.find(m => m.name === currentMember.father);
+        if (parent) {
+          expandAncestors(parent.externalId);
+        }
+      }
+    };
+    
+    expandAncestors(externalId);
+    setExpandedNodes(newExpanded);
   };
 
   const toggleNode = (nodeId: string) => {
@@ -385,6 +418,7 @@ export function FamilyTree() {
                 root={root}
                 onMemberSelect={(member: FamilyTreeNode) => setSelectedMember(member)}
                 selectedMember={selectedMember as FamilyTreeNode | null}
+                highlightMember={selectedMember?.externalId}
               />
             ) : (
               <div className="text-center py-8 bg-gray-50 rounded-lg border">
