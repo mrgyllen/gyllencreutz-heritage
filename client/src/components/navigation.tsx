@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { LanguageToggle } from "@/components/language-toggle";
 import { useLanguage } from "@/contexts/language-context";
+import { Link } from "wouter";
 
 export function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -61,6 +62,11 @@ export function Navigation() {
               >
                 {t('nav.about')}
               </button>
+              <Link href="/admin">
+                <Button variant="ghost" size="sm" className="text-warm-stone hover:text-antique-brass">
+                  <Settings className="h-4 w-4" />
+                </Button>
+              </Link>
               <LanguageToggle />
             </div>
           </div>
