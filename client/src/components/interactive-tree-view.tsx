@@ -279,22 +279,22 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
           .style('stroke', '#e5e5e0')
           .style('stroke-width', 0.3);
         
-        // Central cross pattern (characteristic of Gyllencreutz arms)
-        // Vertical cross bar (red)
+        // Central cross pattern (characteristic of Gyllencreutz arms) - proper upright cross
+        // Vertical cross bar (red) - shorter, positioned higher
         markGroup.append('rect')
           .attr('x', shieldWidth/2 - 1.5)
-          .attr('y', 7)
+          .attr('y', 6)
           .attr('width', 3)
-          .attr('height', 10)
+          .attr('height', 8)
           .style('fill', '#dc2626')
           .style('stroke', '#b91c1c')
           .style('stroke-width', 0.3);
         
-        // Horizontal cross bar (red)
+        // Horizontal cross bar (red) - positioned in upper third
         markGroup.append('rect')
-          .attr('x', 6)
-          .attr('y', shieldHeight/2 - 1.5)
-          .attr('width', 10)
+          .attr('x', 6.5)
+          .attr('y', 8.5)
+          .attr('width', 9)
           .attr('height', 3)
           .style('fill', '#dc2626')
           .style('stroke', '#b91c1c')

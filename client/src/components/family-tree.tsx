@@ -389,9 +389,9 @@ export function FamilyTree() {
                 <path d="M11 2 L3 5.5 L3 15.5 Q11 24 19 15.5 L19 5.5 Z" fill="#d4af37" stroke="#b8941f" strokeWidth="0.5"/>
                 {/* Inner shield field */}
                 <path d="M11 3.5 L4.5 6.5 L4.5 14.5 Q11 22.5 17.5 14.5 L17.5 6.5 Z" fill="#f5f5f0" stroke="#e5e5e0" strokeWidth="0.3"/>
-                {/* Central cross */}
-                <rect x="9.5" y="7" width="3" height="10" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
-                <rect x="6" y="11.5" width="10" height="3" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
+                {/* Central cross - proper upright orientation */}
+                <rect x="9.5" y="6" width="3" height="8" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
+                <rect x="6.5" y="8.5" width="9" height="3" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
                 {/* Corner decorations */}
                 <circle cx="7" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
                 <circle cx="15" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
