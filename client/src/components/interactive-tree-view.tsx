@@ -55,27 +55,8 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     svg.call(zoom);
 
-    // Define gradients for heraldic coat of arms
+    // Define patterns and gradients for tree visualization
     const defs = svg.append('defs');
-    
-    // Authentic heraldic gradient for Gyllencreutz shield
-    const heraldicGradient = defs.append('radialGradient')
-      .attr('id', 'heraldicGradient')
-      .attr('cx', '40%')
-      .attr('cy', '25%')
-      .attr('r', '80%');
-    
-    heraldicGradient.append('stop')
-      .attr('offset', '0%')
-      .attr('stop-color', '#fef3c7');
-    
-    heraldicGradient.append('stop')
-      .attr('offset', '50%')
-      .attr('stop-color', '#fbbf24');
-    
-    heraldicGradient.append('stop')
-      .attr('offset', '100%')
-      .attr('stop-color', '#d97706');
 
     // Create main group
     const g = svg.append('g')
@@ -238,65 +219,22 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         leftX += 25;
       }
       
-      // Prominent Gyllencreutz Coat of Arms for Succession Sons (top-right corner)
+      // Noble Mark for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const shieldX = nodeWidth/2 - 18;
-        const shieldY = -nodeHeight/2 + 8;
+        const markSize = 18;
+        const markX = nodeWidth/2 - markSize - 8; // 8px padding from right edge
+        const markY = nodeHeight/2 - markSize - 8; // 8px padding from bottom edge
         
-        // Create authentic heraldic shield shape (larger and more prominent)
-        const shieldPath = `
-          M ${shieldX + 12} ${shieldY}
-          L ${shieldX + 2} ${shieldY + 4}
-          L ${shieldX + 2} ${shieldY + 18}
-          Q ${shieldX + 12} ${shieldY + 26} ${shieldX + 22} ${shieldY + 18}
-          L ${shieldX + 22} ${shieldY + 4}
-          Z
-        `;
-        
-        // Shield background with heraldic gradient
-        node.append('path')
-          .attr('d', shieldPath)
-          .style('fill', 'url(#heraldicGradient)')
-          .style('stroke', '#7c2d12')
-          .style('stroke-width', 2)
-          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.25))');
-        
-        // Central cross pattern (characteristic of Gyllencreutz arms)
-        // Vertical cross bar
-        node.append('rect')
-          .attr('x', shieldX + 10)
-          .attr('y', shieldY + 6)
-          .attr('width', 4)
-          .attr('height', 12)
-          .style('fill', '#fbbf24')
-          .style('stroke', '#d97706')
-          .style('stroke-width', 0.5);
-        
-        // Horizontal cross bar
-        node.append('rect')
-          .attr('x', shieldX + 6)
-          .attr('y', shieldY + 10)
-          .attr('width', 12)
-          .attr('height', 4)
-          .style('fill', '#fbbf24')
-          .style('stroke', '#d97706')
-          .style('stroke-width', 0.5);
-        
-        // Decorative elements in corners
-        [
-          { x: shieldX + 6, y: shieldY + 7 },
-          { x: shieldX + 18, y: shieldY + 7 },
-          { x: shieldX + 6, y: shieldY + 17 },
-          { x: shieldX + 18, y: shieldY + 17 }
-        ].forEach(pos => {
-          node.append('circle')
-            .attr('cx', pos.x)
-            .attr('cy', pos.y)
-            .attr('r', 1.5)
-            .style('fill', '#dc2626')
-            .style('stroke', '#991b1b')
-            .style('stroke-width', 0.3);
-        });
+        // Add Noble Mark image
+        node.append('image')
+          .attr('x', markX)
+          .attr('y', markY)
+          .attr('width', markSize)
+          .attr('height', markSize)
+          .attr('href', '/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg')
+          .style('opacity', 0.9)
+          .style('filter', 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))')
+          .attr('preserveAspectRatio', 'xMidYMid meet');
       }
       
       // Died Young indicator (bottom area)
