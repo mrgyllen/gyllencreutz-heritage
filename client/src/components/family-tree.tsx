@@ -381,12 +381,33 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-7 h-8 mr-2 flex items-center justify-center relative overflow-hidden">
-              <img 
-                src="/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg" 
-                alt="Noble Mark" 
-                className="w-full h-full object-cover opacity-95 drop-shadow-md"
-              />
+            <div className="w-6 h-7 mr-2 flex items-center justify-center relative">
+              <svg width="24" height="28" viewBox="0 0 24 28" className="drop-shadow-md">
+                {/* Heraldic Shield Shape */}
+                <path 
+                  d="M12 2 L3 6 L3 18 Q12 26 21 18 L21 6 Z" 
+                  fill="#8b2635" 
+                  stroke="#6b1d26" 
+                  strokeWidth="1.5"
+                />
+                {/* Inner Gold Area */}
+                <path 
+                  d="M12 4 L5 7 L5 16 Q12 24 19 16 L19 7 Z" 
+                  fill="#d4af37" 
+                  stroke="#b8941f" 
+                  strokeWidth="0.5"
+                />
+                {/* Central Cross */}
+                <rect x="10.5" y="8" width="3" height="10" fill="#8b2635" stroke="#6b1d26" strokeWidth="0.3"/>
+                <rect x="7" y="12.5" width="10" height="3" fill="#8b2635" stroke="#6b1d26" strokeWidth="0.3"/>
+                {/* Corner Decorations */}
+                <circle cx="8" cy="9" r="1" fill="#6b1d26"/>
+                <circle cx="16" cy="9" r="1" fill="#6b1d26"/>
+                <circle cx="8" cy="19" r="1" fill="#6b1d26"/>
+                <circle cx="16" cy="19" r="1" fill="#6b1d26"/>
+                {/* Noble Number */}
+                <text x="12" y="24" textAnchor="middle" fontSize="6" fontWeight="bold" fill="#d4af37">N°54</text>
+              </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
           </div>

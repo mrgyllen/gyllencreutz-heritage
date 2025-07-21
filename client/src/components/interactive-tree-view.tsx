@@ -221,21 +221,94 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Prominent Noble Mark for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const markWidth = 28;
-        const markHeight = 32;
+        const markWidth = 24;
+        const markHeight = 28;
         const markX = nodeWidth/2 - markWidth - 8; // 8px padding from right edge
         const markY = nodeHeight/2 - markHeight - 8; // 8px padding from bottom edge
         
-        // Add the actual Noble Mark image, larger and more prominent
-        node.append('image')
-          .attr('x', markX)
-          .attr('y', markY)
-          .attr('width', markWidth)
-          .attr('height', markHeight)
-          .attr('href', '/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg')
-          .style('opacity', 0.95)
-          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))')
-          .attr('preserveAspectRatio', 'xMidYMid meet');
+        // Create Noble Mark as authentic heraldic shield (larger and more prominent)
+        const markGroup = node.append('g')
+          .attr('transform', `translate(${markX}, ${markY})`)
+          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))');
+        
+        // Shield shape (authentic heraldic form)
+        const shieldPath = `
+          M ${markWidth/2} 2
+          L 3 6
+          L 3 18
+          Q ${markWidth/2} ${markHeight-2} ${markWidth-3} 18
+          L ${markWidth-3} 6
+          Z
+        `;
+        
+        // Shield background with rich burgundy-gold gradient
+        markGroup.append('path')
+          .attr('d', shieldPath)
+          .style('fill', '#8b2635')
+          .style('stroke', '#6b1d26')
+          .style('stroke-width', 1.5);
+        
+        // Inner shield area with gold tones
+        const innerPath = `
+          M ${markWidth/2} 4
+          L 5 7
+          L 5 16
+          Q ${markWidth/2} ${markHeight-4} ${markWidth-5} 16
+          L ${markWidth-5} 7
+          Z
+        `;
+        
+        markGroup.append('path')
+          .attr('d', innerPath)
+          .style('fill', '#d4af37')
+          .style('stroke', '#b8941f')
+          .style('stroke-width', 0.5);
+        
+        // Central cross (characteristic of Gyllencreutz arms)
+        // Vertical bar
+        markGroup.append('rect')
+          .attr('x', markWidth/2 - 1.5)
+          .attr('y', 8)
+          .attr('width', 3)
+          .attr('height', 10)
+          .style('fill', '#8b2635')
+          .style('stroke', '#6b1d26')
+          .style('stroke-width', 0.3);
+        
+        // Horizontal bar  
+        markGroup.append('rect')
+          .attr('x', 7)
+          .attr('y', markHeight/2 - 1.5)
+          .attr('width', 10)
+          .attr('height', 3)
+          .style('fill', '#8b2635')
+          .style('stroke', '#6b1d26')
+          .style('stroke-width', 0.3);
+        
+        // Small decorative elements
+        [
+          { x: 8, y: 9 },
+          { x: markWidth-8, y: 9 },
+          { x: 8, y: markHeight-9 },
+          { x: markWidth-8, y: markHeight-9 }
+        ].forEach(pos => {
+          markGroup.append('circle')
+            .attr('cx', pos.x)
+            .attr('cy', pos.y)
+            .attr('r', 1)
+            .style('fill', '#6b1d26');
+        });
+        
+        // "N°" text to clearly identify as Noble Mark
+        markGroup.append('text')
+          .attr('x', markWidth/2)
+          .attr('y', markHeight - 4)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .style('font-size', '6px')
+          .style('font-weight', 'bold')
+          .style('fill', '#d4af37')
+          .text('N°54');
       }
       
       // Died Young indicator (bottom area)
