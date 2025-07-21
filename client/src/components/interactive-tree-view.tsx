@@ -221,21 +221,47 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Prominent Noble Mark for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const markWidth = 24;
-        const markHeight = 28;
-        const markX = nodeWidth/2 - markWidth - 8; // 8px padding from right edge
-        const markY = nodeHeight/2 - markHeight - 8; // 8px padding from bottom edge
+        const markSize = 20;
+        const markX = nodeWidth/2 - markSize - 6; // 6px padding from right edge  
+        const markY = nodeHeight/2 - markSize - 6; // 6px padding from bottom edge
         
-        // Add the actual Noble Mark image (resized and positioned)
-        node.append('image')
-          .attr('x', markX)
-          .attr('y', markY)
-          .attr('width', markWidth)
-          .attr('height', markHeight)
-          .attr('href', '/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg')
-          .style('opacity', 0.95)
-          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))')
-          .attr('preserveAspectRatio', 'xMidYMid meet');
+        // Create a gold shield with "N°54" as Noble Mark indicator
+        const markGroup = node.append('g')
+          .attr('transform', `translate(${markX}, ${markY})`);
+        
+        // Gold shield background
+        markGroup.append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', markSize)
+          .attr('height', markSize)
+          .attr('rx', 3)
+          .style('fill', '#d4af37')
+          .style('stroke', '#b8941f')
+          .style('stroke-width', 1.5)
+          .style('filter', 'drop-shadow(2px 2px 3px rgba(0,0,0,0.3))');
+        
+        // Noble number text
+        markGroup.append('text')
+          .attr('x', markSize/2)
+          .attr('y', markSize/2 - 2)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .style('font-size', '7px')
+          .style('font-weight', 'bold')
+          .style('fill', '#8b2635')
+          .text('N°');
+        
+        // Family number  
+        markGroup.append('text')
+          .attr('x', markSize/2)
+          .attr('y', markSize/2 + 4)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .style('font-size', '6px')
+          .style('font-weight', 'bold')
+          .style('fill', '#8b2635')
+          .text('54');
       }
       
       // Died Young indicator (bottom area)
