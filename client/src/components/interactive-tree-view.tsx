@@ -38,6 +38,25 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
     
     // Create hierarchy
     const hierarchy = d3.hierarchy(root);
+    
+    // Add gradient definitions for coat of arms background
+    const defs = svg.append('defs');
+    const gradient = defs.append('linearGradient')
+      .attr('id', 'amberGradient')
+      .attr('x1', '0%')
+      .attr('y1', '0%')
+      .attr('x2', '100%')
+      .attr('y2', '100%');
+    
+    gradient.append('stop')
+      .attr('offset', '0%')
+      .style('stop-color', '#fbbf24') // amber-400
+      .style('stop-opacity', 1);
+      
+    gradient.append('stop')
+      .attr('offset', '100%')
+      .style('stop-color', '#f59e0b') // amber-500
+      .style('stop-opacity', 1);
     const treeLayout = d3.tree<FamilyTreeNode>()
       .size([width - 100, height - 100])
       .nodeSize([nodeWidth + 60, levelHeight + 40]); // More space for org chart connectors
@@ -55,8 +74,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     svg.call(zoom);
 
-    // Define patterns and gradients for tree visualization
-    const defs = svg.append('defs');
+    // Define additional patterns for tree visualization if needed
 
     // Create main group
     const g = svg.append('g')
@@ -225,36 +243,30 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         const markX = nodeWidth/2 - iconSize - 6; // 6px padding from right edge  
         const markY = nodeHeight/2 - iconSize - 6; // 6px padding from bottom edge
         
-        // Use foreignObject to embed the existing FamilyCoatOfArms React component
-        const foreignObject = node.append('foreignObject')
-          .attr('x', markX)
-          .attr('y', markY)
-          .attr('width', iconSize)
-          .attr('height', iconSize)
+        // Create background container (amber gradient background)
+        const container = node.append('g')
+          .attr('transform', `translate(${markX}, ${markY})`)
           .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))');
         
-        // Create container div
-        const div = foreignObject.append('xhtml:div')
-          .style('width', `${iconSize}px`)
-          .style('height', `${iconSize}px`)
-          .style('display', 'flex')
-          .style('align-items', 'center')
-          .style('justify-content', 'center');
+        // Background rectangle with amber gradient simulation
+        container.append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', iconSize)
+          .attr('height', iconSize)
+          .attr('rx', 2)
+          .style('fill', 'url(#amberGradient)')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 1);
         
-        // Add the coat of arms - since we can't use React in D3, create the equivalent HTML
-        const coatContainer = div.append('xhtml:div')
-          .attr('class', 'w-6 h-6 flex items-center justify-center bg-gradient-to-br from-amber-200 to-amber-300 border border-amber-500 rounded-sm shadow-sm overflow-hidden relative')
-          .style('width', `${iconSize}px`)
-          .style('height', `${iconSize}px`);
-        
-        coatContainer.append('xhtml:img')
-          .attr('src', '/attached_assets/vapenskjöld_1752593493242.jpg')
-          .attr('alt', 'Gyllencreutz Family Coat of Arms')
-          .attr('class', 'w-full h-full object-cover object-center')
-          .style('width', '100%')
-          .style('height', '100%')
-          .style('object-fit', 'cover')
-          .style('object-position', 'center');
+        // Add the authentic coat of arms image
+        container.append('image')
+          .attr('x', 1)
+          .attr('y', 1)
+          .attr('width', iconSize - 2)
+          .attr('height', iconSize - 2)
+          .attr('href', '/attached_assets/vapenskjöld_1752593493242.jpg')
+          .attr('preserveAspectRatio', 'xMidYMid slice');
       }
       
       // Died Young indicator (bottom area)
