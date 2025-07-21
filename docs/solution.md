@@ -115,6 +115,8 @@ Claude is responsible for the backend architecture and data processing.
 - Admin data management: CRUD operations for family member records (NEW)
 - Data persistence and backup functionality for admin operations (NEW)
 - Server-side validation and data integrity enforcement (NEW)
+- GitHub integration: automatic commits for admin data changes (NEW)
+- Sync status monitoring and retry management for GitHub operations (NEW)
 
 ### Architecture Alignment
 - Follows `/docs/architecture-guidelines.md`
@@ -135,10 +137,19 @@ Claude is responsible for the backend architecture and data processing.
 - `DELETE /api/family-members/{id}` - Delete family member record
 - `POST /api/family-members/bulk-update` - Bulk update operations with backup
 
+#### GitHub Sync APIs (NEW)
+- `GET /api/github/status` - Get GitHub sync status and connection information
+- `POST /api/github/test` - Test GitHub API connection and authentication
+- `POST /api/github/retry` - Manually retry failed GitHub sync operations
+- `GET /api/github/logs` - Retrieve GitHub sync operation history
+
 ### Recent Updates
 - Implemented comprehensive admin interface with Azure Functions backend (January 21, 2025)
 - Added full CRUD operations for real-time family data management
 - Created data persistence layer with automatic backup functionality
+- Integrated GitHub automatic sync for admin data changes with commit filtering (January 21, 2025)
+- Added GitHub API integration, retry logic, and real-time sync status monitoring
+- Updated CI/CD workflow to skip deployments for [data-only] admin commits
 
 _Last updated: January 21, 2025_
 

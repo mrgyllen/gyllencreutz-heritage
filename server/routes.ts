@@ -1,6 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { storage, gitHubSync } from "./storage";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -119,6 +119,101 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error in bulk update:", error);
       res.status(500).json({ error: "Failed to perform bulk update" });
+    }
+  });
+
+  // GitHub sync status and control endpoints
+  app.get("/api/github/status", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.json({
+          available: false,
+          message: "GitHub sync not configured - missing environment variables"
+        });
+      }
+
+      const status = gitHubSync.getStatus();
+      const connectionTest = await gitHubSync.testConnection();
+      
+      res.json({
+        available: true,
+        connected: connectionTest.connected,
+        ...status,
+        connectionError: connectionTest.error
+      });
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to get GitHub sync status",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.post("/api/github/test", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.status(400).json({
+          success: false,
+          message: "GitHub sync not configured"
+        });
+      }
+
+      const result = await gitHubSync.testConnection();
+      
+      if (result.connected) {
+        res.json({
+          success: true,
+          message: "✅ GitHub connection successful"
+        });
+      } else {
+        res.status(400).json({
+          success: false,
+          message: `❌ GitHub connection failed: ${result.error}`,
+          error: result.error
+        });
+      }
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to test GitHub connection",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.post("/api/github/retry", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.status(400).json({
+          success: false,
+          message: "GitHub sync not configured"
+        });
+      }
+
+      const result = await gitHubSync.manualRetry();
+      res.json(result);
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: "Failed to retry GitHub sync",
+        error: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.get("/api/github/logs", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.json([]);
+      }
+
+      const logs = gitHubSync.getSyncLogs();
+      res.json(logs);
+    } catch (error) {
+      res.status(500).json({ 
+        error: "Failed to get GitHub sync logs",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
     }
   });
 

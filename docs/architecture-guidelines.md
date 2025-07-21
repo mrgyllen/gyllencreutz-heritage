@@ -50,28 +50,54 @@ Both backend implementations provide identical API responses and functionality, 
 - **Parameters**: `id` - family member identifier, request body with updated data
 - **Response**: Success confirmation with updated member data
 - **Usage**: Admin interface data editing functionality
-- **Implementation**: Full validation, data persistence, and backup support
+- **Implementation**: Full validation, data persistence, backup support, and GitHub sync
 
 **`POST /api/family-members`**
 - **Purpose**: Create new family member record
 - **Request Body**: Family member data with required fields (externalId, name, biologicalSex)
 - **Response**: Success confirmation with created member data including auto-generated ID
 - **Usage**: Admin interface for adding new family members
-- **Implementation**: Duplicate detection and field validation included
+- **Implementation**: Duplicate detection, field validation, and GitHub sync included
 
 **`DELETE /api/family-members/{id}`**
 - **Purpose**: Delete family member record
 - **Parameters**: `id` - family member identifier (externalId)
 - **Response**: Success confirmation with deleted member data
 - **Usage**: Admin interface for removing family members
-- **Implementation**: Safe deletion with data persistence
+- **Implementation**: Safe deletion with data persistence and GitHub sync
 
 **`POST /api/family-members/bulk-update`**
 - **Purpose**: Bulk update multiple family members or entire dataset
 - **Request Body**: Array of family member objects
 - **Response**: Success confirmation with update/create counts and backup information
 - **Usage**: Admin interface for mass data operations and imports
-- **Implementation**: Automatic backup creation before operations
+- **Implementation**: Automatic backup creation and GitHub sync for bulk operations
+
+#### GitHub Sync API Endpoints (NEW)
+
+**`GET /api/github/status`**
+- **Purpose**: Get current GitHub sync configuration and status
+- **Response**: Sync availability, connection status, last sync time, pending operations, and error information
+- **Usage**: Admin interface sync status monitoring widget
+- **Implementation**: Real-time status with retry management and connection testing
+
+**`POST /api/github/test`**
+- **Purpose**: Test GitHub API connection and authentication
+- **Response**: Success/failure status with connection error details
+- **Usage**: Admin interface connection verification button
+- **Implementation**: Direct GitHub API authentication test with detailed error reporting
+
+**`POST /api/github/retry`**
+- **Purpose**: Manually retry failed GitHub sync operations
+- **Response**: Retry attempt status and results
+- **Usage**: Admin interface manual retry button for failed syncs
+- **Implementation**: Exponential backoff retry with operation queue management
+
+**`GET /api/github/logs`**
+- **Purpose**: Retrieve GitHub sync operation logs and history
+- **Response**: Array of sync operation logs with timestamps and results
+- **Usage**: Admin interface sync history and debugging
+- **Implementation**: In-memory log retention with operation details
 
 #### Development/Debugging Endpoints
 
@@ -123,6 +149,16 @@ All endpoints return JSON responses with consistent structure:
 - **Data Validation**: Server-side validation for all data modifications
 - **Auto-incrementing IDs**: Automatic ID generation for new family members
 - **Relationship Integrity**: Validation of father references and genealogical connections
+- **GitHub Integration**: Automatic commits to repository for all data changes with [data-only] prefix
+
+### GitHub Sync System (NEW)
+- **Automatic Commits**: All admin data changes automatically commit to GitHub repository
+- **GitHub API Integration**: Uses Fine-Grained Personal Access Tokens for secure repository access
+- **Commit Message Format**: `[data-only] admin: <operation description>` to identify admin changes
+- **Deployment Filtering**: GitHub Actions skip site deployments for [data-only] commits
+- **Retry Logic**: Exponential backoff retry system (5min → hourly) for failed sync operations
+- **Status Monitoring**: Real-time sync status with admin interface widget
+- **Dual Environment Support**: Available in both Express (development) and Azure Functions (production)
 
 ### Data Structure
 The JSON data contains flat records that are processed into hierarchical family relationships:
@@ -134,7 +170,7 @@ The JSON data contains flat records that are processed into hierarchical family 
 - **Monarch Data**: String arrays parsed from Python-style format to JavaScript arrays
 
 ### Storage Interface
-Both backend implementations use a common storage interface with full CRUD capabilities:
+Both backend implementations use a common storage interface with full CRUD capabilities and GitHub sync:
 ```javascript
 class FunctionStorage {
   // Read Operations
@@ -143,14 +179,23 @@ class FunctionStorage {
   async getFamilyMember(id)           // Gets specific member by externalId
   
   // Write Operations (IMPLEMENTED)
-  async createFamilyMember(data)      // Creates new member with auto-generated ID
-  async updateFamilyMember(id, data)  // Updates existing member by externalId
-  async deleteFamilyMember(id)        // Removes member by externalId
-  async bulkUpdateFamilyMembers(data) // Mass update/create operations
+  async createFamilyMember(data)      // Creates new member with auto-generated ID + GitHub sync
+  async updateFamilyMember(id, data)  // Updates existing member by externalId + GitHub sync
+  async deleteFamilyMember(id)        // Removes member by externalId + GitHub sync
+  async bulkUpdateFamilyMembers(data) // Mass update/create operations + GitHub sync
   
   // Data Persistence (IMPLEMENTED)
   async persistToFile()               // Writes changes to JSON file
   async createBackup()                // Creates timestamped backup before bulk ops
+}
+
+class GitHubSync {
+  // GitHub Integration
+  async syncFamilyData(operation, memberData, familyData) // Commits changes to GitHub
+  async testConnection()              // Tests GitHub API authentication
+  async manualRetry()                 // Manually retry failed operations
+  getStatus()                         // Returns current sync status and metrics
+  getSyncLogs()                       // Returns sync operation history
 }
 ```
 
@@ -199,6 +244,14 @@ class FunctionStorage {
 - Created admin interface at `/admin` route with full data management capabilities
 - Added automatic backup system for bulk operations
 - Enhanced API endpoints with full family member lifecycle management
+
+### GitHub Sync Integration (January 21, 2025)
+- Implemented automatic GitHub commits for all admin data changes
+- Added GitHub API integration with Fine-Grained Personal Access Token authentication
+- Created sync status monitoring with real-time admin interface widget
+- Added retry logic with exponential backoff for failed sync operations
+- Updated GitHub Actions workflow to skip deployments for [data-only] commits
+- Implemented dual backend support (Express + Azure Functions) for GitHub sync
 
 _Last updated: January 21, 2025_
 | **Environment** | Replit workspace | Azure cloud infrastructure |

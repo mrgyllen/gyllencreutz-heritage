@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Edit, Trash2, Save, X, Download, Upload } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Github, CheckCircle, AlertCircle, RotateCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -35,6 +35,56 @@ export function Admin() {
 
   const { data: familyMembers = [], isLoading } = useQuery<FamilyMember[]>({
     queryKey: ['/api/family-members'],
+  });
+
+  // GitHub sync status query
+  const { data: githubStatus } = useQuery({
+    queryKey: ['/api/github/status'],
+    queryFn: async () => {
+      const response = await fetch('/api/github/status');
+      return response.json();
+    },
+    refetchInterval: 10000, // Refresh every 10 seconds
+  });
+
+  // GitHub test connection mutation
+  const testGitHubMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/github/test', { method: 'POST' });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message);
+      return result;
+    },
+    onSuccess: (data) => {
+      toast({ description: data.message });
+      queryClient.invalidateQueries({ queryKey: ['/api/github/status'] });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        description: error.message || 'GitHub connection test failed' 
+      });
+    },
+  });
+
+  // Manual retry mutation
+  const retryGitHubMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/github/retry', { method: 'POST' });
+      const result = await response.json();
+      if (!result.success) throw new Error(result.message);
+      return result;
+    },
+    onSuccess: (data) => {
+      toast({ description: data.message });
+      queryClient.invalidateQueries({ queryKey: ['/api/github/status'] });
+    },
+    onError: (error: any) => {
+      toast({ 
+        variant: "destructive", 
+        description: error.message || 'GitHub retry failed' 
+      });
+    },
   });
 
   const updateMemberMutation = useMutation({
@@ -146,6 +196,98 @@ export function Admin() {
         <h1 className="text-3xl font-bold text-primary mb-2">Family Data Administration</h1>
         <p className="text-muted-foreground">Manage and edit Gyllencreutz family member information</p>
       </div>
+
+      {/* GitHub Sync Status Widget */}
+      {githubStatus && (
+        <Card className="mb-6">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Github className="w-5 h-5" />
+              GitHub Sync Status
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                {githubStatus.available ? (
+                  <>
+                    <div className="flex items-center gap-2">
+                      {githubStatus.connected ? (
+                        <>
+                          <CheckCircle className="w-4 h-4 text-green-500" />
+                          <span className="text-sm text-green-700">Connected</span>
+                        </>
+                      ) : (
+                        <>
+                          <AlertCircle className="w-4 h-4 text-red-500" />
+                          <span className="text-sm text-red-700">
+                            {githubStatus.connectionError || 'Connection failed'}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {githubStatus.lastSync && (
+                      <span className="text-xs text-muted-foreground">
+                        Last sync: {new Date(githubStatus.lastSync).toLocaleString()}
+                      </span>
+                    )}
+                    {githubStatus.pendingOperations > 0 && (
+                      <Badge variant="secondary">
+                        {githubStatus.pendingOperations} pending
+                      </Badge>
+                    )}
+                    {githubStatus.isRetrying && (
+                      <Badge variant="outline">
+                        <RotateCcw className="w-3 h-3 mr-1 animate-spin" />
+                        Retrying...
+                      </Badge>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 text-yellow-500" />
+                    <span className="text-sm text-yellow-700">
+                      {githubStatus.message || 'GitHub sync not configured'}
+                    </span>
+                  </div>
+                )}
+              </div>
+              
+              {githubStatus.available && (
+                <div className="flex gap-2">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => testGitHubMutation.mutate()}
+                    disabled={testGitHubMutation.isPending}
+                  >
+                    {testGitHubMutation.isPending ? 'Testing...' : 'Test'}
+                  </Button>
+                  {githubStatus.pendingOperations > 0 && (
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => retryGitHubMutation.mutate()}
+                      disabled={retryGitHubMutation.isPending}
+                    >
+                      {retryGitHubMutation.isPending ? 'Retrying...' : 'Retry'}
+                    </Button>
+                  )}
+                </div>
+              )}
+            </div>
+            
+            {/* Error Display */}
+            {githubStatus.error && (
+              <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
+                <div className="text-sm text-red-800">
+                  <strong>Sync Error:</strong> {githubStatus.error}
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      )}
 
       {/* Actions Bar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">

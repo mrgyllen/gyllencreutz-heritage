@@ -1,4 +1,20 @@
 import { type User, type InsertUser, type FamilyMember, type InsertFamilyMember } from "@shared/schema";
+import { GitHubSync } from "./github-sync";
+
+// GitHub sync instance (will be initialized if environment variables are present)
+let gitHubSync: GitHubSync | null = null;
+
+// Initialize GitHub sync if credentials are available
+if (process.env.GITHUB_TOKEN && process.env.GITHUB_REPO_OWNER && process.env.GITHUB_REPO_NAME) {
+  gitHubSync = new GitHubSync({
+    token: process.env.GITHUB_TOKEN,
+    owner: process.env.GITHUB_REPO_OWNER,
+    repo: process.env.GITHUB_REPO_NAME
+  });
+  console.log('✅ GitHub sync initialized');
+} else {
+  console.log('⚠️ GitHub sync disabled - missing environment variables');
+}
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -542,6 +558,22 @@ export class MemStorage implements IStorage {
       monarchDuringLife: member.monarchDuringLife || []
     };
     this.familyMembers.set(member.externalId, familyMember);
+    
+    // Persist to file system
+    await this.persistToFile();
+    
+    // Sync to GitHub if available
+    if (gitHubSync) {
+      try {
+        const allMembers = Array.from(this.familyMembers.values());
+        await gitHubSync.syncFamilyData('create', familyMember, allMembers);
+        console.log('✅ New member synced to GitHub:', familyMember.name);
+      } catch (error) {
+        console.error('❌ GitHub sync failed for create:', error);
+        // Don't throw error - local create succeeded
+      }
+    }
+    
     return familyMember;
   }
 
@@ -571,6 +603,18 @@ export class MemStorage implements IStorage {
     // Persist changes to file system
     await this.persistToFile();
     
+    // Sync to GitHub if available
+    if (gitHubSync) {
+      try {
+        const allMembers = Array.from(this.familyMembers.values());
+        await gitHubSync.syncFamilyData('update', updatedMember, allMembers);
+        console.log('✅ Updated member synced to GitHub:', updatedMember.name);
+      } catch (error) {
+        console.error('❌ GitHub sync failed for update:', error);
+        // Don't throw error - local save succeeded
+      }
+    }
+    
     return updatedMember;
   }
 
@@ -584,6 +628,18 @@ export class MemStorage implements IStorage {
     
     // Persist changes to file system
     await this.persistToFile();
+    
+    // Sync to GitHub if available
+    if (gitHubSync) {
+      try {
+        const allMembers = Array.from(this.familyMembers.values());
+        await gitHubSync.syncFamilyData('delete', member, allMembers);
+        console.log('✅ Deleted member synced to GitHub:', member.name);
+      } catch (error) {
+        console.error('❌ GitHub sync failed for delete:', error);
+        // Don't throw error - local delete succeeded
+      }
+    }
     
     return member;
   }
@@ -621,6 +677,18 @@ export class MemStorage implements IStorage {
     
     // Persist changes to file system
     await this.persistToFile();
+    
+    // Sync to GitHub if available
+    if (gitHubSync) {
+      try {
+        const allMembers = Array.from(this.familyMembers.values());
+        await gitHubSync.syncFamilyData('bulk', { count: updated + created }, allMembers);
+        console.log('✅ Bulk update synced to GitHub:', `${updated} updated, ${created} created`);
+      } catch (error) {
+        console.error('❌ GitHub sync failed for bulk update:', error);
+        // Don't throw error - local bulk update succeeded
+      }
+    }
     
     return { updated, created };
   }
@@ -702,3 +770,6 @@ export class MemStorage implements IStorage {
 }
 
 export const storage = new MemStorage();
+
+// Export GitHub sync instance for use in routes
+export { gitHubSync };

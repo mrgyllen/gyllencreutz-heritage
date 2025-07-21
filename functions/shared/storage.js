@@ -4,6 +4,98 @@
 const fs = require('fs');
 const path = require('path');
 
+// GitHub API integration for Azure Functions
+class GitHubSyncAzure {
+    constructor() {
+        this.token = process.env.GITHUB_TOKEN;
+        this.owner = process.env.GITHUB_REPO_OWNER;
+        this.repo = process.env.GITHUB_REPO_NAME;
+        this.enabled = !!(this.token && this.owner && this.repo);
+        
+        if (this.enabled) {
+            console.log('✅ Azure Functions GitHub sync initialized');
+        } else {
+            console.log('⚠️ Azure Functions GitHub sync disabled - missing environment variables');
+        }
+    }
+
+    async syncFamilyData(operation, memberData, familyData) {
+        if (!this.enabled) {
+            console.log('⚠️ GitHub sync skipped - not configured');
+            return { success: true, message: 'Sync disabled' };
+        }
+
+        try {
+            // Import fetch dynamically (Node.js 18+)
+            const fetch = (await import('node-fetch')).default;
+
+            // Get current file SHA
+            const fileResponse = await fetch(
+                `https://api.github.com/repos/${this.owner}/${this.repo}/contents/functions/data/family-members.json`,
+                {
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'User-Agent': 'Gyllencreutz-Admin/1.0'
+                    }
+                }
+            );
+
+            const fileData = await fileResponse.json();
+            
+            // Create commit message
+            const commitMessage = `[data-only] admin: ${this.generateCommitMessage(operation, memberData)}`;
+            
+            // Update file content
+            const updateResponse = await fetch(
+                `https://api.github.com/repos/${this.owner}/${this.repo}/contents/functions/data/family-members.json`,
+                {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${this.token}`,
+                        'User-Agent': 'Gyllencreutz-Admin/1.0',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: commitMessage,
+                        content: Buffer.from(JSON.stringify(familyData, null, 2)).toString('base64'),
+                        sha: fileData.sha
+                    })
+                }
+            );
+
+            if (updateResponse.ok) {
+                console.log('✅ Azure Functions: Synced to GitHub successfully');
+                return { success: true, message: 'Synced to GitHub' };
+            } else {
+                const error = await updateResponse.text();
+                throw new Error(`GitHub API error: ${error}`);
+            }
+
+        } catch (error) {
+            console.error('❌ Azure Functions GitHub sync failed:', error);
+            return { success: false, error: error.message };
+        }
+    }
+
+    generateCommitMessage(operation, data) {
+        switch (operation) {
+            case 'create':
+                return `add family member '${data?.name || 'unknown'}' (${data?.externalId || 'no-id'})`;
+            case 'update':
+                return `update ${data?.name || 'family member'} (${data?.externalId || 'no-id'})`;
+            case 'delete':
+                return `delete family member '${data?.name || 'unknown'}' (${data?.externalId || 'no-id'})`;
+            case 'bulk':
+                return `bulk update ${data?.count || 'multiple'} family members`;
+            default:
+                return `${operation} family data`;
+        }
+    }
+}
+
+// Initialize GitHub sync for Azure Functions
+const gitHubSync = new GitHubSyncAzure();
+
 class FunctionStorage {
     constructor() {
         this.familyMembers = [];
@@ -114,6 +206,15 @@ class FunctionStorage {
         
         this.familyMembers.push(newMember);
         await this.persistToFile();
+        
+        // Sync to GitHub if available
+        try {
+            await gitHubSync.syncFamilyData('create', newMember, this.familyMembers);
+        } catch (error) {
+            console.error('❌ GitHub sync failed for create:', error);
+            // Don't throw error - local create succeeded
+        }
+        
         return newMember;
     }
 
@@ -133,6 +234,15 @@ class FunctionStorage {
         
         this.familyMembers[memberIndex] = updatedMember;
         await this.persistToFile();
+        
+        // Sync to GitHub if available
+        try {
+            await gitHubSync.syncFamilyData('update', updatedMember, this.familyMembers);
+        } catch (error) {
+            console.error('❌ GitHub sync failed for update:', error);
+            // Don't throw error - local update succeeded
+        }
+        
         return updatedMember;
     }
 
@@ -145,6 +255,15 @@ class FunctionStorage {
         const deletedMember = this.familyMembers[memberIndex];
         this.familyMembers.splice(memberIndex, 1);
         await this.persistToFile();
+        
+        // Sync to GitHub if available
+        try {
+            await gitHubSync.syncFamilyData('delete', deletedMember, this.familyMembers);
+        } catch (error) {
+            console.error('❌ GitHub sync failed for delete:', error);
+            // Don't throw error - local delete succeeded
+        }
+        
         return deletedMember;
     }
 
@@ -193,6 +312,15 @@ class FunctionStorage {
         }
         
         await this.persistToFile();
+        
+        // Sync to GitHub if available
+        try {
+            await gitHubSync.syncFamilyData('bulk', { count: updated + created }, this.familyMembers);
+        } catch (error) {
+            console.error('❌ GitHub sync failed for bulk update:', error);
+            // Don't throw error - local bulk update succeeded
+        }
+        
         return { updated, created };
     }
 
