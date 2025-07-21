@@ -21,11 +21,12 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - **Data Visualization**: D3.js for interactive family tree rendering
 
 ### Backend Architecture
-- **Runtime**: Node.js with Express.js server
+- **Runtime**: Node.js with Express.js server + Azure Functions for admin operations
 - **Language**: TypeScript with ES modules
 - **API Design**: RESTful API with JSON responses
-- **Data Layer**: In-memory storage (MemStorage) with interfaces for future database integration
+- **Data Layer**: In-memory storage (MemStorage) for read operations, Azure Functions with file-based storage for admin CRUD operations
 - **Session Management**: Express sessions (prepared for PostgreSQL session store)
+- **Admin Backend**: Azure Functions (edit-family-member, add-family-member, bulk-update-family) for data persistence
 
 ### Development Setup
 - **Development Server**: Vite dev server with Express middleware in development
@@ -48,6 +49,15 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Type-safe data handling with Zod validation schemas
 - Updated to use cleaned final data files with corrected structure and "BiologicalSex" field naming
 
+### Admin Interface (NEW)
+- Comprehensive admin panel at `/admin` route for family data management
+- Real-time search and filtering across all 148 family members
+- Full CRUD operations: Create, Read, Update, Delete family member records
+- Statistics dashboard showing member counts, succession sons, and search metrics
+- Form validation and user-friendly edit dialogs for all data fields
+- Data export functionality for backup and external processing
+- Azure Functions backend integration for persistent data storage
+
 ### User Interface
 - Single-page application with smooth scrolling navigation
 - Responsive design optimized for desktop and mobile
@@ -57,11 +67,24 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 
 ## Data Flow
 
+### Public Website Flow
 1. **Initial Load**: Client fetches family member data from `/api/family-members`
 2. **Tree Construction**: Frontend converts flat data into hierarchical tree structure
 3. **Visualization**: D3.js renders interactive family tree with SVG elements
 4. **Search**: Real-time search queries sent to `/api/family-members/search/:query`
 5. **User Interaction**: Click/hover events display detailed member information
+
+### Admin Interface Flow (NEW)
+1. **Admin Access**: Navigate to `/admin` via settings icon in navigation
+2. **Data Loading**: Admin panel fetches family data for management interface
+3. **Search & Filter**: Real-time filtering across all family member fields
+4. **CRUD Operations**: 
+   - **Create**: `POST /api/family-members` via Azure Function
+   - **Read**: `GET /api/family-members/{id}` for individual member details
+   - **Update**: `PUT /api/family-members/{id}` with form validation
+   - **Delete**: `DELETE /api/family-members/{id}` with confirmation
+5. **Data Persistence**: Azure Functions write changes to family-members.json
+6. **Cache Invalidation**: React Query updates UI automatically after mutations
 
 ## External Dependencies
 
@@ -112,6 +135,16 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - Performance: Assets have hashed filenames for optimal caching and cache invalidation
 
 ## Recent Changes (January 2025)
+
+### Admin Interface Implementation (January 21, 2025)
+- feat(Admin): add comprehensive admin interface with full CRUD operations for family data management
+- feat(Backend): create Azure Functions backend (edit-family-member, add-family-member, bulk-update-family) for data persistence
+- feat(UI): implement admin panel with search functionality, statistics dashboard, and member filtering
+- feat(Forms): add user-friendly edit dialogs with form validation for all family member fields
+- feat(Navigation): integrate admin access through navigation bar with settings icon
+- feat(Data): enable real-time editing of family member information including names, dates, relationships, and succession status
+- feat(Export): add data export functionality for backup and data management purposes
+- fix(API): configure Azure Functions with proper data file paths for production deployment compatibility
 
 ### Generation Visualization System (January 20, 2025)
 - feat(Replit): add comprehensive generation visualization with timeline cards and member filtering

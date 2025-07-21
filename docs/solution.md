@@ -70,8 +70,13 @@ Replit is responsible for all frontend development and visual presentation.
 - Bilingual language switching interface
 - Historical portrait gallery implementation
 - Search functionality UI components
+- Admin interface design and user experience (NEW)
+- Form validation and modal dialog components for data editing
+- Statistics dashboard with real-time metrics display
 
 ### Recent Updates
+- Implemented comprehensive admin interface for family data management (January 21, 2025)
+- Added real-time search, CRUD operations, and statistics dashboard to admin panel
 - Implemented authentic Gyllencreutz coat of arms for succession son indicators (January 21, 2025)
 - Created prominent heraldic shield design based on actual family coat of arms
 - Positioned larger succession icons in top-right corner of tree nodes without circular borders
@@ -85,9 +90,6 @@ Replit is responsible for all frontend development and visual presentation.
 - All changes to visuals, styling, or component structure must reflect those guidelines
 
 _Last updated: January 21, 2025_
-- All changes to visuals, styling, or component structure must reflect those guidelines
-
-_Last updated: 2025-01-19_
 
 ---
 
@@ -103,13 +105,16 @@ Claude is responsible for the backend architecture and data processing.
 - Drizzle ORM configured for future PostgreSQL integration
 
 ### Responsibilities
-- Define and maintain API endpoints (`/api/family-members`, `/api/family-members/search/{query}`)
+- Define and maintain API endpoints (public and admin)
 - Load and parse family tree JSON data from `functions/data/family-members.json`
 - Handle genealogical data retrieval, filtering, and search functionality
 - Convert flat family data into hierarchical tree structures
 - Support frontend requirements for family tree visualization
 - Maintain dual backend systems (Express for development, Functions for production)
 - Ensure consistent API responses across both environments
+- Admin data management: CRUD operations for family member records (NEW)
+- Data persistence and backup functionality for admin operations (NEW)
+- Server-side validation and data integrity enforcement (NEW)
 
 ### Architecture Alignment
 - Follows `/docs/architecture-guidelines.md`
@@ -118,11 +123,24 @@ Claude is responsible for the backend architecture and data processing.
 - All changes to logic, data structure, or backend architecture must update that file accordingly
 
 ### Current API Endpoints
+#### Public APIs
 - `GET /api/family-members` - Returns all family members with complete genealogical data
 - `GET /api/family-members/search/{query}` - Searches family members by name and notes
 - `GET /api/debug-deployment` - Deployment debugging and file system verification
 
-_Last updated: 2025-01-19_
+#### Admin APIs (NEW)
+- `GET /api/family-members/{id}` - Get specific family member by ID
+- `PUT /api/family-members/{id}` - Update existing family member record
+- `POST /api/family-members` - Create new family member record
+- `DELETE /api/family-members/{id}` - Delete family member record
+- `POST /api/family-members/bulk-update` - Bulk update operations with backup
+
+### Recent Updates
+- Implemented comprehensive admin interface with Azure Functions backend (January 21, 2025)
+- Added full CRUD operations for real-time family data management
+- Created data persistence layer with automatic backup functionality
+
+_Last updated: January 21, 2025_
 
 ---
 

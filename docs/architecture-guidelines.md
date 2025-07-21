@@ -23,6 +23,8 @@ Both backend implementations provide identical API responses and functionality, 
 
 ### Current Endpoints
 
+#### Public API Endpoints
+
 **`GET /api/family-members`**
 - **Purpose**: Retrieve all family members with complete genealogical data
 - **Response**: Array of family member objects with relationships, dates, and metadata
@@ -33,6 +35,40 @@ Both backend implementations provide identical API responses and functionality, 
 - **Parameters**: `query` - search term (minimum 2 characters)
 - **Response**: Filtered array of family members matching the search criteria
 - **Usage**: Real-time search functionality for finding specific family members
+
+#### Admin API Endpoints (NEW)
+
+**`GET /api/family-members/{id}`**
+- **Purpose**: Retrieve specific family member by ID
+- **Parameters**: `id` - unique family member identifier
+- **Response**: Single family member object with complete details
+- **Usage**: Admin interface member detail viewing and editing
+
+**`PUT /api/family-members/{id}`**
+- **Purpose**: Update existing family member record
+- **Parameters**: `id` - family member identifier, request body with updated data
+- **Response**: Success confirmation with updated member data
+- **Usage**: Admin interface data editing functionality
+
+**`POST /api/family-members`**
+- **Purpose**: Create new family member record
+- **Request Body**: Family member data without ID (auto-generated)
+- **Response**: Success confirmation with created member data including new ID
+- **Usage**: Admin interface for adding new family members
+
+**`DELETE /api/family-members/{id}`**
+- **Purpose**: Delete family member record
+- **Parameters**: `id` - family member identifier
+- **Response**: Success confirmation with deleted member data
+- **Usage**: Admin interface for removing family members
+
+**`POST /api/family-members/bulk-update`**
+- **Purpose**: Bulk update multiple family members or entire dataset
+- **Request Body**: Array of family member objects or complete dataset
+- **Response**: Success confirmation with update count and backup information
+- **Usage**: Admin interface for mass data operations and imports
+
+#### Development/Debugging Endpoints
 
 **`GET /api/debug-deployment`** *(Development/Debugging)*
 - **Purpose**: Verify deployment status and file system accessibility
@@ -69,10 +105,19 @@ All endpoints return JSON responses with consistent structure:
 
 ### Data Loading Strategy
 - **Development**: Express server loads from `attached_assets/` directory
-- **Production**: Azure Functions load from multiple possible paths for robust deployment
-- **Fallback Paths**: `functions/data/`, `data/`, and relative paths are all checked
-- **Initialization**: Data loaded once at startup and cached in memory
+- **Production**: Azure Functions load from `functions/data/` directory
+- **Admin Operations**: Azure Functions write directly to `functions/data/family-members.json`
+- **Initialization**: Data loaded once at startup and cached in memory for read operations
 - **Processing**: Raw JSON transformed into structured family member objects
+- **Backup System**: Automatic timestamped backups created before bulk operations
+
+### Data Persistence (NEW)
+- **Admin Interface**: Real-time data editing through Azure Functions
+- **File-based Storage**: Direct JSON file manipulation for data persistence
+- **CRUD Operations**: Full Create, Read, Update, Delete functionality
+- **Data Validation**: Server-side validation for all data modifications
+- **Auto-incrementing IDs**: Automatic ID generation for new family members
+- **Relationship Integrity**: Validation of father references and genealogical connections
 
 ### Data Structure
 The JSON data contains flat records that are processed into hierarchical family relationships:
@@ -87,8 +132,13 @@ The JSON data contains flat records that are processed into hierarchical family 
 Both backend implementations use a common storage interface:
 ```javascript
 class FunctionStorage {
-  async getAllFamilyMembers()     // Returns all family members
-  async searchFamilyMembers(query) // Filters members by search term
+  async getAllFamilyMembers()         // Returns all family members
+  async searchFamilyMembers(query)    // Filters members by search term
+  async getFamilyMember(id)           // Gets specific member by ID (NEW)
+  async updateFamilyMember(id, data)  // Updates existing member (NEW)
+  async addFamilyMember(data)         // Creates new member (NEW)
+  async deleteFamilyMember(id)        // Removes member (NEW)
+  async bulkUpdateFamilyMembers(data) // Mass update operations (NEW)
 }
 ```
 
@@ -118,6 +168,27 @@ class FunctionStorage {
 | **Port** | 5000 (Replit) | Managed by Azure |
 | **Scaling** | Single instance | Auto-scaling |
 | **Deployment** | Instant restart | GitHub Actions build |
+| **Data Write** | Read-only operations | Full CRUD via admin interface |
+
+### Security Considerations (Future Implementation)
+- **Authentication**: Azure Static Web Apps built-in authentication (GitHub, Azure AD)
+- **Authorization**: Role-based access control for admin operations
+- **Data Validation**: Server-side validation for all data modifications
+- **Audit Trail**: Logging and backup system for all data changes
+- **Rate Limiting**: Protection against excessive API usage
+
+---
+
+## 📝 Recent Updates
+
+### Admin Interface Implementation (January 21, 2025)
+- Added comprehensive CRUD operations for family data management
+- Implemented Azure Functions backend for data persistence
+- Created admin interface at `/admin` route with full data management capabilities
+- Added automatic backup system for bulk operations
+- Enhanced API endpoints with full family member lifecycle management
+
+_Last updated: January 21, 2025_
 | **Environment** | Replit workspace | Azure cloud infrastructure |
 
 ### File Deployment Considerations
