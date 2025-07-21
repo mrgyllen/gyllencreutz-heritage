@@ -243,12 +243,12 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         const markX = nodeWidth/2 - iconSize - 6; // 6px padding from right edge  
         const markY = nodeHeight/2 - iconSize - 6; // 6px padding from bottom edge
         
-        // Create background container (amber gradient background)
+        // Create authentic Gyllencreutz coat of arms container
         const container = node.append('g')
           .attr('transform', `translate(${markX}, ${markY})`)
           .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))');
         
-        // Background rectangle with amber gradient simulation
+        // Amber gradient background border
         container.append('rect')
           .attr('x', 0)
           .attr('y', 0)
@@ -259,14 +259,65 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
           .style('stroke', '#d97706')
           .style('stroke-width', 1);
         
-        // Add the authentic coat of arms image
-        container.append('image')
-          .attr('x', 1)
-          .attr('y', 1)
-          .attr('width', iconSize - 2)
-          .attr('height', iconSize - 2)
-          .attr('href', '/attached_assets/vapenskjöld_1752593493242.jpg')
-          .attr('preserveAspectRatio', 'xMidYMid slice');
+        // Inner silver field (shield)
+        const shieldPath = `
+          M ${iconSize/2} 2
+          L 3 4
+          L 3 ${iconSize-5}
+          Q ${iconSize/2} ${iconSize-1} ${iconSize-3} ${iconSize-5}
+          L ${iconSize-3} 4
+          Z
+        `;
+        
+        container.append('path')
+          .attr('d', shieldPath)
+          .style('fill', '#ffffff')
+          .style('stroke', '#e5e7eb')
+          .style('stroke-width', 0.5);
+        
+        // Three red crosses pattée (authentic Gyllencreutz pattern)
+        const crossPositions = [
+          { x: iconSize/2 - 4, y: 6 },    // Top left
+          { x: iconSize/2 + 4, y: 6 },    // Top right  
+          { x: iconSize/2, y: 13 }        // Bottom center
+        ];
+        
+        crossPositions.forEach(pos => {
+          const crossGroup = container.append('g')
+            .attr('transform', `translate(${pos.x}, ${pos.y})`);
+          
+          // Create authentic cross pattée with flared ends
+          const crossPath = `
+            M 0 -2
+            L -0.6 -1.4
+            L -0.3 -1.4
+            L -0.3 1.4
+            L -0.6 1.4
+            L 0 2
+            L 0.6 1.4
+            L 0.3 1.4
+            L 0.3 -1.4
+            L 0.6 -1.4
+            Z
+            M -2 0
+            L -1.4 -0.6
+            L -1.4 -0.3
+            L 1.4 -0.3
+            L 1.4 -0.6
+            L 2 0
+            L 1.4 0.6
+            L 1.4 0.3
+            L -1.4 0.3
+            L -1.4 0.6
+            Z
+          `;
+          
+          crossGroup.append('path')
+            .attr('d', crossPath)
+            .style('fill', '#dc2626')
+            .style('stroke', '#b91c1c')
+            .style('stroke-width', 0.1);
+        });
       }
       
       // Died Young indicator (bottom area)
