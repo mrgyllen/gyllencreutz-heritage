@@ -71,10 +71,20 @@ Replit is responsible for all frontend development and visual presentation.
 - Historical portrait gallery implementation
 - Search functionality UI components
 
+### Recent Updates
+- Implemented authentic Gyllencreutz coat of arms for succession son indicators (January 21, 2025)
+- Created prominent heraldic shield design based on actual family coat of arms
+- Positioned larger succession icons in top-right corner of tree nodes without circular borders
+- Enhanced visual prominence with gold heraldic gradients and red corner decorations
+- Updated legend to match authentic heraldic shield design
+
 ### Design Alignment
 - Follows `/docs/design-guidelines.md`
 - Maintains authentic 1500-1700s Swedish nobility aesthetic
 - Uses subtle, muted color palette that supports content
+- All changes to visuals, styling, or component structure must reflect those guidelines
+
+_Last updated: January 21, 2025_
 - All changes to visuals, styling, or component structure must reflect those guidelines
 
 _Last updated: 2025-01-19_
