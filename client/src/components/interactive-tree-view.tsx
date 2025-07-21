@@ -263,7 +263,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
           .style('stroke', '#b8941f')
           .style('stroke-width', 0.5);
         
-        // Inner shield field (silver/light)
+        // Inner shield field (silver/white)
         const innerShieldPath = `
           M ${shieldWidth/2} 3.5
           L 4.5 6.5
@@ -275,97 +275,52 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         
         markGroup.append('path')
           .attr('d', innerShieldPath)
-          .style('fill', '#f5f5f0')
-          .style('stroke', '#e5e5e0')
-          .style('stroke-width', 0.3);
-        
-        // Authentic Gyllencreutz cross pattée (flared cross) - centered on shield
-        const crossGroup = markGroup.append('g')
-          .attr('transform', `translate(${shieldWidth/2}, ${shieldHeight/2 - 1})`);
-        
-        // Vertical arm of cross pattée
-        const verticalPath = `
-          M -1.5 -6
-          L -2.5 -5
-          L -1 -5
-          L -1 5
-          L -2.5 5
-          L -1.5 6
-          L 1.5 6
-          L 2.5 5
-          L 1 5
-          L 1 -5
-          L 2.5 -5
-          L 1.5 -6
-          Z
-        `;
-        
-        crossGroup.append('path')
-          .attr('d', verticalPath)
-          .style('fill', '#dc2626')
-          .style('stroke', '#b91c1c')
+          .style('fill', '#ffffff')
+          .style('stroke', '#f0f0f0')
           .style('stroke-width', 0.2);
         
-        // Horizontal arm of cross pattée
-        const horizontalPath = `
-          M -6 -1.5
-          L -5 -2.5
-          L -5 -1
-          L 5 -1
-          L 5 -2.5
-          L 6 -1.5
-          L 6 1.5
-          L 5 2.5
-          L 5 1
-          L -5 1
-          L -5 2.5
-          L -6 1.5
-          Z
-        `;
+        // Three crosses pattée arrangement like authentic Gyllencreutz arms
+        const crossPositions = [
+          { x: shieldWidth/2 - 3, y: 8 },    // Top left
+          { x: shieldWidth/2 + 3, y: 8 },    // Top right  
+          { x: shieldWidth/2, y: 16 }        // Bottom center
+        ];
         
-        crossGroup.append('path')
-          .attr('d', horizontalPath)
-          .style('fill', '#dc2626')
-          .style('stroke', '#b91c1c')
-          .style('stroke-width', 0.2);
-        
-        // Small heraldic decorations in corners (quatrefoils)
-        [
-          { x: 6, y: 7 },
-          { x: shieldWidth-6, y: 7 },
-          { x: 6, y: shieldHeight-7 },
-          { x: shieldWidth-6, y: shieldHeight-7 }
-        ].forEach(pos => {
-          const quatrefoil = markGroup.append('g')
+        crossPositions.forEach(pos => {
+          const crossGroup = markGroup.append('g')
             .attr('transform', `translate(${pos.x}, ${pos.y})`);
           
-          quatrefoil.append('circle')
-            .attr('cx', 0)
-            .attr('cy', -0.5)
-            .attr('r', 0.7)
-            .style('fill', '#b8941f')
-            .style('opacity', 0.6);
-            
-          quatrefoil.append('circle')
-            .attr('cx', 0.5)
-            .attr('cy', 0)
-            .attr('r', 0.7)
-            .style('fill', '#b8941f')
-            .style('opacity', 0.6);
-            
-          quatrefoil.append('circle')
-            .attr('cx', 0)
-            .attr('cy', 0.5)
-            .attr('r', 0.7)
-            .style('fill', '#b8941f')
-            .style('opacity', 0.6);
-            
-          quatrefoil.append('circle')
-            .attr('cx', -0.5)
-            .attr('cy', 0)
-            .attr('r', 0.7)
-            .style('fill', '#b8941f')
-            .style('opacity', 0.6);
+          // Create small cross pattée with flared ends
+          const crossPath = `
+            M 0 -2.5
+            L -0.7 -1.8
+            L -0.4 -1.8
+            L -0.4 1.8
+            L -0.7 1.8
+            L 0 2.5
+            L 0.7 1.8
+            L 0.4 1.8
+            L 0.4 -1.8
+            L 0.7 -1.8
+            Z
+            M -2.5 0
+            L -1.8 -0.7
+            L -1.8 -0.4
+            L 1.8 -0.4
+            L 1.8 -0.7
+            L 2.5 0
+            L 1.8 0.7
+            L 1.8 0.4
+            L -1.8 0.4
+            L -1.8 0.7
+            Z
+          `;
+          
+          crossGroup.append('path')
+            .attr('d', crossPath)
+            .style('fill', '#dc2626')
+            .style('stroke', '#b91c1c')
+            .style('stroke-width', 0.15);
         });
       }
       
