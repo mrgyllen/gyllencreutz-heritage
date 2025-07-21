@@ -9,6 +9,9 @@ export interface IStorage {
   getFamilyMember(id: string): Promise<FamilyMember | undefined>;
   createFamilyMember(member: InsertFamilyMember): Promise<FamilyMember>;
   searchFamilyMembers(query: string): Promise<FamilyMember[]>;
+  updateFamilyMember(externalId: string, updateData: Partial<InsertFamilyMember>): Promise<FamilyMember | undefined>;
+  deleteFamilyMember(externalId: string): Promise<FamilyMember | undefined>;
+  bulkUpdateFamilyMembers(members: InsertFamilyMember[]): Promise<{ updated: number; created: number }>;
 }
 
 export class MemStorage implements IStorage {
@@ -548,6 +551,153 @@ export class MemStorage implements IStorage {
       member.name.toLowerCase().includes(lowerQuery) ||
       (member.notes && member.notes.toLowerCase().includes(lowerQuery))
     );
+  }
+
+  async updateFamilyMember(externalId: string, updateData: Partial<InsertFamilyMember>): Promise<FamilyMember | undefined> {
+    const existingMember = this.familyMembers.get(externalId);
+    if (!existingMember) {
+      return undefined;
+    }
+
+    const updatedMember: FamilyMember = {
+      ...existingMember,
+      ...updateData,
+      id: existingMember.id, // Preserve original ID
+      externalId: existingMember.externalId, // Preserve original externalId
+    };
+
+    this.familyMembers.set(externalId, updatedMember);
+    
+    // Persist changes to file system
+    await this.persistToFile();
+    
+    return updatedMember;
+  }
+
+  async deleteFamilyMember(externalId: string): Promise<FamilyMember | undefined> {
+    const member = this.familyMembers.get(externalId);
+    if (!member) {
+      return undefined;
+    }
+
+    this.familyMembers.delete(externalId);
+    
+    // Persist changes to file system
+    await this.persistToFile();
+    
+    return member;
+  }
+
+  async bulkUpdateFamilyMembers(members: InsertFamilyMember[]): Promise<{ updated: number; created: number }> {
+    // Create backup before bulk operation
+    await this.createBackup();
+    
+    let updated = 0;
+    let created = 0;
+    
+    for (const memberData of members) {
+      const existingMember = this.familyMembers.get(memberData.externalId);
+      
+      if (existingMember) {
+        // Update existing member
+        const updatedMember: FamilyMember = {
+          ...existingMember,
+          ...memberData,
+          id: existingMember.id, // Preserve original ID
+        };
+        this.familyMembers.set(memberData.externalId, updatedMember);
+        updated++;
+      } else {
+        // Create new member
+        const newMember: FamilyMember = {
+          id: this.currentFamilyId++,
+          ...memberData,
+          monarchDuringLife: memberData.monarchDuringLife || []
+        };
+        this.familyMembers.set(memberData.externalId, newMember);
+        created++;
+      }
+    }
+    
+    // Persist changes to file system
+    await this.persistToFile();
+    
+    return { updated, created };
+  }
+
+  private async persistToFile(): Promise<void> {
+    try {
+      const { writeFileSync } = await import('fs');
+      const { fileURLToPath } = await import('url');
+      const { dirname, join } = await import('path');
+      
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const filePath = join(__dirname, '../attached_assets/Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json');
+      
+      // Convert family members back to original JSON format
+      const familyArray = Array.from(this.familyMembers.values()).map(member => ({
+        ID: member.externalId,
+        Name: member.name,
+        Born: member.born,
+        Died: member.died,
+        BiologicalSex: member.biologicalSex,
+        Notes: member.notes,
+        Father: member.father,
+        AgeAtDeath: member.ageAtDeath,
+        DiedYoung: member.diedYoung,
+        IsSuccessionSon: member.isSuccessionSon,
+        HasMaleChildren: member.hasMaleChildren,
+        NobleBranch: member.nobleBranch,
+        MonarchDuringLife: JSON.stringify(member.monarchDuringLife || [])
+      }));
+      
+      const jsonData = JSON.stringify(familyArray, null, 2);
+      writeFileSync(filePath, jsonData, 'utf8');
+      
+      console.log(`Persisted ${familyArray.length} family members to file`);
+    } catch (error) {
+      console.error('Error persisting data to file:', error);
+      throw new Error('Failed to persist data changes');
+    }
+  }
+
+  private async createBackup(): Promise<void> {
+    try {
+      const { writeFileSync } = await import('fs');
+      const { fileURLToPath } = await import('url');
+      const { dirname, join } = await import('path');
+      
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      const backupPath = join(__dirname, `../attached_assets/backup_${timestamp}.json`);
+      
+      // Create backup of current data
+      const familyArray = Array.from(this.familyMembers.values()).map(member => ({
+        ID: member.externalId,
+        Name: member.name,
+        Born: member.born,
+        Died: member.died,
+        BiologicalSex: member.biologicalSex,
+        Notes: member.notes,
+        Father: member.father,
+        AgeAtDeath: member.ageAtDeath,
+        DiedYoung: member.diedYoung,
+        IsSuccessionSon: member.isSuccessionSon,
+        HasMaleChildren: member.hasMaleChildren,
+        NobleBranch: member.nobleBranch,
+        MonarchDuringLife: JSON.stringify(member.monarchDuringLife || [])
+      }));
+      
+      const jsonData = JSON.stringify(familyArray, null, 2);
+      writeFileSync(backupPath, jsonData, 'utf8');
+      
+      console.log(`Created backup at ${backupPath}`);
+    } catch (error) {
+      console.error('Error creating backup:', error);
+      throw new Error('Failed to create backup');
+    }
   }
 }
 

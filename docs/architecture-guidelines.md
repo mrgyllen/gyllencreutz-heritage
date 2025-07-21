@@ -36,37 +36,42 @@ Both backend implementations provide identical API responses and functionality, 
 - **Response**: Filtered array of family members matching the search criteria
 - **Usage**: Real-time search functionality for finding specific family members
 
-#### Admin API Endpoints (NEW)
+#### Admin API Endpoints (IMPLEMENTED)
 
 **`GET /api/family-members/{id}`**
 - **Purpose**: Retrieve specific family member by ID
-- **Parameters**: `id` - unique family member identifier
+- **Parameters**: `id` - unique family member identifier (externalId)
 - **Response**: Single family member object with complete details
 - **Usage**: Admin interface member detail viewing and editing
+- **Implementation**: Available in both Express and Azure Functions
 
 **`PUT /api/family-members/{id}`**
 - **Purpose**: Update existing family member record
 - **Parameters**: `id` - family member identifier, request body with updated data
 - **Response**: Success confirmation with updated member data
 - **Usage**: Admin interface data editing functionality
+- **Implementation**: Full validation, data persistence, and backup support
 
 **`POST /api/family-members`**
 - **Purpose**: Create new family member record
-- **Request Body**: Family member data without ID (auto-generated)
-- **Response**: Success confirmation with created member data including new ID
+- **Request Body**: Family member data with required fields (externalId, name, biologicalSex)
+- **Response**: Success confirmation with created member data including auto-generated ID
 - **Usage**: Admin interface for adding new family members
+- **Implementation**: Duplicate detection and field validation included
 
 **`DELETE /api/family-members/{id}`**
 - **Purpose**: Delete family member record
-- **Parameters**: `id` - family member identifier
+- **Parameters**: `id` - family member identifier (externalId)
 - **Response**: Success confirmation with deleted member data
 - **Usage**: Admin interface for removing family members
+- **Implementation**: Safe deletion with data persistence
 
 **`POST /api/family-members/bulk-update`**
 - **Purpose**: Bulk update multiple family members or entire dataset
-- **Request Body**: Array of family member objects or complete dataset
-- **Response**: Success confirmation with update count and backup information
+- **Request Body**: Array of family member objects
+- **Response**: Success confirmation with update/create counts and backup information
 - **Usage**: Admin interface for mass data operations and imports
+- **Implementation**: Automatic backup creation before operations
 
 #### Development/Debugging Endpoints
 
@@ -129,16 +134,23 @@ The JSON data contains flat records that are processed into hierarchical family 
 - **Monarch Data**: String arrays parsed from Python-style format to JavaScript arrays
 
 ### Storage Interface
-Both backend implementations use a common storage interface:
+Both backend implementations use a common storage interface with full CRUD capabilities:
 ```javascript
 class FunctionStorage {
+  // Read Operations
   async getAllFamilyMembers()         // Returns all family members
   async searchFamilyMembers(query)    // Filters members by search term
-  async getFamilyMember(id)           // Gets specific member by ID (NEW)
-  async updateFamilyMember(id, data)  // Updates existing member (NEW)
-  async addFamilyMember(data)         // Creates new member (NEW)
-  async deleteFamilyMember(id)        // Removes member (NEW)
-  async bulkUpdateFamilyMembers(data) // Mass update operations (NEW)
+  async getFamilyMember(id)           // Gets specific member by externalId
+  
+  // Write Operations (IMPLEMENTED)
+  async createFamilyMember(data)      // Creates new member with auto-generated ID
+  async updateFamilyMember(id, data)  // Updates existing member by externalId
+  async deleteFamilyMember(id)        // Removes member by externalId
+  async bulkUpdateFamilyMembers(data) // Mass update/create operations
+  
+  // Data Persistence (IMPLEMENTED)
+  async persistToFile()               // Writes changes to JSON file
+  async createBackup()                // Creates timestamped backup before bulk ops
 }
 ```
 
@@ -210,4 +222,4 @@ _Last updated: January 21, 2025_
 ---
 
 _Maintained by Claude AI_  
-_Last updated: 2025-01-19_
+_Last updated: 2025-01-21_
