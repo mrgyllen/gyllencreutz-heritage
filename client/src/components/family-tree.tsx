@@ -381,11 +381,23 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-5 h-5 mr-2 bg-yellow-400 border border-yellow-600 rounded flex items-center justify-center relative drop-shadow-sm">
-              <div className="text-xs font-bold text-red-800 leading-none text-center">
-                <div>N°</div>
-                <div className="text-[10px]">54</div>
-              </div>
+            <div className="w-5 h-6 mr-2 flex items-center justify-center relative">
+              <svg width="22" height="26" viewBox="0 0 22 26" className="drop-shadow-md">
+                {/* Outer shield border */}
+                <path d="M11 1 L2 5 L2 16 Q11 25 20 16 L20 5 Z" fill="#2d1810" stroke="#1a0f08" strokeWidth="1"/>
+                {/* Gold border */}
+                <path d="M11 2 L3 5.5 L3 15.5 Q11 24 19 15.5 L19 5.5 Z" fill="#d4af37" stroke="#b8941f" strokeWidth="0.5"/>
+                {/* Inner shield field */}
+                <path d="M11 3.5 L4.5 6.5 L4.5 14.5 Q11 22.5 17.5 14.5 L17.5 6.5 Z" fill="#f5f5f0" stroke="#e5e5e0" strokeWidth="0.3"/>
+                {/* Central cross */}
+                <rect x="9.5" y="7" width="3" height="10" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
+                <rect x="6" y="11.5" width="10" height="3" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
+                {/* Corner decorations */}
+                <circle cx="7" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
+                <circle cx="15" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
+                <circle cx="7" cy="17.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
+                <circle cx="15" cy="17.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
+              </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
           </div>

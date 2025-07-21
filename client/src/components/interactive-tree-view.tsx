@@ -219,49 +219,102 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         leftX += 25;
       }
       
-      // Prominent Noble Mark for Succession Sons (lower right corner, inside box)
+      // Gyllencreutz Coat of Arms for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const markSize = 20;
-        const markX = nodeWidth/2 - markSize - 6; // 6px padding from right edge  
-        const markY = nodeHeight/2 - markSize - 6; // 6px padding from bottom edge
+        const shieldWidth = 22;
+        const shieldHeight = 26;
+        const markX = nodeWidth/2 - shieldWidth - 6; // 6px padding from right edge  
+        const markY = nodeHeight/2 - shieldHeight - 6; // 6px padding from bottom edge
         
-        // Create a gold shield with "N°54" as Noble Mark indicator
+        // Create authentic heraldic shield based on family coat of arms
         const markGroup = node.append('g')
-          .attr('transform', `translate(${markX}, ${markY})`);
+          .attr('transform', `translate(${markX}, ${markY})`)
+          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.4))');
         
-        // Gold shield background
-        markGroup.append('rect')
-          .attr('x', 0)
-          .attr('y', 0)
-          .attr('width', markSize)
-          .attr('height', markSize)
-          .attr('rx', 3)
+        // Outer shield border (black/dark brown)
+        const outerShieldPath = `
+          M ${shieldWidth/2} 1
+          L 2 5
+          L 2 16
+          Q ${shieldWidth/2} ${shieldHeight-1} ${shieldWidth-2} 16
+          L ${shieldWidth-2} 5
+          Z
+        `;
+        
+        markGroup.append('path')
+          .attr('d', outerShieldPath)
+          .style('fill', '#2d1810')
+          .style('stroke', '#1a0f08')
+          .style('stroke-width', 1);
+        
+        // Gold border layer
+        const goldBorderPath = `
+          M ${shieldWidth/2} 2
+          L 3 5.5
+          L 3 15.5
+          Q ${shieldWidth/2} ${shieldHeight-2} ${shieldWidth-3} 15.5
+          L ${shieldWidth-3} 5.5
+          Z
+        `;
+        
+        markGroup.append('path')
+          .attr('d', goldBorderPath)
           .style('fill', '#d4af37')
           .style('stroke', '#b8941f')
-          .style('stroke-width', 1.5)
-          .style('filter', 'drop-shadow(2px 2px 3px rgba(0,0,0,0.3))');
+          .style('stroke-width', 0.5);
         
-        // Noble number text
-        markGroup.append('text')
-          .attr('x', markSize/2)
-          .attr('y', markSize/2 - 2)
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .style('font-size', '7px')
-          .style('font-weight', 'bold')
-          .style('fill', '#8b2635')
-          .text('N°');
+        // Inner shield field (silver/light)
+        const innerShieldPath = `
+          M ${shieldWidth/2} 3.5
+          L 4.5 6.5
+          L 4.5 14.5
+          Q ${shieldWidth/2} ${shieldHeight-3.5} ${shieldWidth-4.5} 14.5
+          L ${shieldWidth-4.5} 6.5
+          Z
+        `;
         
-        // Family number  
-        markGroup.append('text')
-          .attr('x', markSize/2)
-          .attr('y', markSize/2 + 4)
-          .attr('text-anchor', 'middle')
-          .attr('dominant-baseline', 'middle')
-          .style('font-size', '6px')
-          .style('font-weight', 'bold')
-          .style('fill', '#8b2635')
-          .text('54');
+        markGroup.append('path')
+          .attr('d', innerShieldPath)
+          .style('fill', '#f5f5f0')
+          .style('stroke', '#e5e5e0')
+          .style('stroke-width', 0.3);
+        
+        // Central cross pattern (characteristic of Gyllencreutz arms)
+        // Vertical cross bar (red)
+        markGroup.append('rect')
+          .attr('x', shieldWidth/2 - 1.5)
+          .attr('y', 7)
+          .attr('width', 3)
+          .attr('height', 10)
+          .style('fill', '#dc2626')
+          .style('stroke', '#b91c1c')
+          .style('stroke-width', 0.3);
+        
+        // Horizontal cross bar (red)
+        markGroup.append('rect')
+          .attr('x', 6)
+          .attr('y', shieldHeight/2 - 1.5)
+          .attr('width', 10)
+          .attr('height', 3)
+          .style('fill', '#dc2626')
+          .style('stroke', '#b91c1c')
+          .style('stroke-width', 0.3);
+        
+        // Small decorative elements in corners
+        [
+          { x: 7, y: 8.5 },
+          { x: shieldWidth-7, y: 8.5 },
+          { x: 7, y: shieldHeight-8.5 },
+          { x: shieldWidth-7, y: shieldHeight-8.5 }
+        ].forEach(pos => {
+          markGroup.append('circle')
+            .attr('cx', pos.x)
+            .attr('cy', pos.y)
+            .attr('r', 1)
+            .style('fill', '#7c2d12')
+            .style('stroke', '#6b1d26')
+            .style('stroke-width', 0.2);
+        });
       }
       
       // Died Young indicator (bottom area)
