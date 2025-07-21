@@ -279,41 +279,93 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
           .style('stroke', '#e5e5e0')
           .style('stroke-width', 0.3);
         
-        // Central cross pattern (characteristic of Gyllencreutz arms) - proper upright cross
-        // Vertical cross bar (red) - shorter, positioned higher
-        markGroup.append('rect')
-          .attr('x', shieldWidth/2 - 1.5)
-          .attr('y', 6)
-          .attr('width', 3)
-          .attr('height', 8)
+        // Authentic Gyllencreutz cross pattée (flared cross) - centered on shield
+        const crossGroup = markGroup.append('g')
+          .attr('transform', `translate(${shieldWidth/2}, ${shieldHeight/2 - 1})`);
+        
+        // Vertical arm of cross pattée
+        const verticalPath = `
+          M -1.5 -6
+          L -2.5 -5
+          L -1 -5
+          L -1 5
+          L -2.5 5
+          L -1.5 6
+          L 1.5 6
+          L 2.5 5
+          L 1 5
+          L 1 -5
+          L 2.5 -5
+          L 1.5 -6
+          Z
+        `;
+        
+        crossGroup.append('path')
+          .attr('d', verticalPath)
           .style('fill', '#dc2626')
           .style('stroke', '#b91c1c')
-          .style('stroke-width', 0.3);
+          .style('stroke-width', 0.2);
         
-        // Horizontal cross bar (red) - positioned in upper third
-        markGroup.append('rect')
-          .attr('x', 6.5)
-          .attr('y', 8.5)
-          .attr('width', 9)
-          .attr('height', 3)
+        // Horizontal arm of cross pattée
+        const horizontalPath = `
+          M -6 -1.5
+          L -5 -2.5
+          L -5 -1
+          L 5 -1
+          L 5 -2.5
+          L 6 -1.5
+          L 6 1.5
+          L 5 2.5
+          L 5 1
+          L -5 1
+          L -5 2.5
+          L -6 1.5
+          Z
+        `;
+        
+        crossGroup.append('path')
+          .attr('d', horizontalPath)
           .style('fill', '#dc2626')
           .style('stroke', '#b91c1c')
-          .style('stroke-width', 0.3);
+          .style('stroke-width', 0.2);
         
-        // Small decorative elements in corners
+        // Small heraldic decorations in corners (quatrefoils)
         [
-          { x: 7, y: 8.5 },
-          { x: shieldWidth-7, y: 8.5 },
-          { x: 7, y: shieldHeight-8.5 },
-          { x: shieldWidth-7, y: shieldHeight-8.5 }
+          { x: 6, y: 7 },
+          { x: shieldWidth-6, y: 7 },
+          { x: 6, y: shieldHeight-7 },
+          { x: shieldWidth-6, y: shieldHeight-7 }
         ].forEach(pos => {
-          markGroup.append('circle')
-            .attr('cx', pos.x)
-            .attr('cy', pos.y)
-            .attr('r', 1)
-            .style('fill', '#7c2d12')
-            .style('stroke', '#6b1d26')
-            .style('stroke-width', 0.2);
+          const quatrefoil = markGroup.append('g')
+            .attr('transform', `translate(${pos.x}, ${pos.y})`);
+          
+          quatrefoil.append('circle')
+            .attr('cx', 0)
+            .attr('cy', -0.5)
+            .attr('r', 0.7)
+            .style('fill', '#b8941f')
+            .style('opacity', 0.6);
+            
+          quatrefoil.append('circle')
+            .attr('cx', 0.5)
+            .attr('cy', 0)
+            .attr('r', 0.7)
+            .style('fill', '#b8941f')
+            .style('opacity', 0.6);
+            
+          quatrefoil.append('circle')
+            .attr('cx', 0)
+            .attr('cy', 0.5)
+            .attr('r', 0.7)
+            .style('fill', '#b8941f')
+            .style('opacity', 0.6);
+            
+          quatrefoil.append('circle')
+            .attr('cx', -0.5)
+            .attr('cy', 0)
+            .attr('r', 0.7)
+            .style('fill', '#b8941f')
+            .style('opacity', 0.6);
         });
       }
       

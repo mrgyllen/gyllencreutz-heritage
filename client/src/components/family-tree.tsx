@@ -387,16 +387,24 @@ export function FamilyTree() {
                 <path d="M11 1 L2 5 L2 16 Q11 25 20 16 L20 5 Z" fill="#2d1810" stroke="#1a0f08" strokeWidth="1"/>
                 {/* Gold border */}
                 <path d="M11 2 L3 5.5 L3 15.5 Q11 24 19 15.5 L19 5.5 Z" fill="#d4af37" stroke="#b8941f" strokeWidth="0.5"/>
-                {/* Inner shield field */}
-                <path d="M11 3.5 L4.5 6.5 L4.5 14.5 Q11 22.5 17.5 14.5 L17.5 6.5 Z" fill="#f5f5f0" stroke="#e5e5e0" strokeWidth="0.3"/>
-                {/* Central cross - proper upright orientation */}
-                <rect x="9.5" y="6" width="3" height="8" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
-                <rect x="6.5" y="8.5" width="9" height="3" fill="#dc2626" stroke="#b91c1c" strokeWidth="0.3"/>
-                {/* Corner decorations */}
-                <circle cx="7" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
-                <circle cx="15" cy="8.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
-                <circle cx="7" cy="17.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
-                <circle cx="15" cy="17.5" r="1" fill="#7c2d12" stroke="#6b1d26" strokeWidth="0.2"/>
+                {/* Inner shield field - clean white/silver */}
+                <path d="M11 3.5 L4.5 6.5 L4.5 14.5 Q11 22.5 17.5 14.5 L17.5 6.5 Z" fill="#ffffff" stroke="#f0f0f0" strokeWidth="0.2"/>
+                {/* Authentic Gyllencreutz cross pattée - centered */}
+                <g transform="translate(11, 12)">
+                  {/* Vertical arm */}
+                  <path d="M -1.5 -6 L -2.5 -5 L -1 -5 L -1 5 L -2.5 5 L -1.5 6 L 1.5 6 L 2.5 5 L 1 5 L 1 -5 L 2.5 -5 L 1.5 -6 Z" 
+                        fill="#dc2626" stroke="#b91c1c" strokeWidth="0.2"/>
+                  {/* Horizontal arm */}
+                  <path d="M -6 -1.5 L -5 -2.5 L -5 -1 L 5 -1 L 5 -2.5 L 6 -1.5 L 6 1.5 L 5 2.5 L 5 1 L -5 1 L -5 2.5 L -6 1.5 Z" 
+                        fill="#dc2626" stroke="#b91c1c" strokeWidth="0.2"/>
+                </g>
+                {/* Decorative corner elements */}
+                <g opacity="0.4">
+                  <circle cx="6" cy="7" r="0.8" fill="#b8941f"/>
+                  <circle cx="16" cy="7" r="0.8" fill="#b8941f"/>
+                  <circle cx="6" cy="19" r="0.8" fill="#b8941f"/>
+                  <circle cx="16" cy="19" r="0.8" fill="#b8941f"/>
+                </g>
               </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
