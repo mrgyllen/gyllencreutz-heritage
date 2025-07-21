@@ -381,12 +381,10 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 mr-2 flex items-center justify-center relative overflow-hidden rounded">
-              <img 
-                src="/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg" 
-                alt="Noble Mark" 
-                className="w-full h-full object-cover opacity-90 drop-shadow-sm"
-              />
+            <div className="w-4 h-4 mr-2 flex items-center justify-center relative">
+              <div className="w-4 h-4 bg-amber-400 border border-amber-600 rounded-full flex items-center justify-center drop-shadow-sm">
+                <span className="text-xs font-bold text-amber-900">N°</span>
+              </div>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
           </div>

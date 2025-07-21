@@ -221,20 +221,35 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Noble Mark for Succession Sons (lower right corner, inside box)
       if (d.data.isSuccessionSon) {
-        const markSize = 18;
-        const markX = nodeWidth/2 - markSize - 8; // 8px padding from right edge
-        const markY = nodeHeight/2 - markSize - 8; // 8px padding from bottom edge
+        const markSize = 16;
+        const markX = nodeWidth/2 - markSize - 6; // 6px padding from right edge
+        const markY = nodeHeight/2 - markSize - 6; // 6px padding from bottom edge
         
-        // Add Noble Mark image
-        node.append('image')
-          .attr('x', markX)
-          .attr('y', markY)
-          .attr('width', markSize)
-          .attr('height', markSize)
-          .attr('href', '/attached_assets/Adelsmärrke från kopia 2_1752593493242.jpg')
+        // Create a simple noble mark icon using SVG shapes instead of image
+        const markGroup = node.append('g')
+          .attr('transform', `translate(${markX}, ${markY})`);
+        
+        // Background circle with golden color
+        markGroup.append('circle')
+          .attr('cx', markSize/2)
+          .attr('cy', markSize/2)
+          .attr('r', markSize/2)
+          .style('fill', '#fbbf24')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 1)
           .style('opacity', 0.9)
-          .style('filter', 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))')
-          .attr('preserveAspectRatio', 'xMidYMid meet');
+          .style('filter', 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))');
+        
+        // Add "N°" text to represent Noble Mark
+        markGroup.append('text')
+          .attr('x', markSize/2)
+          .attr('y', markSize/2 + 1)
+          .attr('text-anchor', 'middle')
+          .attr('dominant-baseline', 'middle')
+          .style('font-size', '8px')
+          .style('font-weight', 'bold')
+          .style('fill', '#7c2d12')
+          .text('N°');
       }
       
       // Died Young indicator (bottom area)
