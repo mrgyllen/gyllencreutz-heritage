@@ -381,9 +381,16 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <Badge variant="secondary" className="bg-amber-600 text-white text-xs">
-              Succession Son
-            </Badge>
+            <div className="w-4 h-4 bg-amber-300 border border-amber-500 rounded mr-2 flex items-center justify-center">
+              <div className="w-2 h-2 bg-amber-800 rounded-sm"></div>
+            </div>
+            <span className="text-sm text-gray-600">Succession Son</span>
+          </div>
+          <div className="flex items-center">
+            <div className="w-4 h-4 bg-sky-100 border border-sky-400 rounded-full mr-2 flex items-center justify-center">
+              <span className="text-xs font-bold text-sky-700">3</span>
+            </div>
+            <span className="text-sm text-gray-600">Children Count</span>
           </div>
           <div className="flex items-center">
             <Badge variant="outline" className="text-xs text-red-600 border-red-300 bg-red-50">

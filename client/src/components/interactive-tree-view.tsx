@@ -23,8 +23,8 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
   
-  const nodeWidth = 200;
-  const nodeHeight = 80;
+  const nodeWidth = 220;
+  const nodeHeight = 100;
   const levelHeight = 140; // Increased for org chart style spacing
 
   useEffect(() => {
@@ -169,53 +169,115 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     // Add member names
     nodes.append('text')
-      .attr('y', -20)
+      .attr('y', -25)
       .attr('text-anchor', 'middle')
       .style('font-size', '12px')
       .style('font-weight', 'bold')
       .style('fill', '#1f2937')
-      .text((d: d3.HierarchyPointNode<FamilyTreeNode>) => d.data.name.length > 25 ? d.data.name.substring(0, 25) + '...' : d.data.name);
+      .text((d: d3.HierarchyPointNode<FamilyTreeNode>) => d.data.name.length > 22 ? d.data.name.substring(0, 22) + '...' : d.data.name);
 
     // Add birth-death dates
     nodes.append('text')
-      .attr('y', -5)
+      .attr('y', -10)
       .attr('text-anchor', 'middle')
       .style('font-size', '10px')
       .style('fill', '#6b7280')
       .text((d: d3.HierarchyPointNode<FamilyTreeNode>) => `${d.data.born || '?'} - ${d.data.died || '?'}`);
 
-    // Add badges for special attributes
+    // Add enhanced visual indicators
     nodes.each(function(this: SVGGElement, d: d3.HierarchyPointNode<FamilyTreeNode>) {
       const node = d3.select(this);
-      let badgeX = -nodeWidth/2 + 10;
+      let badgeY = 8;
+      let leftX = -nodeWidth/2 + 8;
+      let rightX = nodeWidth/2 - 8;
       
-      if (d.data.isSuccessionSon) {
-        node.append('foreignObject')
-          .attr('x', badgeX)
-          .attr('y', 15)
-          .attr('width', 20)
-          .attr('height', 20)
-          .html('<div class="w-5 h-5 bg-amber-300 border border-amber-500 rounded-sm"></div>');
-        badgeX += 25;
-      }
-      
-      if (d.data.diedYoung) {
-        node.append('rect')
-          .attr('x', badgeX)
-          .attr('y', 15)
-          .attr('width', 40)
-          .attr('height', 16)
-          .attr('rx', 3)
-          .style('fill', '#fef2f2')
-          .style('stroke', '#fca5a5');
+      // Children count (top-left)
+      if (d.children && d.children.length > 0) {
+        const childCount = d.children.length;
         
+        // Background circle for children count
+        node.append('circle')
+          .attr('cx', leftX + 10)
+          .attr('cy', badgeY)
+          .attr('r', 8)
+          .style('fill', '#e0f2fe')
+          .style('stroke', '#0284c7');
+        
+        // Children count text
         node.append('text')
-          .attr('x', badgeX + 20)
-          .attr('y', 26)
+          .attr('x', leftX + 10)
+          .attr('y', badgeY + 3)
           .attr('text-anchor', 'middle')
           .style('font-size', '8px')
+          .style('font-weight', 'bold')
+          .style('fill', '#0284c7')
+          .text(childCount);
+        
+        leftX += 25;
+      }
+      
+      // Succession heraldic icon (top-right area)
+      if (d.data.isSuccessionSon) {
+        // Create heraldic coat of arms background
+        node.append('rect')
+          .attr('x', rightX - 18)
+          .attr('y', badgeY - 9)
+          .attr('width', 18)
+          .attr('height', 18)
+          .attr('rx', 2)
+          .style('fill', '#fbbf24')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 1.5);
+        
+        // Add simplified heraldic symbol (shield shape)
+        node.append('path')
+          .attr('d', `M ${rightX - 9} ${badgeY - 6} 
+                     L ${rightX - 15} ${badgeY - 3} 
+                     L ${rightX - 15} ${badgeY + 3} 
+                     Q ${rightX - 9} ${badgeY + 6} ${rightX - 3} ${badgeY + 3} 
+                     L ${rightX - 3} ${badgeY - 3} Z`)
+          .style('fill', '#92400e')
+          .style('stroke', '#451a03')
+          .style('stroke-width', 0.5);
+        
+        rightX -= 25;
+      }
+      
+      // Died Young indicator (bottom area)
+      if (d.data.diedYoung) {
+        node.append('rect')
+          .attr('x', -25)
+          .attr('y', 25)
+          .attr('width', 50)
+          .attr('height', 12)
+          .attr('rx', 3)
+          .style('fill', '#fef2f2')
+          .style('stroke', '#fca5a5')
+          .style('stroke-width', 1);
+        
+        node.append('text')
+          .attr('x', 0)
+          .attr('y', 33)
+          .attr('text-anchor', 'middle')
+          .style('font-size', '8px')
+          .style('font-weight', 'bold')
           .style('fill', '#dc2626')
           .text('Died Young');
+      }
+      
+      // Noble branch indicator (bottom-right, small text)
+      if (d.data.nobleBranch && d.data.nobleBranch !== 'Main branch') {
+        const branchText = d.data.nobleBranch === 'Elder line' ? 'Elder' : 'Younger';
+        const branchColor = d.data.nobleBranch === 'Elder line' ? '#f59e0b' : '#f97316';
+        
+        node.append('text')
+          .attr('x', nodeWidth/2 - 5)
+          .attr('y', nodeHeight/2 - 5)
+          .attr('text-anchor', 'end')
+          .style('font-size', '7px')
+          .style('font-weight', 'bold')
+          .style('fill', branchColor)
+          .text(branchText);
       }
     });
 
