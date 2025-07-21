@@ -381,8 +381,29 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-5 h-5 bg-gradient-to-b from-yellow-100 to-amber-400 border border-amber-600 rounded-full mr-2 flex items-center justify-center">
-              <span className="text-xs text-amber-800">♔</span>
+            <div className="w-4 h-5 mr-2 flex items-center justify-center relative">
+              <svg width="16" height="20" viewBox="0 0 16 20" className="drop-shadow-sm">
+                <defs>
+                  <radialGradient id="legendShieldGrad" cx="50%" cy="30%" r="70%">
+                    <stop offset="0%" stopColor="#fbbf24"/>
+                    <stop offset="60%" stopColor="#f59e0b"/>
+                    <stop offset="100%" stopColor="#d97706"/>
+                  </radialGradient>
+                </defs>
+                <path 
+                  d="M8 2 L2 5 L2 13 Q8 18 14 13 L14 5 Z" 
+                  fill="url(#legendShieldGrad)" 
+                  stroke="#7c2d12" 
+                  strokeWidth="1.5"
+                />
+                <path 
+                  d="M5 11 L6 8 L7 10 L8 7 L9 10 L10 8 L11 11 Z" 
+                  fill="#fbbf24" 
+                  stroke="#92400e" 
+                  strokeWidth="0.5"
+                />
+                <circle cx="8" cy="9" r="1" fill="#dc2626"/>
+              </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>
           </div>

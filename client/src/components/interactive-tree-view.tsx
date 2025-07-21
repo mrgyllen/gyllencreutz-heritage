@@ -55,23 +55,27 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     svg.call(zoom);
 
-    // Define gradient for crown effect
+    // Define gradients for succession icons
     const defs = svg.append('defs');
     
-    const crownGradient = defs.append('linearGradient')
-      .attr('id', 'crownGradient')
-      .attr('x1', '0%')
-      .attr('y1', '0%')
-      .attr('x2', '0%')
-      .attr('y2', '100%');
+    // Shield gradient for heraldic appearance
+    const shieldGradient = defs.append('radialGradient')
+      .attr('id', 'shieldGradient')
+      .attr('cx', '50%')
+      .attr('cy', '30%')
+      .attr('r', '70%');
     
-    crownGradient.append('stop')
+    shieldGradient.append('stop')
       .attr('offset', '0%')
-      .attr('stop-color', '#fef3c7');
+      .attr('stop-color', '#fbbf24');
     
-    crownGradient.append('stop')
-      .attr('offset', '100%')
+    shieldGradient.append('stop')
+      .attr('offset', '60%')
       .attr('stop-color', '#f59e0b');
+    
+    shieldGradient.append('stop')
+      .attr('offset', '100%')
+      .attr('stop-color', '#d97706');
 
     // Create main group
     const g = svg.append('g')
@@ -236,45 +240,51 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       
       // Succession heraldic icon (top-right area)
       if (d.data.isSuccessionSon) {
-        // Create elegant crown symbol
-        const crownCenterX = rightX - 10;
+        const crownCenterX = rightX - 12;
         const crownCenterY = badgeY;
         
-        // Crown base circle
-        node.append('circle')
-          .attr('cx', crownCenterX)
-          .attr('cy', crownCenterY)
-          .attr('r', 9)
-          .style('fill', 'url(#crownGradient)')
-          .style('stroke', '#b45309')
-          .style('stroke-width', 1.5);
+        // Create shield-shaped background with heraldic styling
+        const shieldPath = `
+          M ${crownCenterX} ${crownCenterY - 8}
+          L ${crownCenterX - 8} ${crownCenterY - 5}
+          L ${crownCenterX - 8} ${crownCenterY + 5}
+          Q ${crownCenterX} ${crownCenterY + 10} ${crownCenterX + 8} ${crownCenterY + 5}
+          L ${crownCenterX + 8} ${crownCenterY - 5}
+          Z
+        `;
         
-        // Crown points (simplified royal crown)
-        const crownPath = `
-          M ${crownCenterX - 6} ${crownCenterY + 1}
-          L ${crownCenterX - 4} ${crownCenterY - 4}
-          L ${crownCenterX - 2} ${crownCenterY}
-          L ${crownCenterX} ${crownCenterY - 5}
-          L ${crownCenterX + 2} ${crownCenterY}
-          L ${crownCenterX + 4} ${crownCenterY - 4}
-          L ${crownCenterX + 6} ${crownCenterY + 1}
+        // Shield background with gradient
+        node.append('path')
+          .attr('d', shieldPath)
+          .style('fill', 'url(#shieldGradient)')
+          .style('stroke', '#7c2d12')
+          .style('stroke-width', 1.5)
+          .style('filter', 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))');
+        
+        // Add crown symbol inside shield
+        const crownSymbol = `
+          M ${crownCenterX - 4} ${crownCenterY + 1}
+          L ${crownCenterX - 3} ${crownCenterY - 2}
+          L ${crownCenterX - 1} ${crownCenterY}
+          L ${crownCenterX} ${crownCenterY - 3}
+          L ${crownCenterX + 1} ${crownCenterY}
+          L ${crownCenterX + 3} ${crownCenterY - 2}
+          L ${crownCenterX + 4} ${crownCenterY + 1}
           Z
         `;
         
         node.append('path')
-          .attr('d', crownPath)
+          .attr('d', crownSymbol)
           .style('fill', '#fbbf24')
-          .style('stroke', '#d97706')
-          .style('stroke-width', 0.8);
+          .style('stroke', '#92400e')
+          .style('stroke-width', 0.5);
         
-        // Crown jewels (small dots)
-        [-2, 0, 2].forEach(offset => {
-          node.append('circle')
-            .attr('cx', crownCenterX + offset)
-            .attr('cy', crownCenterY + 2)
-            .attr('r', 0.8)
-            .style('fill', '#dc2626');
-        });
+        // Add small central jewel
+        node.append('circle')
+          .attr('cx', crownCenterX)
+          .attr('cy', crownCenterY - 1)
+          .attr('r', 1)
+          .style('fill', '#dc2626');
         
         rightX -= 25;
       }
