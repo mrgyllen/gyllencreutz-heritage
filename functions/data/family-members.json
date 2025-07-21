@@ -12,7 +12,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Gustav Vasa (1523–1560)']"
+    "MonarchDuringLife": "['Gustav Vasa (1523\u20131560)']"
   },
   {
     "ID": "0.1",
@@ -20,14 +20,14 @@
     "Born": 1545,
     "Died": 1625.0,
     "BiologicalSex": "Male",
-    "Notes": "Ennobled in Sweden, buried Östra Ryd church. Married 1stly Kerstin Marbo, 2ndly Brita Alfsdotter (d. 1616), 3rdly Catharina von Masenbach.",
+    "Notes": "Ennobled in Sweden, buried \u00d6stra Ryd church. Married 1stly Kerstin Marbo, 2ndly Brita Alfsdotter (d. 1616), 3rdly Catharina von Masenbach.",
     "Father": "0",
     "AgeAtDeath": 80.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Gustav Vasa (1523–1560)', 'Erik XIV (1560–1568)', 'Johan III (1568–1592)', 'Sigismund (1592–1599)', 'Karl IX (1604–1611)', 'Gustav II Adolf (1611–1632)']"
+    "MonarchDuringLife": "['Gustav Vasa (1523\u20131560)', 'Erik XIV (1560\u20131568)', 'Johan III (1568\u20131592)', 'Sigismund (1592\u20131599)', 'Karl IX (1604\u20131611)', 'Gustav II Adolf (1611\u20131632)']"
   },
   {
     "ID": "1",
@@ -35,14 +35,14 @@
     "Born": 1575,
     "Died": 1580.0,
     "BiologicalSex": "Male",
-    "Notes": "Died from the plague, buried Östra Ryd church",
+    "Notes": "Died from the plague, buried \u00d6stra Ryd church",
     "Father": "0.1",
     "AgeAtDeath": 5.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Johan III (1568–1592)']"
+    "MonarchDuringLife": "['Johan III (1568\u20131592)']"
   },
   {
     "ID": "2",
@@ -50,14 +50,14 @@
     "Born": 1576,
     "Died": 1623.0,
     "BiologicalSex": "Male",
-    "Notes": "Buried Östra Ryd church. Married baroness Christina Oxenstierna (1619)",
+    "Notes": "Buried \u00d6stra Ryd church. Married baroness Christina Oxenstierna (1619)",
     "Father": "0.1",
     "AgeAtDeath": 47.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Johan III (1568–1592)', 'Sigismund (1592–1599)', 'Karl IX (1604–1611)', 'Gustav II Adolf (1611–1632)']"
+    "MonarchDuringLife": "['Johan III (1568\u20131592)', 'Sigismund (1592\u20131599)', 'Karl IX (1604\u20131611)', 'Gustav II Adolf (1611\u20131632)']"
   },
   {
     "ID": "3",
@@ -65,14 +65,14 @@
     "Born": 1578,
     "Died": 1578.0,
     "BiologicalSex": "Female",
-    "Notes": "Buried Östra Ryd church",
+    "Notes": "Buried \u00d6stra Ryd church",
     "Father": "0.1",
     "AgeAtDeath": 0.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Johan III (1568–1592)']"
+    "MonarchDuringLife": "['Johan III (1568\u20131592)']"
   },
   {
     "ID": "4",
@@ -87,7 +87,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl IX (1604–1611)', 'Gustav II Adolf (1611–1632)', 'Kristina (1632–1654)']"
+    "MonarchDuringLife": "['Karl IX (1604\u20131611)', 'Gustav II Adolf (1611\u20131632)', 'Kristina (1632\u20131654)']"
   },
   {
     "ID": "5",
@@ -102,7 +102,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl IX (1604–1611)']"
+    "MonarchDuringLife": "['Karl IX (1604\u20131611)']"
   },
   {
     "ID": "6",
@@ -117,7 +117,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl IX (1604–1611)']"
+    "MonarchDuringLife": "['Karl IX (1604\u20131611)']"
   },
   {
     "ID": "7",
@@ -125,14 +125,14 @@
     "Born": 1611,
     "Died": 1652.0,
     "BiologicalSex": "Female",
-    "Notes": "Married (1647) Isak Svinhufvud af Qvalstad (1611–1666)",
+    "Notes": "Married (1647) Isak Svinhufvud af Qvalstad (1611\u20131666)",
     "Father": "0.1",
     "AgeAtDeath": 41.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl IX (1604–1611)', 'Gustav II Adolf (1611–1632)', 'Kristina (1632–1654)']"
+    "MonarchDuringLife": "['Karl IX (1604\u20131611)', 'Gustav II Adolf (1611\u20131632)', 'Kristina (1632\u20131654)']"
   },
   {
     "ID": "8",
@@ -140,14 +140,14 @@
     "Born": 1613,
     "Died": 1639.0,
     "BiologicalSex": "Female",
-    "Notes": "Born at Viby, died at Anklam, Pommerania; married (1630) lieutenant-colonel Anders Pedersson Utter (1592–1640)",
+    "Notes": "Born at Viby, died at Anklam, Pommerania; married (1630) lieutenant-colonel Anders Pedersson Utter (1592\u20131640)",
     "Father": "0.1",
     "AgeAtDeath": 26.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Gustav II Adolf (1611–1632)', 'Kristina (1632–1654)']"
+    "MonarchDuringLife": "['Gustav II Adolf (1611\u20131632)', 'Kristina (1632\u20131654)']"
   },
   {
     "ID": "9",
@@ -162,7 +162,7 @@
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Gustav II Adolf (1611–1632)', 'Kristina (1632–1654)']"
+    "MonarchDuringLife": "['Gustav II Adolf (1611\u20131632)', 'Kristina (1632\u20131654)']"
   },
   {
     "ID": "9.1",
@@ -177,7 +177,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Kristina (1632–1654)']"
+    "MonarchDuringLife": "['Kristina (1632\u20131654)']"
   },
   {
     "ID": "9.2",
@@ -185,14 +185,14 @@
     "Born": 1637,
     "Died": 1720.0,
     "BiologicalSex": "Male",
-    "Notes": "Died at Alby, Botkyrka parish; married (1685) Elisabet Prytz (1652–1732)",
+    "Notes": "Died at Alby, Botkyrka parish; married (1685) Elisabet Prytz (1652\u20131732)",
     "Father": "9",
     "AgeAtDeath": 83.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Kristina (1632–1654)', 'Karl X Gustav (1654–1660)', 'Karl XI (1660–1697)', 'Karl XII (1697–1718)', 'Ulrika Eleonora (1718–1720)', 'Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Kristina (1632\u20131654)', 'Karl X Gustav (1654\u20131660)', 'Karl XI (1660\u20131697)', 'Karl XII (1697\u20131718)', 'Ulrika Eleonora (1718\u20131720)', 'Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.1",
@@ -207,7 +207,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl XI (1660–1697)', 'Karl XII (1697–1718)']"
+    "MonarchDuringLife": "['Karl XI (1660\u20131697)', 'Karl XII (1697\u20131718)']"
   },
   {
     "ID": "9.2.2",
@@ -215,14 +215,14 @@
     "Born": 1686,
     "Died": 1686.0,
     "BiologicalSex": "Male",
-    "Notes": "Died as infant, buried Värmdö church",
+    "Notes": "Died as infant, buried V\u00e4rmd\u00f6 church",
     "Father": "9.2",
     "AgeAtDeath": 0.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl XI (1660–1697)']"
+    "MonarchDuringLife": "['Karl XI (1660\u20131697)']"
   },
   {
     "ID": "9.2.3",
@@ -237,7 +237,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl XI (1660–1697)', 'Karl XII (1697–1718)']"
+    "MonarchDuringLife": "['Karl XI (1660\u20131697)', 'Karl XII (1697\u20131718)']"
   },
   {
     "ID": "9.2.4",
@@ -252,7 +252,7 @@
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Karl XI (1660–1697)', 'Karl XII (1697–1718)', 'Ulrika Eleonora (1718–1720)', 'Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Karl XI (1660\u20131697)', 'Karl XII (1697\u20131718)', 'Ulrika Eleonora (1718\u20131720)', 'Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.1",
@@ -260,14 +260,14 @@
     "Born": 1722,
     "Died": 1799.0,
     "BiologicalSex": "Female",
-    "Notes": "Elisabet Maria, born 18 June 1722 at Alby, died 5 April 1799 at Göstad, Vånga parish.",
+    "Notes": "Elisabet Maria, born 18 June 1722 at Alby, died 5 April 1799 at G\u00f6stad, V\u00e5nga parish.",
     "Father": "9.2.4",
     "AgeAtDeath": 77.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)', 'Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)', 'Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)']"
   },
   {
     "ID": "9.2.4.2",
@@ -282,7 +282,7 @@
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Fredrik I (1720–1751)', 'Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)', 'Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.1",
@@ -290,14 +290,14 @@
     "Born": 1753,
     "Died": 1833.0,
     "BiologicalSex": "Male",
-    "Notes": "Johan Fredrik Gyllencreutz, born 15 April 1753 at Tomtaholm, died 19 January 1833, married 13 October 1786 at Dybeck Christina Fredrika Löwen (born 28 June 1768, died 20 July 1834 at Linköping).",
+    "Notes": "Johan Fredrik Gyllencreutz, born 15 April 1753 at Tomtaholm, died 19 January 1833, married 13 October 1786 at Dybeck Christina Fredrika L\u00f6wen (born 28 June 1768, died 20 July 1834 at Link\u00f6ping).",
     "Father": "9.2.4.2",
     "AgeAtDeath": 80.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.1.1",
@@ -312,7 +312,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.1.2",
@@ -320,14 +320,14 @@
     "Born": 1789,
     "Died": 1878.0,
     "BiologicalSex": "Female",
-    "Notes": "Magdalena Sofia Aurora, born 18 January 1789, died 16 November 1878 at Linköping.",
+    "Notes": "Magdalena Sofia Aurora, born 18 January 1789, died 16 November 1878 at Link\u00f6ping.",
     "Father": "9.2.4.2.1",
     "AgeAtDeath": 89.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.1.3",
@@ -342,7 +342,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.1.4",
@@ -350,14 +350,14 @@
     "Born": 1793,
     "Died": 1875.0,
     "BiologicalSex": "Female",
-    "Notes": "Lovisa Fredrika, born 8 August 1793 at Gustorp, died 9 March 1875 at Linköping.",
+    "Notes": "Lovisa Fredrika, born 8 August 1793 at Gustorp, died 9 March 1875 at Link\u00f6ping.",
     "Father": "9.2.4.2.1",
     "AgeAtDeath": 82.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.1.5",
@@ -365,14 +365,14 @@
     "Born": 1798,
     "Died": 1864.0,
     "BiologicalSex": "Male",
-    "Notes": "Fredrik Vilhelm Gyllencreutz, born 7 April 1798 at Norrköping,2 October 1844 at Hyllie, married 15 October 1826 at Hovmanstorp Maria Margareta Liedbeck, born 29 September 1780, died 22 November 1864 at Lund.",
+    "Notes": "Fredrik Vilhelm Gyllencreutz, born 7 April 1798 at Norrk\u00f6ping,2 October 1844 at Hyllie, married 15 October 1826 at Hovmanstorp Maria Margareta Liedbeck, born 29 September 1780, died 22 November 1864 at Lund.",
     "Father": "9.2.4.2.1",
     "AgeAtDeath": 66.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.1.6",
@@ -380,14 +380,14 @@
     "Born": 1808,
     "Died": 1809.0,
     "BiologicalSex": "Male",
-    "Notes": "Johan Christoffer Gyllencreutz, born 25 September 1808, died 18 February 1809 at Torstorp, Östra Ryd parish.",
+    "Notes": "Johan Christoffer Gyllencreutz, born 25 September 1808, died 18 February 1809 at Torstorp, \u00d6stra Ryd parish.",
     "Father": "9.2.4.2.1",
     "AgeAtDeath": 1.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)']"
   },
   {
     "ID": "9.2.4.2.2",
@@ -395,14 +395,14 @@
     "Born": 1754,
     "Died": 1832.0,
     "BiologicalSex": "Male",
-    "Notes": "Alf Gyllencreutz, born 8 Decemebr 1754 at Tomtaholm, died 11 March 1832 at Linköping, married 1stly 18 November 1777 at Tynningö Gustava Christina Bögwald, divorced (died April 1815 at Stockholm, daughter of the wholesaler Teodor Bögwald); married 2ndly 1800 Brita Christina le Moine (born 1770, died 17 July 1806 at Västersäter, daughter of the customs inspector at Stockholm Johan le Moine and Anna Brita Hasselberg).",
+    "Notes": "Alf Gyllencreutz, born 8 Decemebr 1754 at Tomtaholm, died 11 March 1832 at Link\u00f6ping, married 1stly 18 November 1777 at Tynning\u00f6 Gustava Christina B\u00f6gwald, divorced (died April 1815 at Stockholm, daughter of the wholesaler Teodor B\u00f6gwald); married 2ndly 1800 Brita Christina le Moine (born 1770, died 17 July 1806 at V\u00e4sters\u00e4ter, daughter of the customs inspector at Stockholm Johan le Moine and Anna Brita Hasselberg).",
     "Father": "9.2.4.2",
     "AgeAtDeath": 78.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.2.1",
@@ -410,14 +410,14 @@
     "Born": 1778,
     "Died": 1855.0,
     "BiologicalSex": "Female",
-    "Notes": "Carolina Christina Elisabet, born 10 August 1778 at Tynningö, died 15 December 1855 at Arboga, married 14 August 1808 at Kristinehamn Anders Peter Otterström.",
+    "Notes": "Carolina Christina Elisabet, born 10 August 1778 at Tynning\u00f6, died 15 December 1855 at Arboga, married 14 August 1808 at Kristinehamn Anders Peter Otterstr\u00f6m.",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 77.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.2",
@@ -425,14 +425,14 @@
     "Born": 1779,
     "Died": 9999.0,
     "BiologicalSex": "Male",
-    "Notes": "Gustaf Fredrik Gyllencreutz, born 27 August 1779 at Tynningö.",
+    "Notes": "Gustaf Fredrik Gyllencreutz, born 27 August 1779 at Tynning\u00f6.",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.3",
@@ -440,14 +440,14 @@
     "Born": 1780,
     "Died": 1782.0,
     "BiologicalSex": "Female",
-    "Notes": "Magdalena Fredrika, born 29 November 1780 at Tynningö, died 22 May 1782 at Tynningö, buried 27 May 1782.",
+    "Notes": "Magdalena Fredrika, born 29 November 1780 at Tynning\u00f6, died 22 May 1782 at Tynning\u00f6, buried 27 May 1782.",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 2.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.4",
@@ -462,7 +462,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.5",
@@ -477,7 +477,7 @@
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.2.5.1",
@@ -492,7 +492,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.2",
@@ -507,7 +507,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.3",
@@ -515,14 +515,14 @@
     "Born": 1817,
     "Died": 1873.0,
     "BiologicalSex": "Male",
-    "Notes": "Edvard Adolf Gyllencreutz, born 22 October 1817 at Stockholm, died 27 April 1873 at Grönö, married 13 December 1848 at Nora Vilhelmina Elisabet Wedberg (born 13 December 1830 at Nora, died 25 March 1917 at Stockholm (daughter of the mill-owner Lars Erik Wedberg and Lovisa Vilhelmina Geijer).",
+    "Notes": "Edvard Adolf Gyllencreutz, born 22 October 1817 at Stockholm, died 27 April 1873 at Gr\u00f6n\u00f6, married 13 December 1848 at Nora Vilhelmina Elisabet Wedberg (born 13 December 1830 at Nora, died 25 March 1917 at Stockholm (daughter of the mill-owner Lars Erik Wedberg and Lovisa Vilhelmina Geijer).",
     "Father": "9.2.4.2.2.5",
     "AgeAtDeath": 56.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.3.1",
@@ -537,7 +537,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.5.3.2",
@@ -552,7 +552,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.3.3",
@@ -560,14 +560,14 @@
     "Born": 1852,
     "Died": 1856.0,
     "BiologicalSex": "Male",
-    "Notes": "Alf Edvard Gyllencreutz, born 3 October 1852, died 22 January 1856 at Grönö.",
+    "Notes": "Alf Edvard Gyllencreutz, born 3 October 1852, died 22 January 1856 at Gr\u00f6n\u00f6.",
     "Father": "9.2.4.2.2.5.3",
     "AgeAtDeath": 4.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.5.3.4",
@@ -575,14 +575,14 @@
     "Born": 1855,
     "Died": 1857.0,
     "BiologicalSex": "Female",
-    "Notes": "Tora Elisabet, born 14 February 1855 at Grönö, died 27 July 1857 at Grönö.",
+    "Notes": "Tora Elisabet, born 14 February 1855 at Gr\u00f6n\u00f6, died 27 July 1857 at Gr\u00f6n\u00f6.",
     "Father": "9.2.4.2.2.5.3",
     "AgeAtDeath": 2.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.5.3.5",
@@ -590,14 +590,14 @@
     "Born": 1857,
     "Died": 1915.0,
     "BiologicalSex": "Female",
-    "Notes": "Ellen Helena, born 15 September 1857 at Grönö, married 6 October 1877 at Lidköping Bror Axel Tjernberg (born 14 October 1845 at Härnösand, died 31 May 1915 at Stockholm.",
+    "Notes": "Ellen Helena, born 15 September 1857 at Gr\u00f6n\u00f6, married 6 October 1877 at Lidk\u00f6ping Bror Axel Tjernberg (born 14 October 1845 at H\u00e4rn\u00f6sand, died 31 May 1915 at Stockholm.",
     "Father": "9.2.4.2.2.5.3",
     "AgeAtDeath": 58.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.4",
@@ -612,7 +612,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.2.5.5",
@@ -620,14 +620,14 @@
     "Born": 1821,
     "Died": 1898.0,
     "BiologicalSex": "Male",
-    "Notes": "Knut Gustaf Gyllencreutz, born 24 January 1821 at Stockholm, died 19 March 1898, married Inga Maria Göhle (born 24 October 1824 at Brunneby, died 24 May 1914 at Uppsala, daughter of the property-owner Olof Vilhelm Göhle and Anna Elisabet Westerdahl).",
+    "Notes": "Knut Gustaf Gyllencreutz, born 24 January 1821 at Stockholm, died 19 March 1898, married Inga Maria G\u00f6hle (born 24 October 1824 at Brunneby, died 24 May 1914 at Uppsala, daughter of the property-owner Olof Vilhelm G\u00f6hle and Anna Elisabet Westerdahl).",
     "Father": "9.2.4.2.2.5",
     "AgeAtDeath": 77.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1",
@@ -635,14 +635,14 @@
     "Born": 1854,
     "Died": 9999.0,
     "BiologicalSex": "Male",
-    "Notes": "Knut Gustaf Gyllencreutz, born 10 July 1854 at Stockholm, married 11 November 1878 at Visby Ananda Christina Josefina Boberg (born 7 January 1856 at Visby, daughter of Olof Adolf Fredrik Boberg and Maria Christina Elisabet Klintström).",
+    "Notes": "Knut Gustaf Gyllencreutz, born 10 July 1854 at Stockholm, married 11 November 1878 at Visby Ananda Christina Josefina Boberg (born 7 January 1856 at Visby, daughter of Olof Adolf Fredrik Boberg and Maria Christina Elisabet Klintstr\u00f6m).",
     "Father": "9.2.4.2.2.5.5",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1",
@@ -650,29 +650,29 @@
     "Born": 1879,
     "Died": 1948.0,
     "BiologicalSex": "Male",
-    "Notes": "Carl Gustaf Adolf Gyllencreutz, born 6 January 1879 at Visby, died 1948, married 21 May 1904 at Vetlanda parish Hedvig Valfrid Constance Boström (born 27 July 1884 at Säfsjö, died 1946, daughter of Ernst Boström and Hedvig Hansson).",
+    "Notes": "Carl Gustaf Adolf Gyllencreutz, born 6 January 1879 at Visby, died 1948, married 21 May 1904 at Vetlanda parish Hedvig Valfrid Constance Bostr\u00f6m (born 27 July 1884 at S\u00e4fsj\u00f6, died 1946, daughter of Ernst Bostr\u00f6m and Hedvig Hansson).",
     "Father": "9.2.4.2.2.5.5.1",
     "AgeAtDeath": 69.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.1",
-    "Name": "Ernst Gustaf Sören Gyllencreutz",
+    "Name": "Ernst Gustaf S\u00f6ren Gyllencreutz",
     "Born": 1904,
     "Died": 9999.0,
     "BiologicalSex": "Male",
-    "Notes": "Ernst Gustaf Sören Gyllencreutz, born 23 October 1904 at Jönköping, married 9 June 1935 Ingeborg Cecilia Andersson (born 11 July 1911).",
+    "Notes": "Ernst Gustaf S\u00f6ren Gyllencreutz, born 23 October 1904 at J\u00f6nk\u00f6ping, married 9 June 1935 Ingeborg Cecilia Andersson (born 11 July 1911).",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.1.1",
@@ -680,7 +680,7 @@
     "Born": 1939,
     "Died": null,
     "BiologicalSex": "Female",
-    "Notes": "Sigrid Ingalill Christina, born 3 December 1939, married 27 June Nils Åke Florén (born 3 July 1940).",
+    "Notes": "Sigrid Ingalill Christina, born 3 December 1939, married 27 June Nils \u00c5ke Flor\u00e9n (born 3 July 1940).",
     "Father": "9.2.4.2.2.5.5.1.1.1",
     "AgeAtDeath": null,
     "DiedYoung": false,
@@ -695,14 +695,14 @@
     "Born": 1906,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Nanna Margit Vallifrid, born 23 January 1906 at Säby parish.",
+    "Notes": "Nanna Margit Vallifrid, born 23 January 1906 at S\u00e4by parish.",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.3",
@@ -710,14 +710,14 @@
     "Born": 1908,
     "Died": 1995.0,
     "BiologicalSex": "Male",
-    "Notes": "Knut Gustaf Adolf Gyllencreutz, born 2 April 1908 at Hälsingborg, married 3 February 1940 Elsa Vilhelmina Ingeborg Nilsson (born 1 April 1906 at Malmö).",
+    "Notes": "Knut Gustaf Adolf Gyllencreutz, born 2 April 1908 at H\u00e4lsingborg, married 3 February 1940 Elsa Vilhelmina Ingeborg Nilsson (born 1 April 1906 at Malm\u00f6).",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": 87.0,
     "DiedYoung": false,
     "IsSuccessionSon": true,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.3.1",
@@ -751,18 +751,18 @@
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.4",
-    "Name": "Alf Börje Maximilian Gyllencreutz",
+    "Name": "Alf B\u00f6rje Maximilian Gyllencreutz",
     "Born": 1910,
     "Died": 2020.0,
     "BiologicalSex": "Male",
-    "Notes": "Alf Börje Maximilian Gyllencreutz, born 7 August 1910 at Hälsingborg, married 1 October 1938 Karin Elisabet Johansson (born 15 July 1913).",
+    "Notes": "Alf B\u00f6rje Maximilian Gyllencreutz, born 7 August 1910 at H\u00e4lsingborg, married 1 October 1938 Karin Elisabet Johansson (born 15 July 1913).",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": 110.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.4.1",
@@ -770,7 +770,7 @@
     "Born": 1939,
     "Died": null,
     "BiologicalSex": "Female",
-    "Notes": "Christina Elisabet Birgitta, born 6 November 1939, married 26 October 1963 Karl Ivar Torbjörn Palmqvist (born 16 August 1938).",
+    "Notes": "Christina Elisabet Birgitta, born 6 November 1939, married 26 October 1963 Karl Ivar Torbj\u00f6rn Palmqvist (born 16 August 1938).",
     "Father": "9.2.4.2.2.5.5.1.1.4",
     "AgeAtDeath": null,
     "DiedYoung": false,
@@ -785,14 +785,14 @@
     "Born": 1912,
     "Died": 1947.0,
     "BiologicalSex": "Male",
-    "Notes": "Sven Arne Erhard Gyllencreutz, born 20 October 1912 at Hälsingborg, died 1947, married Ulla Ingegerd Mathilda Erdheim (died 1943).",
+    "Notes": "Sven Arne Erhard Gyllencreutz, born 20 October 1912 at H\u00e4lsingborg, died 1947, married Ulla Ingegerd Mathilda Erdheim (died 1943).",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": 35.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.5.1",
@@ -811,11 +811,11 @@
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.5.2",
-    "Name": "Claes-Göran Gyllencreutz",
+    "Name": "Claes-G\u00f6ran Gyllencreutz",
     "Born": 1941,
     "Died": null,
     "BiologicalSex": "Male",
-    "Notes": "Claes-Göran Gyllencreutz, born 13 June 1941, married 18 March 1972 Kjerstin Ingeborg Löfgren (born 18 December 1940).",
+    "Notes": "Claes-G\u00f6ran Gyllencreutz, born 13 June 1941, married 18 March 1972 Kjerstin Ingeborg L\u00f6fgren (born 18 December 1940).",
     "Father": "9.2.4.2.2.5.5.1.1.5",
     "AgeAtDeath": null,
     "DiedYoung": false,
@@ -860,14 +860,14 @@
     "Born": 1915,
     "Died": 1917.0,
     "BiologicalSex": "Male",
-    "Notes": "Stig Carl Gustaf Gyllencreutz, born 22 March 1915 at Hälsingborg, died 3 December 1917 at Hälsingborg.",
+    "Notes": "Stig Carl Gustaf Gyllencreutz, born 22 March 1915 at H\u00e4lsingborg, died 3 December 1917 at H\u00e4lsingborg.",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": 2.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.7",
@@ -882,22 +882,22 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.8",
-    "Name": "Torsten Gösta Ingemar Gyllencreutz",
+    "Name": "Torsten G\u00f6sta Ingemar Gyllencreutz",
     "Born": 1920,
     "Died": 1981.0,
     "BiologicalSex": "Male",
-    "Notes": "Torsten Gösta Ingemar Gyllencreutz, born 8 June 1920 at Raus parish, died 1981, married 1944 Gunvor Linnéa Alexandersson (born 15 April 1923).",
+    "Notes": "Torsten G\u00f6sta Ingemar Gyllencreutz, born 8 June 1920 at Raus parish, died 1981, married 1944 Gunvor Linn\u00e9a Alexandersson (born 15 April 1923).",
     "Father": "9.2.4.2.2.5.5.1.1",
     "AgeAtDeath": 61.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.8.1",
@@ -987,7 +987,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.10",
@@ -1002,7 +1002,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.1.10.1",
@@ -1010,7 +1010,7 @@
     "Born": 1960,
     "Died": null,
     "BiologicalSex": "Female",
-    "Notes": "Maj-Lis, born 1 May 1960, married 1 September 1984 Claes Göran Olof LIndqvist (born 9 July 1951).",
+    "Notes": "Maj-Lis, born 1 May 1960, married 1 September 1984 Claes G\u00f6ran Olof LIndqvist (born 9 July 1951).",
     "Father": "9.2.4.2.2.5.5.1.1.10",
     "AgeAtDeath": null,
     "DiedYoung": false,
@@ -1032,7 +1032,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.5.1.3",
@@ -1040,14 +1040,14 @@
     "Born": 1884,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Carin Ingeborg Elisabet, born 1 July 1884 at Stockholm, married 12 November 1924 at Stockholm the vicar of Grums parish Gustaf Petrus Sillén (born 8 April 1869 at Gesäter parish).",
+    "Notes": "Carin Ingeborg Elisabet, born 1 July 1884 at Stockholm, married 12 November 1924 at Stockholm the vicar of Grums parish Gustaf Petrus Sill\u00e9n (born 8 April 1869 at Ges\u00e4ter parish).",
     "Father": "9.2.4.2.2.5.5.1",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.6",
@@ -1062,7 +1062,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.2.5.7",
@@ -1070,14 +1070,14 @@
     "Born": 1825,
     "Died": 1864.0,
     "BiologicalSex": "Male",
-    "Notes": "Yngve Reinhold Gyllencreutz, born 8 April 1825 at Stockholm, died 20 April 1864 at Överkalix parish, married 13 April 1856 Maria Josefina Almqvist (born 11 January 1831 at Råneå parish, died 23 May 1896 at Stockholm, daughter of the vicar Christoffer Almqvist and Catharina Sofia Wennberg).",
+    "Notes": "Yngve Reinhold Gyllencreutz, born 8 April 1825 at Stockholm, died 20 April 1864 at \u00d6verkalix parish, married 13 April 1856 Maria Josefina Almqvist (born 11 January 1831 at R\u00e5ne\u00e5 parish, died 23 May 1896 at Stockholm, daughter of the vicar Christoffer Almqvist and Catharina Sofia Wennberg).",
     "Father": "9.2.4.2.2.5",
     "AgeAtDeath": 39.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.5.7.1",
@@ -1092,7 +1092,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.2.2.5.7.2",
@@ -1100,14 +1100,14 @@
     "Born": 1857,
     "Died": 1862.0,
     "BiologicalSex": "Male",
-    "Notes": "Alf Hjalmar Gyllencreutz, born 15 December 1857, died 22 September 1862 at Överkalix.",
+    "Notes": "Alf Hjalmar Gyllencreutz, born 15 December 1857, died 22 September 1862 at \u00d6verkalix.",
     "Father": "9.2.4.2.2.5.7",
     "AgeAtDeath": 5.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.5.7.3",
@@ -1122,7 +1122,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.7.4",
@@ -1130,14 +1130,14 @@
     "Born": 1862,
     "Died": 1862.0,
     "BiologicalSex": "Female",
-    "Notes": "Berta Amanda Sofia, born 30 June 1862, died 1 November 1862 at Överkalix.",
+    "Notes": "Berta Amanda Sofia, born 30 June 1862, died 1 November 1862 at \u00d6verkalix.",
     "Father": "9.2.4.2.2.5.7",
     "AgeAtDeath": 0.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.5.7.5",
@@ -1145,14 +1145,14 @@
     "Born": 1863,
     "Died": 1865.0,
     "BiologicalSex": "Male",
-    "Notes": "Axel Georg Gyllencreutz, born 22 August 1863, died 14 April 1865 at Överkalix.",
+    "Notes": "Axel Georg Gyllencreutz, born 22 August 1863, died 14 April 1865 at \u00d6verkalix.",
     "Father": "9.2.4.2.2.5.7",
     "AgeAtDeath": 2.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.5.8",
@@ -1160,14 +1160,14 @@
     "Born": 1826,
     "Died": 1875.0,
     "BiologicalSex": "Female",
-    "Notes": "Aurore Maria Carolina, born 6 September 1826, died 8 January 1875, married 25 May 1859 Vilhelm d'Aubigné (born 30 January 1831 at Hälsingborg, died 7 January 1883 at Stockholm).",
+    "Notes": "Aurore Maria Carolina, born 6 September 1826, died 8 January 1875, married 25 May 1859 Vilhelm d'Aubign\u00e9 (born 30 January 1831 at H\u00e4lsingborg, died 7 January 1883 at Stockholm).",
     "Father": "9.2.4.2.2.5",
     "AgeAtDeath": 49.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.9",
@@ -1182,7 +1182,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.10",
@@ -1197,7 +1197,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.11",
@@ -1205,14 +1205,14 @@
     "Born": 1831,
     "Died": 1883.0,
     "BiologicalSex": "Male",
-    "Notes": "Axel Sigfrid Gyllencreutz, born 4 July 1831, died 28 February 1883 at Göteborg.",
+    "Notes": "Axel Sigfrid Gyllencreutz, born 4 July 1831, died 28 February 1883 at G\u00f6teborg.",
     "Father": "9.2.4.2.2.5",
     "AgeAtDeath": 52.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.2.2.5.12",
@@ -1227,7 +1227,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.5.13",
@@ -1242,7 +1242,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.2.2.6",
@@ -1250,14 +1250,14 @@
     "Born": 1787,
     "Died": 1787.0,
     "BiologicalSex": "Male",
-    "Notes": "Tyko Lars Gyllencreutz, born 21 February 1787, died 1 March 1787 at Tynningö.",
+    "Notes": "Tyko Lars Gyllencreutz, born 21 February 1787, died 1 March 1787 at Tynning\u00f6.",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 0.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.7",
@@ -1272,7 +1272,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.8",
@@ -1287,7 +1287,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.9",
@@ -1295,14 +1295,14 @@
     "Born": 1791,
     "Died": 1791.0,
     "BiologicalSex": "Female",
-    "Notes": "Anna Maria, born 3 March 1791, died 4 March 1791 at Tynningö, buried 10 June 1791.",
+    "Notes": "Anna Maria, born 3 March 1791, died 4 March 1791 at Tynning\u00f6, buried 10 June 1791.",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 0.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.2.2.10",
@@ -1310,14 +1310,14 @@
     "Born": 1793,
     "Died": 1867.0,
     "BiologicalSex": "Female",
-    "Notes": "Maria Gustava, born 29 December 1793 at Stockholm, died 26 December 1867 at Stockholm, married 28 February 1809 Gustaf Adolf Björkman (born 22 November 1773 at Stockholm, died 15 October 1863 at Stockholm).",
+    "Notes": "Maria Gustava, born 29 December 1793 at Stockholm, died 26 December 1867 at Stockholm, married 28 February 1809 Gustaf Adolf Bj\u00f6rkman (born 22 November 1773 at Stockholm, died 15 October 1863 at Stockholm).",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 74.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.11",
@@ -1332,7 +1332,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.2.2.12",
@@ -1340,14 +1340,14 @@
     "Born": 1806,
     "Died": 1837.0,
     "BiologicalSex": "Female",
-    "Notes": "Christina Amalia, born 17 July 1806 at Västersäter, died 22 July 1837 at Stockholm, married 16 December 1831 Mattias Georg Törnqvist (born 16 December 1781, died 4 February 1856 at Stockholm).",
+    "Notes": "Christina Amalia, born 17 July 1806 at V\u00e4sters\u00e4ter, died 22 July 1837 at Stockholm, married 16 December 1831 Mattias Georg T\u00f6rnqvist (born 16 December 1781, died 4 February 1856 at Stockholm).",
     "Father": "9.2.4.2.2",
     "AgeAtDeath": 31.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.3",
@@ -1355,14 +1355,14 @@
     "Born": 1755,
     "Died": 1840.0,
     "BiologicalSex": "Female",
-    "Notes": "Eva Elisabet Ulrika, born 19 November 1755 at Bossgård, died 3 February 1840 at Linköping.",
+    "Notes": "Eva Elisabet Ulrika, born 19 November 1755 at Bossg\u00e5rd, died 3 February 1840 at Link\u00f6ping.",
     "Father": "9.2.4.2",
     "AgeAtDeath": 85.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.4",
@@ -1370,14 +1370,14 @@
     "Born": 1757,
     "Died": 1832.0,
     "BiologicalSex": "Female",
-    "Notes": "Beata Maria, born 4 October 1757 at Bossgård, died 15 September 1832 at Norrköping, married 5 August 1777 at Viby baron Carl Gustaf Cronhielm (born 1739, died 1822).",
+    "Notes": "Beata Maria, born 4 October 1757 at Bossg\u00e5rd, died 15 September 1832 at Norrk\u00f6ping, married 5 August 1777 at Viby baron Carl Gustaf Cronhielm (born 1739, died 1822).",
     "Father": "9.2.4.2",
     "AgeAtDeath": 75.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.2.5",
@@ -1392,7 +1392,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)']"
   },
   {
     "ID": "9.2.4.2.6",
@@ -1407,7 +1407,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Elder line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)']"
   },
   {
     "ID": "9.2.4.3",
@@ -1422,7 +1422,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.4",
@@ -1430,14 +1430,14 @@
     "Born": 1726,
     "Died": 1796.0,
     "BiologicalSex": "Female",
-    "Notes": "Ulrika, born 3 April 1726 at Alby, died 13 January 1796 at Göstad, married 1752 major Johan Christoffer Freijtag (born 1718, died 1764).",
+    "Notes": "Ulrika, born 3 April 1726 at Alby, died 13 January 1796 at G\u00f6stad, married 1752 major Johan Christoffer Freijtag (born 1718, died 1764).",
     "Father": "9.2.4",
     "AgeAtDeath": 70.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)', 'Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)', 'Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)']"
   },
   {
     "ID": "9.2.4.5",
@@ -1452,7 +1452,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.6",
@@ -1460,14 +1460,14 @@
     "Born": 1728,
     "Died": 1785.0,
     "BiologicalSex": "Male",
-    "Notes": "Born at Alby, died at Stockholm; married 25 June 1754 baroness Ulrika Eleonora Siöblad (1734–1806)",
+    "Notes": "Born at Alby, died at Stockholm; married 25 June 1754 baroness Ulrika Eleonora Si\u00f6blad (1734\u20131806)",
     "Father": "9.2.4",
     "AgeAtDeath": 57.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)', 'Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)', 'Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.7",
@@ -1475,14 +1475,14 @@
     "Born": 1729,
     "Died": 1775.0,
     "BiologicalSex": "Male",
-    "Notes": "Fredrik Johan Gyllencreutz, born 18 August 1729 at Stockholm, died 16 December 1775 at Alby, married 14 February 1768 Hedvig von Bergholtz (born 22 June 1737 at Kolbäck parish, died 12 July 1776 at Alby, daughter of Melkior von Bergholtz and baroness Christina Funck).",
+    "Notes": "Fredrik Johan Gyllencreutz, born 18 August 1729 at Stockholm, died 16 December 1775 at Alby, married 14 February 1768 Hedvig von Bergholtz (born 22 June 1737 at Kolb\u00e4ck parish, died 12 July 1776 at Alby, daughter of Melkior von Bergholtz and baroness Christina Funck).",
     "Father": "9.2.4",
     "AgeAtDeath": 46.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Fredrik I (1720–1751)', 'Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)', 'Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)']"
   },
   {
     "ID": "9.2.4.7.1",
@@ -1490,14 +1490,14 @@
     "Born": 1768,
     "Died": 1823.0,
     "BiologicalSex": "Male",
-    "Notes": "Carl Johan Gyllencreutz, born 14 December 1768 at Alby, died 31 January 1823 at Vänsjö, married 7 July 1791 at Ekenäs, Borgå, Finland to Catharina Lovisa Tandefelt (born 14 May 1768, died 12 May 1848 at Magnusborg).",
+    "Notes": "Carl Johan Gyllencreutz, born 14 December 1768 at Alby, died 31 January 1823 at V\u00e4nsj\u00f6, married 7 July 1791 at Eken\u00e4s, Borg\u00e5, Finland to Catharina Lovisa Tandefelt (born 14 May 1768, died 12 May 1848 at Magnusborg).",
     "Father": "9.2.4.7",
     "AgeAtDeath": 55.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.7.1.1",
@@ -1512,7 +1512,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.7.1.2",
@@ -1520,14 +1520,14 @@
     "Born": 1798,
     "Died": 1884.0,
     "BiologicalSex": "Female",
-    "Notes": "Christina Lovisa, born 20 March 1798, died 15 February 1884 at Sörbo, Nykil parish.",
+    "Notes": "Christina Lovisa, born 20 March 1798, died 15 February 1884 at S\u00f6rbo, Nykil parish.",
     "Father": "9.2.4.7.1",
     "AgeAtDeath": 86.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.3",
@@ -1535,14 +1535,14 @@
     "Born": 1800,
     "Died": 1872.0,
     "BiologicalSex": "Female",
-    "Notes": "Charlotta Aurora, born 9 June 1800, died 26 September 1872 at Sörbo.",
+    "Notes": "Charlotta Aurora, born 9 June 1800, died 26 September 1872 at S\u00f6rbo.",
     "Father": "9.2.4.7.1",
     "AgeAtDeath": 72.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4",
@@ -1550,14 +1550,14 @@
     "Born": 1803,
     "Died": 1892.0,
     "BiologicalSex": "Male",
-    "Notes": "Carl Johan Gyllencreutz, born 31 January 1803 at Borgå, Finland, died 3 November 1892 at Sörbo, married 1stly 11 June 1826 at Grimmestorp, Härja parish Ulrika Henrietta König (born 27 March 1815 at Grimmestorp, died 8 June 1853 at Skackebo, Nykil parish); married 2ndly 20 July 1854 at Skackebo Aurora Vilhelmina König (born 18 April 1813 at Grimmestorp, died 6 January 1899 at Linköping).",
+    "Notes": "Carl Johan Gyllencreutz, born 31 January 1803 at Borg\u00e5, Finland, died 3 November 1892 at S\u00f6rbo, married 1stly 11 June 1826 at Grimmestorp, H\u00e4rja parish Ulrika Henrietta K\u00f6nig (born 27 March 1815 at Grimmestorp, died 8 June 1853 at Skackebo, Nykil parish); married 2ndly 20 July 1854 at Skackebo Aurora Vilhelmina K\u00f6nig (born 18 April 1813 at Grimmestorp, died 6 January 1899 at Link\u00f6ping).",
     "Father": "9.2.4.7.1",
     "AgeAtDeath": 89.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.1",
@@ -1565,14 +1565,14 @@
     "Born": 1839,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Hedvig Maria Lovisa, born 1 March 1839 at Vänsjö.",
+    "Notes": "Hedvig Maria Lovisa, born 1 March 1839 at V\u00e4nsj\u00f6.",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.7.1.4.2",
@@ -1587,7 +1587,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)']"
   },
   {
     "ID": "9.2.4.7.1.4.3",
@@ -1595,14 +1595,14 @@
     "Born": 1843,
     "Died": 1905.0,
     "BiologicalSex": "Female",
-    "Notes": "Christina Elisabet Ulrika, born 4 April 1843 at Ebbetorp, died 28 August 1905 at Hammar parish, married 21 May 1868 at Skackebo Jakob Herman Aspegren, born 2 August 1839 at Lilla Greby, died 6 February 1903 at Ånväga, Skeda parish).",
+    "Notes": "Christina Elisabet Ulrika, born 4 April 1843 at Ebbetorp, died 28 August 1905 at Hammar parish, married 21 May 1868 at Skackebo Jakob Herman Aspegren, born 2 August 1839 at Lilla Greby, died 6 February 1903 at \u00c5nv\u00e4ga, Skeda parish).",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": 62.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.4",
@@ -1617,7 +1617,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)']"
   },
   {
     "ID": "9.2.4.7.1.4.5",
@@ -1625,14 +1625,14 @@
     "Born": 1847,
     "Died": 1922.0,
     "BiologicalSex": "Male",
-    "Notes": "Axel Vilhelm Alarik Gyllencreutz, born 2 February 1847 at Frugården, Utby parish, died 23 September 1922 at Stockholm, married 1stly 1 September 1876 at Stockholm Anna Aurora Rosa Aimée Camitz (born 1 January 1848 at Borrud, Bäck parish, died 9 April 1899 at Stockholm, daughter of mill-owner Johan Vilhelm Camitz and Apollonia Augusta Aimée af Cristiernin).",
+    "Notes": "Axel Vilhelm Alarik Gyllencreutz, born 2 February 1847 at Frug\u00e5rden, Utby parish, died 23 September 1922 at Stockholm, married 1stly 1 September 1876 at Stockholm Anna Aurora Rosa Aim\u00e9e Camitz (born 1 January 1848 at Borrud, B\u00e4ck parish, died 9 April 1899 at Stockholm, daughter of mill-owner Johan Vilhelm Camitz and Apollonia Augusta Aim\u00e9e af Cristiernin).",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": 75.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.1",
@@ -1647,52 +1647,52 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.2",
-    "Name": "Elsa Ulrika Aimée",
+    "Name": "Elsa Ulrika Aim\u00e9e",
     "Born": 1879,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Elsa Ulrika Aimée, born 24 March 1879 at Karlsborg, married 31 August 1903 at Höja vicarage the engineer Carl Arvid Granqvist (born 15 October 1863 at Botholm).",
+    "Notes": "Elsa Ulrika Aim\u00e9e, born 24 March 1879 at Karlsborg, married 31 August 1903 at H\u00f6ja vicarage the engineer Carl Arvid Granqvist (born 15 October 1863 at Botholm).",
     "Father": "9.2.4.7.1.4.5",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.3",
-    "Name": "Tora Martina Aimée",
+    "Name": "Tora Martina Aim\u00e9e",
     "Born": 1882,
     "Died": 1884.0,
     "BiologicalSex": "Female",
-    "Notes": "Tora Martina Aimée, born 4 November 1882 at Karlsborg, died 11 January 1884 at Karlsborg.",
+    "Notes": "Tora Martina Aim\u00e9e, born 4 November 1882 at Karlsborg, died 11 January 1884 at Karlsborg.",
     "Father": "9.2.4.7.1.4.5",
     "AgeAtDeath": 2.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.4",
-    "Name": "Sigrid Adèle Aimée",
+    "Name": "Sigrid Ad\u00e8le Aim\u00e9e",
     "Born": 1886,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Sigrid Adèle Aimée, born 29 May 1886, married 1stly 5 October 1912 at Stockholm captain Carl Verner Albert Gyllencreutz, divorced 2 June 1925 (born 1887); married 2ndly 25 July 1925 at Stockholm Lars Fermæus (born 3 May 1894 at Göteborg).",
+    "Notes": "Sigrid Ad\u00e8le Aim\u00e9e, born 29 May 1886, married 1stly 5 October 1912 at Stockholm captain Carl Verner Albert Gyllencreutz, divorced 2 June 1925 (born 1887); married 2ndly 25 July 1925 at Stockholm Lars Ferm\u00e6us (born 3 May 1894 at G\u00f6teborg).",
     "Father": "9.2.4.7.1.4.5",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.5",
@@ -1700,14 +1700,14 @@
     "Born": 1887,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Anna Rosa Margareta, born 27 December 1887, married 19 October 1918 at Stockholm Carl Gustaf Stellan Wareilus (born 27 August 1880 at Göteborg).",
+    "Notes": "Anna Rosa Margareta, born 27 December 1887, married 19 October 1918 at Stockholm Carl Gustaf Stellan Wareilus (born 27 August 1880 at G\u00f6teborg).",
     "Father": "9.2.4.7.1.4.5",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.5.6",
@@ -1722,7 +1722,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.6",
@@ -1730,14 +1730,14 @@
     "Born": 1849,
     "Died": 1921.0,
     "BiologicalSex": "Male",
-    "Notes": "Tyko Johan Fredrik Gyllencreutz, born 25 April 1849 at Frugården, died 31 March 1921 at Stockholm, married 26 November 1887 at Motala Agnes Vilhelmina Swenson (born 8 May 1853 at Vadstena, died 21 February 1927 at Stockholm).",
+    "Notes": "Tyko Johan Fredrik Gyllencreutz, born 25 April 1849 at Frug\u00e5rden, died 31 March 1921 at Stockholm, married 26 November 1887 at Motala Agnes Vilhelmina Swenson (born 8 May 1853 at Vadstena, died 21 February 1927 at Stockholm).",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": 72.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.6.1",
@@ -1752,7 +1752,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.1.4.6.2",
@@ -1760,29 +1760,29 @@
     "Born": 1893,
     "Died": 1925.0,
     "BiologicalSex": "Female",
-    "Notes": "Hedvig Ulrika Focasa, born 14 July 1893 at Motala, married 1stly 18 August 1920 at Berlin, Germany professor Paul Rieth (born 16 June 1871 at Pössneck, Thüringen, Germany, died 15 May 1925 at München; married 2ndly 16 January 1927 at the German church, Stockholm lieutenant Harald Johan Gabriel von Seth (born 1893).",
+    "Notes": "Hedvig Ulrika Focasa, born 14 July 1893 at Motala, married 1stly 18 August 1920 at Berlin, Germany professor Paul Rieth (born 16 June 1871 at P\u00f6ssneck, Th\u00fcringen, Germany, died 15 May 1925 at M\u00fcnchen; married 2ndly 16 January 1927 at the German church, Stockholm lieutenant Harald Johan Gabriel von Seth (born 1893).",
     "Father": "9.2.4.7.1.4.6",
     "AgeAtDeath": 32.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.6.3",
-    "Name": "Carl-Gösta Linus Gyllencreutz",
+    "Name": "Carl-G\u00f6sta Linus Gyllencreutz",
     "Born": 1894,
     "Died": 1966.0,
     "BiologicalSex": "Male",
-    "Notes": "Carl-Gösta Linus Gyllencreutz, born 26 November 1894 at Odensberg, died 9166, married 2 November 1925 at villa Eken, Floda parish to Astrid Wadell (born 26 April 1898 at Göteborg, died 1964, daughter of Luther Emil Wadell and Anna Larsson).",
+    "Notes": "Carl-G\u00f6sta Linus Gyllencreutz, born 26 November 1894 at Odensberg, died 9166, married 2 November 1925 at villa Eken, Floda parish to Astrid Wadell (born 26 April 1898 at G\u00f6teborg, died 1964, daughter of Luther Emil Wadell and Anna Larsson).",
     "Father": "9.2.4.7.1.4.6",
     "AgeAtDeath": 72.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)', 'Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.7.1.4.6.3.1",
@@ -1865,14 +1865,14 @@
     "Born": 1850,
     "Died": 1914.0,
     "BiologicalSex": "Male",
-    "Notes": "Rikard Henrik Albert Gyllencreutz, born 14 July 1850 at Frugården, died 21 February 1914 at Kisa, married 25 August 1886 at Åtvida church Vendela Johanna Movik (born 18 October 1860 at Åtvidaberg, died 13 February 1912 at Ådala, daughter of Verner Movik and Matilda Carlsson).",
+    "Notes": "Rikard Henrik Albert Gyllencreutz, born 14 July 1850 at Frug\u00e5rden, died 21 February 1914 at Kisa, married 25 August 1886 at \u00c5tvida church Vendela Johanna Movik (born 18 October 1860 at \u00c5tvidaberg, died 13 February 1912 at \u00c5dala, daughter of Verner Movik and Matilda Carlsson).",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": 64.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)', 'Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.1",
@@ -1880,14 +1880,14 @@
     "Born": 1887,
     "Died": 1971.0,
     "BiologicalSex": "Male",
-    "Notes": "Carl Verner Albert Gyllencreutz, born 7 August 1887 at Åtvidaberg, died 1971, married 1stly 5 October 1912 at Stockholm Sigrid Adèle Aimée Gyllencreutz, divorced 2 June 1925 (born 29 May 1886 at Karlsborg, died 1975, see above); married 2ndly 2 February 1926 at the Swedish church, Copenhagen, Denmark Astrid Young (born 13 January 1891 at Göteborg, died 1969, daughter of Robert Young and Carrie Nilsson).",
+    "Notes": "Carl Verner Albert Gyllencreutz, born 7 August 1887 at \u00c5tvidaberg, died 1971, married 1stly 5 October 1912 at Stockholm Sigrid Ad\u00e8le Aim\u00e9e Gyllencreutz, divorced 2 June 1925 (born 29 May 1886 at Karlsborg, died 1975, see above); married 2ndly 2 February 1926 at the Swedish church, Copenhagen, Denmark Astrid Young (born 13 January 1891 at G\u00f6teborg, died 1969, daughter of Robert Young and Carrie Nilsson).",
     "Father": "9.2.4.7.1.4.7",
     "AgeAtDeath": 84.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)', 'Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.1.1",
@@ -1902,7 +1902,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.1.2",
@@ -1910,14 +1910,14 @@
     "Born": 1927,
     "Died": 9999.0,
     "BiologicalSex": "Male",
-    "Notes": "Karl-Tyke Robert Gyllencreutz, born 22 April 1927 at Göteborg, married 1 January 1955 Elisabeth Reuterswärd (born 15 July 1929).",
+    "Notes": "Karl-Tyke Robert Gyllencreutz, born 22 April 1927 at G\u00f6teborg, married 1 January 1955 Elisabeth Reutersw\u00e4rd (born 15 July 1929).",
     "Father": "9.2.4.7.1.4.7.1",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": true,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.1.2.1",
@@ -1925,7 +1925,7 @@
     "Born": 1956,
     "Died": null,
     "BiologicalSex": "Male",
-    "Notes": "Carl Gerhard Joachim Gyllencreutz, born 24 September 1956, married 22 July 1978 Tuula Margit Väisänen (born 8 January 1956).",
+    "Notes": "Carl Gerhard Joachim Gyllencreutz, born 24 September 1956, married 22 July 1978 Tuula Margit V\u00e4is\u00e4nen (born 8 January 1956).",
     "Father": "9.2.4.7.1.4.7.1.2",
     "AgeAtDeath": null,
     "DiedYoung": false,
@@ -1996,33 +1996,33 @@
   },
   {
     "ID": "9.2.4.7.1.4.7.2",
-    "Name": "Björn Johan Verner",
+    "Name": "Bj\u00f6rn Johan Verner",
     "Born": 1888,
     "Died": 1980.0,
     "BiologicalSex": "Male",
-    "Notes": "Björn Johan Verner, born 26 August 1888 at Åtvidaberg, died 1980, married 12 September 1916 at Kungälv church Harriet Bäärnhielm (born 22 October 1891 at Stockholm, died 1951); married 2ndly 1951 Barbro Johansson (born 24 November 1915).",
+    "Notes": "Bj\u00f6rn Johan Verner, born 26 August 1888 at \u00c5tvidaberg, died 1980, married 12 September 1916 at Kung\u00e4lv church Harriet B\u00e4\u00e4rnhielm (born 22 October 1891 at Stockholm, died 1951); married 2ndly 1951 Barbro Johansson (born 24 November 1915).",
     "Father": "9.2.4.7.1.4.7",
     "AgeAtDeath": 92.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar II (1872–1907)', 'Gustaf V (1907–1950)', 'Gustaf VI Adolf (1950–1973)', 'Carl XVI Gustaf (1973–present)']"
+    "MonarchDuringLife": "['Oscar II (1872\u20131907)', 'Gustaf V (1907\u20131950)', 'Gustaf VI Adolf (1950\u20131973)', 'Carl XVI Gustaf (1973\u2013present)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.2.1",
-    "Name": "Björn Gyllencreutz",
+    "Name": "Bj\u00f6rn Gyllencreutz",
     "Born": 1917,
     "Died": 1926.0,
     "BiologicalSex": "Male",
-    "Notes": "Björn Gyllencreutz, born 9 June 1917 at Boden, died 19 May 1926 at Stockholm.",
+    "Notes": "Bj\u00f6rn Gyllencreutz, born 9 June 1917 at Boden, died 19 May 1926 at Stockholm.",
     "Father": "9.2.4.7.1.4.7.2",
     "AgeAtDeath": 9.0,
     "DiedYoung": true,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.2.2",
@@ -2030,14 +2030,14 @@
     "Born": 1919,
     "Died": 9999.0,
     "BiologicalSex": "Female",
-    "Notes": "Ulla Margareta, born 9 December 1919 at Boden, married N. N. Hörsta.",
+    "Notes": "Ulla Margareta, born 9 December 1919 at Boden, married N. N. H\u00f6rsta.",
     "Father": "9.2.4.7.1.4.7.2",
     "AgeAtDeath": null,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Gustaf V (1907–1950)']"
+    "MonarchDuringLife": "['Gustaf V (1907\u20131950)']"
   },
   {
     "ID": "9.2.4.7.1.4.7.2.3",
@@ -2097,7 +2097,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.7.1.4.9",
@@ -2105,14 +2105,14 @@
     "Born": 1855,
     "Died": 1894.0,
     "BiologicalSex": "Female",
-    "Notes": "Maria Catharina Ulrika, born 13 November 1855 at Skackebo, married 19 July 1878 at Sörbo captain Adolf Henrik Forselius (born 21 November 1839, died 25 January 1894 at Linköping).",
+    "Notes": "Maria Catharina Ulrika, born 13 November 1855 at Skackebo, married 19 July 1878 at S\u00f6rbo captain Adolf Henrik Forselius (born 21 November 1839, died 25 January 1894 at Link\u00f6ping).",
     "Father": "9.2.4.7.1.4",
     "AgeAtDeath": 39.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Oscar I (1844–1859)', 'Karl XV (1859–1872)', 'Oscar II (1872–1907)']"
+    "MonarchDuringLife": "['Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)', 'Oscar II (1872\u20131907)']"
   },
   {
     "ID": "9.2.4.7.2",
@@ -2120,14 +2120,14 @@
     "Born": 1769,
     "Died": 1863.0,
     "BiologicalSex": "Female",
-    "Notes": "Christina Elisabet, born 31 December 1769, died 26 May 1863 at Vänsjö, married 8 September 1796 at Alby baron Carl Gustaf von Roxendorff (bron 1742, died 1807).",
+    "Notes": "Christina Elisabet, born 31 December 1769, died 26 May 1863 at V\u00e4nsj\u00f6, married 8 September 1796 at Alby baron Carl Gustaf von Roxendorff (bron 1742, died 1807).",
     "Father": "9.2.4.7",
     "AgeAtDeath": 94.0,
     "DiedYoung": false,
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": "Younger line",
-    "MonarchDuringLife": "['Adolf Fredrik (1751–1771)', 'Gustav III (1771–1792)', 'Gustav IV Adolf (1792–1809)', 'Karl XIII (1809–1818)', 'Karl XIV Johan (1818–1844)', 'Oscar I (1844–1859)', 'Karl XV (1859–1872)']"
+    "MonarchDuringLife": "['Adolf Fredrik (1751\u20131771)', 'Gustav III (1771\u20131792)', 'Gustav IV Adolf (1792\u20131809)', 'Karl XIII (1809\u20131818)', 'Karl XIV Johan (1818\u20131844)', 'Oscar I (1844\u20131859)', 'Karl XV (1859\u20131872)']"
   },
   {
     "ID": "9.2.4.8",
@@ -2142,7 +2142,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.9",
@@ -2157,7 +2157,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.10",
@@ -2172,7 +2172,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.11",
@@ -2187,7 +2187,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "9.2.4.12",
@@ -2202,7 +2202,7 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Fredrik I (1720–1751)']"
+    "MonarchDuringLife": "['Fredrik I (1720\u20131751)']"
   },
   {
     "ID": "10",
@@ -2217,6 +2217,6 @@
     "IsSuccessionSon": false,
     "HasMaleChildren": false,
     "NobleBranch": null,
-    "MonarchDuringLife": "['Gustav II Adolf (1611–1632)']"
+    "MonarchDuringLife": "['Gustav II Adolf (1611\u20131632)']"
   }
 ]
