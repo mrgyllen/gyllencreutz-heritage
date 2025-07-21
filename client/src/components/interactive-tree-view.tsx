@@ -55,25 +55,25 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
 
     svg.call(zoom);
 
-    // Define gradients for succession icons
+    // Define gradients for heraldic coat of arms
     const defs = svg.append('defs');
     
-    // Shield gradient for heraldic appearance
-    const shieldGradient = defs.append('radialGradient')
-      .attr('id', 'shieldGradient')
-      .attr('cx', '50%')
-      .attr('cy', '30%')
-      .attr('r', '70%');
+    // Authentic heraldic gradient for Gyllencreutz shield
+    const heraldicGradient = defs.append('radialGradient')
+      .attr('id', 'heraldicGradient')
+      .attr('cx', '40%')
+      .attr('cy', '25%')
+      .attr('r', '80%');
     
-    shieldGradient.append('stop')
+    heraldicGradient.append('stop')
       .attr('offset', '0%')
+      .attr('stop-color', '#fef3c7');
+    
+    heraldicGradient.append('stop')
+      .attr('offset', '50%')
       .attr('stop-color', '#fbbf24');
     
-    shieldGradient.append('stop')
-      .attr('offset', '60%')
-      .attr('stop-color', '#f59e0b');
-    
-    shieldGradient.append('stop')
+    heraldicGradient.append('stop')
       .attr('offset', '100%')
       .attr('stop-color', '#d97706');
 
@@ -238,135 +238,65 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         leftX += 25;
       }
       
-      // Succession icon (top-right area) - showing different design concepts
+      // Prominent Gyllencreutz Coat of Arms for Succession Sons (top-right corner)
       if (d.data.isSuccessionSon) {
-        const iconCenterX = rightX - 10;
-        const iconCenterY = badgeY;
+        const shieldX = nodeWidth/2 - 18;
+        const shieldY = -nodeHeight/2 + 8;
         
-        // Switch between concepts - currently showing Concept 3 (Interlocking Rings)
-        const concept: 1 | 2 | 3 = 3; // Change this to 1, 2, or 3 to test different designs
+        // Create authentic heraldic shield shape (larger and more prominent)
+        const shieldPath = `
+          M ${shieldX + 12} ${shieldY}
+          L ${shieldX + 2} ${shieldY + 4}
+          L ${shieldX + 2} ${shieldY + 18}
+          Q ${shieldX + 12} ${shieldY + 26} ${shieldX + 22} ${shieldY + 18}
+          L ${shieldX + 22} ${shieldY + 4}
+          Z
+        `;
         
-        if (concept === 1) {
-          // CONCEPT 1: Family Tree Branch
-          node.append('circle')
-            .attr('cx', iconCenterX)
-            .attr('cy', iconCenterY)
-            .attr('r', 8)
-            .style('fill', '#fef3c7')
-            .style('stroke', '#d97706')
-            .style('stroke-width', 1.2);
-          
-          node.append('line')
-            .attr('x1', iconCenterX)
-            .attr('y1', iconCenterY + 4)
-            .attr('x2', iconCenterX)
-            .attr('y2', iconCenterY - 2)
-            .style('stroke', '#92400e')
-            .style('stroke-width', 2);
-          
-          node.append('line')
-            .attr('x1', iconCenterX)
-            .attr('y1', iconCenterY - 1)
-            .attr('x2', iconCenterX - 3)
-            .attr('y2', iconCenterY - 4)
-            .style('stroke', '#92400e')
-            .style('stroke-width', 1.5);
-          
-          node.append('line')
-            .attr('x1', iconCenterX)
-            .attr('y1', iconCenterY - 1)
-            .attr('x2', iconCenterX + 3)
-            .attr('y2', iconCenterY - 4)
-            .style('stroke', '#92400e')
-            .style('stroke-width', 1.5);
-          
-          node.append('circle')
-            .attr('cx', iconCenterX - 3)
-            .attr('cy', iconCenterY - 4)
-            .attr('r', 1)
-            .style('fill', '#16a34a');
-          
-          node.append('circle')
-            .attr('cx', iconCenterX + 3)
-            .attr('cy', iconCenterY - 4)
-            .attr('r', 1)
-            .style('fill', '#16a34a');
-            
-        } else if (concept === 2) {
-          // CONCEPT 2: Heraldic Scroll with Quill
-          node.append('circle')
-            .attr('cx', iconCenterX)
-            .attr('cy', iconCenterY)
-            .attr('r', 8)
-            .style('fill', '#fef7ed')
-            .style('stroke', '#d97706')
-            .style('stroke-width', 1.2);
-          
-          // Scroll shape
-          const scrollPath = `
-            M ${iconCenterX - 5} ${iconCenterY - 3}
-            Q ${iconCenterX - 6} ${iconCenterY - 4} ${iconCenterX - 5} ${iconCenterY - 5}
-            L ${iconCenterX + 3} ${iconCenterY - 5}
-            Q ${iconCenterX + 4} ${iconCenterY - 4} ${iconCenterX + 3} ${iconCenterY - 3}
-            L ${iconCenterX + 3} ${iconCenterY + 3}
-            Q ${iconCenterX + 4} ${iconCenterY + 4} ${iconCenterX + 3} ${iconCenterY + 5}
-            L ${iconCenterX - 5} ${iconCenterY + 5}
-            Q ${iconCenterX - 6} ${iconCenterY + 4} ${iconCenterX - 5} ${iconCenterY + 3}
-            Z
-          `;
-          
-          node.append('path')
-            .attr('d', scrollPath)
-            .style('fill', '#f5f5dc')
-            .style('stroke', '#8b4513')
-            .style('stroke-width', 0.8);
-          
-          // Quill pen
-          node.append('line')
-            .attr('x1', iconCenterX + 2)
-            .attr('y1', iconCenterY + 1)
-            .attr('x2', iconCenterX + 5)
-            .attr('y2', iconCenterY - 2)
-            .style('stroke', '#b45309')
-            .style('stroke-width', 1.5);
-          
-          // Quill tip
-          node.append('circle')
-            .attr('cx', iconCenterX + 5)
-            .attr('cy', iconCenterY - 2)
-            .attr('r', 0.8)
-            .style('fill', '#92400e');
-            
-        } else if (concept === 3) {
-          // CONCEPT 3: Interlocking Heritage Rings (refined with thinner rings)
-          node.append('circle')
-            .attr('cx', iconCenterX)
-            .attr('cy', iconCenterY)
-            .attr('r', 8)
-            .style('fill', '#fef3c7')
-            .style('stroke', '#d97706')
-            .style('stroke-width', 1.2);
-          
-          // First ring (left, slightly higher)
-          node.append('circle')
-            .attr('cx', iconCenterX - 2.5)
-            .attr('cy', iconCenterY - 1)
-            .attr('r', 3.5)
-            .style('fill', 'none')
-            .style('stroke', '#b45309')
-            .style('stroke-width', 1.2);
-          
-          // Second interlocking ring (right, slightly lower)
-          node.append('circle')
-            .attr('cx', iconCenterX + 2.5)
-            .attr('cy', iconCenterY + 1)
-            .attr('r', 3.5)
-            .style('fill', 'none')
-            .style('stroke', '#d97706')
-            .style('stroke-width', 1.2);
-        }
+        // Shield background with heraldic gradient
+        node.append('path')
+          .attr('d', shieldPath)
+          .style('fill', 'url(#heraldicGradient)')
+          .style('stroke', '#7c2d12')
+          .style('stroke-width', 2)
+          .style('filter', 'drop-shadow(2px 2px 4px rgba(0,0,0,0.25))');
         
-        rightX -= 22;
+        // Central cross pattern (characteristic of Gyllencreutz arms)
+        // Vertical cross bar
+        node.append('rect')
+          .attr('x', shieldX + 10)
+          .attr('y', shieldY + 6)
+          .attr('width', 4)
+          .attr('height', 12)
+          .style('fill', '#fbbf24')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 0.5);
+        
+        // Horizontal cross bar
+        node.append('rect')
+          .attr('x', shieldX + 6)
+          .attr('y', shieldY + 10)
+          .attr('width', 12)
+          .attr('height', 4)
+          .style('fill', '#fbbf24')
+          .style('stroke', '#d97706')
+          .style('stroke-width', 0.5);
+        
+        // Decorative elements in corners
+        [
+          { x: shieldX + 6, y: shieldY + 7 },
+          { x: shieldX + 18, y: shieldY + 7 },
+          { x: shieldX + 6, y: shieldY + 17 },
+          { x: shieldX + 18, y: shieldY + 17 }
+        ].forEach(pos => {
+          node.append('circle')
+            .attr('cx', pos.x)
+            .attr('cy', pos.y)
+            .attr('r', 1.5)
+            .style('fill', '#dc2626')
+            .style('stroke', '#991b1b')
+            .style('stroke-width', 0.3);
+        });
       }
       
       // Died Young indicator (bottom area)

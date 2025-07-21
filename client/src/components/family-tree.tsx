@@ -381,12 +381,30 @@ export function FamilyTree() {
             <span className="text-sm text-gray-600">Younger Line</span>
           </div>
           <div className="flex items-center">
-            <div className="w-4 h-4 mr-2 flex items-center justify-center relative">
-              <svg width="16" height="16" viewBox="0 0 16 16" className="drop-shadow-sm">
-                {/* Concept 3: Interlocking Heritage Rings (refined) */}
-                <circle cx="8" cy="8" r="7" fill="#fef3c7" stroke="#d97706" strokeWidth="0.8"/>
-                <circle cx="5.5" cy="7" r="3.5" fill="none" stroke="#b45309" strokeWidth="1"/>
-                <circle cx="10.5" cy="9" r="3.5" fill="none" stroke="#d97706" strokeWidth="1"/>
+            <div className="w-5 h-6 mr-2 flex items-center justify-center relative">
+              <svg width="20" height="24" viewBox="0 0 20 24" className="drop-shadow-md">
+                <defs>
+                  <radialGradient id="legendHeraldic" cx="40%" cy="25%" r="80%">
+                    <stop offset="0%" stopColor="#fef3c7"/>
+                    <stop offset="50%" stopColor="#fbbf24"/>
+                    <stop offset="100%" stopColor="#d97706"/>
+                  </radialGradient>
+                </defs>
+                {/* Authentic Gyllencreutz Shield */}
+                <path 
+                  d="M10 2 L2 6 L2 16 Q10 22 18 16 L18 6 Z" 
+                  fill="url(#legendHeraldic)" 
+                  stroke="#7c2d12" 
+                  strokeWidth="1.5"
+                />
+                {/* Cross pattern */}
+                <rect x="8.5" y="8" width="3" height="8" fill="#fbbf24" stroke="#d97706" strokeWidth="0.3"/>
+                <rect x="5" y="10.5" width="10" height="3" fill="#fbbf24" stroke="#d97706" strokeWidth="0.3"/>
+                {/* Corner decorations */}
+                <circle cx="6" cy="9" r="1" fill="#dc2626"/>
+                <circle cx="14" cy="9" r="1" fill="#dc2626"/>
+                <circle cx="6" cy="15" r="1" fill="#dc2626"/>
+                <circle cx="14" cy="15" r="1" fill="#dc2626"/>
               </svg>
             </div>
             <span className="text-sm text-gray-600">Succession Son</span>

@@ -169,4 +169,5 @@ Color scheme: 1500-1700s Swedish nobility aesthetic - subtle, muted tones that d
 - **Member Cards**: Card-based display for generation members with key details and status indicators
 - **Visual Design**: Enhanced timeline with TreePine icons, gradient backgrounds, hover animations, and Swedish nobility styling
 - **Enhanced Cards**: Rounded corners, drop shadows, scale effects, and antique brass highlights for selected states
-- **Crown Indicators**: Larger crowns with sparkles for generations with multiple succession sons
+- **Authentic Heraldic Icons**: Prominent Gyllencreutz coat of arms shields for succession sons featuring authentic cross pattern and heraldic styling
+- **Search Navigation**: Click search results automatically switches to Tree View, expands ancestry path, and centers on selected member
