@@ -238,55 +238,135 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         leftX += 25;
       }
       
-      // Succession heraldic icon (top-right area)
+      // Succession icon (top-right area) - showing different design concepts
       if (d.data.isSuccessionSon) {
-        const crownCenterX = rightX - 12;
-        const crownCenterY = badgeY;
+        const iconCenterX = rightX - 10;
+        const iconCenterY = badgeY;
         
-        // Create shield-shaped background with heraldic styling
-        const shieldPath = `
-          M ${crownCenterX} ${crownCenterY - 8}
-          L ${crownCenterX - 8} ${crownCenterY - 5}
-          L ${crownCenterX - 8} ${crownCenterY + 5}
-          Q ${crownCenterX} ${crownCenterY + 10} ${crownCenterX + 8} ${crownCenterY + 5}
-          L ${crownCenterX + 8} ${crownCenterY - 5}
-          Z
-        `;
+        // Switch between concepts - currently showing Concept 1
+        const concept: 1 | 2 | 3 = 1; // Change this to 1, 2, or 3 to test different designs
         
-        // Shield background with gradient
-        node.append('path')
-          .attr('d', shieldPath)
-          .style('fill', 'url(#shieldGradient)')
-          .style('stroke', '#7c2d12')
-          .style('stroke-width', 1.5)
-          .style('filter', 'drop-shadow(1px 1px 2px rgba(0,0,0,0.3))');
+        if (concept === 1) {
+          // CONCEPT 1: Family Tree Branch
+          node.append('circle')
+            .attr('cx', iconCenterX)
+            .attr('cy', iconCenterY)
+            .attr('r', 8)
+            .style('fill', '#fef3c7')
+            .style('stroke', '#d97706')
+            .style('stroke-width', 1.2);
+          
+          node.append('line')
+            .attr('x1', iconCenterX)
+            .attr('y1', iconCenterY + 4)
+            .attr('x2', iconCenterX)
+            .attr('y2', iconCenterY - 2)
+            .style('stroke', '#92400e')
+            .style('stroke-width', 2);
+          
+          node.append('line')
+            .attr('x1', iconCenterX)
+            .attr('y1', iconCenterY - 1)
+            .attr('x2', iconCenterX - 3)
+            .attr('y2', iconCenterY - 4)
+            .style('stroke', '#92400e')
+            .style('stroke-width', 1.5);
+          
+          node.append('line')
+            .attr('x1', iconCenterX)
+            .attr('y1', iconCenterY - 1)
+            .attr('x2', iconCenterX + 3)
+            .attr('y2', iconCenterY - 4)
+            .style('stroke', '#92400e')
+            .style('stroke-width', 1.5);
+          
+          node.append('circle')
+            .attr('cx', iconCenterX - 3)
+            .attr('cy', iconCenterY - 4)
+            .attr('r', 1)
+            .style('fill', '#16a34a');
+          
+          node.append('circle')
+            .attr('cx', iconCenterX + 3)
+            .attr('cy', iconCenterY - 4)
+            .attr('r', 1)
+            .style('fill', '#16a34a');
+            
+        } else if (concept === 2) {
+          // CONCEPT 2: Heraldic Scroll with Quill
+          node.append('circle')
+            .attr('cx', iconCenterX)
+            .attr('cy', iconCenterY)
+            .attr('r', 8)
+            .style('fill', '#fef7ed')
+            .style('stroke', '#d97706')
+            .style('stroke-width', 1.2);
+          
+          // Scroll shape
+          const scrollPath = `
+            M ${iconCenterX - 5} ${iconCenterY - 3}
+            Q ${iconCenterX - 6} ${iconCenterY - 4} ${iconCenterX - 5} ${iconCenterY - 5}
+            L ${iconCenterX + 3} ${iconCenterY - 5}
+            Q ${iconCenterX + 4} ${iconCenterY - 4} ${iconCenterX + 3} ${iconCenterY - 3}
+            L ${iconCenterX + 3} ${iconCenterY + 3}
+            Q ${iconCenterX + 4} ${iconCenterY + 4} ${iconCenterX + 3} ${iconCenterY + 5}
+            L ${iconCenterX - 5} ${iconCenterY + 5}
+            Q ${iconCenterX - 6} ${iconCenterY + 4} ${iconCenterX - 5} ${iconCenterY + 3}
+            Z
+          `;
+          
+          node.append('path')
+            .attr('d', scrollPath)
+            .style('fill', '#f5f5dc')
+            .style('stroke', '#8b4513')
+            .style('stroke-width', 0.8);
+          
+          // Quill pen
+          node.append('line')
+            .attr('x1', iconCenterX + 2)
+            .attr('y1', iconCenterY + 1)
+            .attr('x2', iconCenterX + 5)
+            .attr('y2', iconCenterY - 2)
+            .style('stroke', '#b45309')
+            .style('stroke-width', 1.5);
+          
+          // Quill tip
+          node.append('circle')
+            .attr('cx', iconCenterX + 5)
+            .attr('cy', iconCenterY - 2)
+            .attr('r', 0.8)
+            .style('fill', '#92400e');
+            
+        } else if (concept === 3) {
+          // CONCEPT 3: Interlocking Heritage Rings
+          node.append('circle')
+            .attr('cx', iconCenterX)
+            .attr('cy', iconCenterY)
+            .attr('r', 8)
+            .style('fill', '#fef3c7')
+            .style('stroke', '#d97706')
+            .style('stroke-width', 1.2);
+          
+          // First ring
+          node.append('circle')
+            .attr('cx', iconCenterX - 2)
+            .attr('cy', iconCenterY - 1)
+            .attr('r', 3)
+            .style('fill', 'none')
+            .style('stroke', '#b45309')
+            .style('stroke-width', 2);
+          
+          // Second interlocking ring
+          node.append('circle')
+            .attr('cx', iconCenterX + 2)
+            .attr('cy', iconCenterY + 1)
+            .attr('r', 3)
+            .style('fill', 'none')
+            .style('stroke', '#d97706')
+            .style('stroke-width', 2);
+        }
         
-        // Add crown symbol inside shield
-        const crownSymbol = `
-          M ${crownCenterX - 4} ${crownCenterY + 1}
-          L ${crownCenterX - 3} ${crownCenterY - 2}
-          L ${crownCenterX - 1} ${crownCenterY}
-          L ${crownCenterX} ${crownCenterY - 3}
-          L ${crownCenterX + 1} ${crownCenterY}
-          L ${crownCenterX + 3} ${crownCenterY - 2}
-          L ${crownCenterX + 4} ${crownCenterY + 1}
-          Z
-        `;
-        
-        node.append('path')
-          .attr('d', crownSymbol)
-          .style('fill', '#fbbf24')
-          .style('stroke', '#92400e')
-          .style('stroke-width', 0.5);
-        
-        // Add small central jewel
-        node.append('circle')
-          .attr('cx', crownCenterX)
-          .attr('cy', crownCenterY - 1)
-          .attr('r', 1)
-          .style('fill', '#dc2626');
-        
-        rightX -= 25;
+        rightX -= 22;
       }
       
       // Died Young indicator (bottom area)
