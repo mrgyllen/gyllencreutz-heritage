@@ -253,7 +253,13 @@ class GitHubSync {
 - Updated GitHub Actions workflow to skip deployments for [data-only] commits
 - Implemented dual backend support (Express + Azure Functions) for GitHub sync
 
-_Last updated: January 21, 2025_
+### Production Deployment Fixes (January 22, 2025)
+- Fixed Azure Static Web Apps routing configuration for SPA admin page navigation
+- Added missing GitHub sync API endpoints to Azure Functions for production parity
+- Resolved direct link access and page refresh 404 errors for admin interface
+- Cleaned unnecessary decimal formatting from JSON integer fields (Born, Died, AgeAtDeath)
+
+_Last updated: January 22, 2025_
 | **Environment** | Replit workspace | Azure cloud infrastructure |
 
 ### File Deployment Considerations
