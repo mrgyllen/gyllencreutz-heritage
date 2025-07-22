@@ -5,3 +5,4 @@ require('./src/functions/familyMembers');
 require('./src/functions/familyMembersSearch');
 require('./src/functions/familyMembersAdmin');
 require('./src/functions/debugDeployment');
+require('./src/functions/githubSync');
