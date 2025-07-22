@@ -1,6 +1,52 @@
 const { app } = require('@azure/functions');
 const { storage } = require('../../shared/storage');
 
+// GET /api/family-members/{id} - Get specific family member by externalId
+app.http('familyMemberById', {
+    methods: ['GET'],
+    authLevel: 'anonymous',
+    route: 'family-members/{id}',
+    handler: async (request, context) => {
+        try {
+            const externalId = request.params.id;
+            const member = await storage.getFamilyMember(externalId);
+            
+            if (!member) {
+                return {
+                    status: 404,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: JSON.stringify({ error: 'Family member not found' })
+                };
+            }
+            
+            return {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify(member)
+            };
+        } catch (error) {
+            context.log.error('Error fetching family member:', error);
+            return {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({ 
+                    error: error.message,
+                    details: 'Failed to fetch family member'
+                })
+            };
+        }
+    }
+});
+
 // POST /api/family-members - Create new family member
 app.http('familyMembersCreate', {
     methods: ['POST'],

@@ -182,6 +182,10 @@ class FunctionStorage {
         );
     }
 
+    async getFamilyMember(externalId) {
+        return this.familyMembers.find(m => m.externalId === externalId) || null;
+    }
+
     async createFamilyMember(memberData) {
         // Generate new ID
         const maxId = this.familyMembers.reduce((max, member) => Math.max(max, member.id), 0);
