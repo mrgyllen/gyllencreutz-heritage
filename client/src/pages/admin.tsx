@@ -93,7 +93,7 @@ export function Admin() {
 
   const updateMemberMutation = useMutation({
     mutationFn: async (member: FamilyMember) => {
-      const response = await fetch(`/api/family-members/${member.id}`, {
+      const response = await fetch(`/api/family-members/${member.externalId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(member),
@@ -132,7 +132,7 @@ export function Admin() {
   });
 
   const deleteMemberMutation = useMutation({
-    mutationFn: async (id: number) => {
+    mutationFn: async (id: string) => {
       const response = await fetch(`/api/family-members/${id}`, {
         method: 'DELETE',
       });
@@ -174,7 +174,11 @@ export function Admin() {
     if (isNew) {
       addMemberMutation.mutate(memberData);
     } else if (editingMember) {
-      updateMemberMutation.mutate({ ...memberData, id: editingMember.id });
+      updateMemberMutation.mutate({
+        ...memberData,
+        id: editingMember.id,
+        externalId: editingMember.externalId,
+      });
     }
   };
 
@@ -397,7 +401,7 @@ export function Admin() {
                   <Button
                     onClick={() => {
                       if (confirm(`Are you sure you want to delete ${member.name}?`)) {
-                        deleteMemberMutation.mutate(member.id);
+                        deleteMemberMutation.mutate(member.externalId);
                       }
                     }}
                     size="sm"
