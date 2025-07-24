@@ -18,14 +18,19 @@ jobs:
        id-token: write
        contents: read
     steps:
-      # Check for data-only commits to skip deployment
-      - name: Check for data-only commit
+      # Check for data-only commits and backup commits to skip deployment
+      - name: Check for deployment skip conditions
         id: check_commit
         run: |
-          if [[ "${{ github.event.head_commit.message }}" == *"[data-only]"* ]]; then
+          commit_msg="${{ github.event.head_commit.message }}"
+          if [[ "$commit_msg" == *"[data-only]"* ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "⏭️ Skipping deployment - data-only commit detected"
-            echo "Commit message: ${{ github.event.head_commit.message }}"
+            echo "Commit message: $commit_msg"
+          elif [[ "$commit_msg" == *"backup: create"* ]] || [[ "$commit_msg" == *"backup: remove"* ]] || [[ "$commit_msg" == *"cleanup: remove old"* ]]; then
+            echo "skip=true" >> $GITHUB_OUTPUT
+            echo "⏭️ Skipping deployment - backup operation detected"
+            echo "Commit message: $commit_msg"
           else
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀 Proceeding with deployment - code changes detected"
