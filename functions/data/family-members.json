@@ -6,7 +6,7 @@
     "born": 1515,
     "died": 1559,
     "biologicalSex": "Male",
-    "notes": "Stable-master of the Duke of Holstein",
+    "notes": "Stable-master of the Duke of Holstein. Test",
     "father": null,
     "ageAtDeath": 44,
     "diedYoung": false,
@@ -43,11 +43,11 @@
   {
     "id": 3,
     "externalId": "1",
-    "name": "Lars Tygesson",
-    "born": 1515,
-    "died": 1559,
+    "name": "Johan Gyllencreutz",
+    "born": 1575,
+    "died": 1580,
     "biologicalSex": "Male",
-    "notes": "Stable-master of the Duke of Holstein. Test",
+    "notes": "Died from the plague, buried Östra Ryd church",
     "father": "0.1",
     "ageAtDeath": 5,
     "diedYoung": true,
@@ -55,7 +55,7 @@
     "hasMaleChildren": false,
     "nobleBranch": null,
     "monarchDuringLife": [
-      "Gustav Vasa (1523–1560)"
+      "Johan III (1568–1592)"
     ]
   },
   {
