@@ -272,10 +272,11 @@ export class GitHubSync {
       const backups: BackupMetadata[] = [];
       for (const item of data) {
         if (item.type === 'file' && item.name.endsWith('.json')) {
-          const match = item.name.match(/family-data_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})_(\w+)\.json/);
+          const match = item.name.match(/family-data_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})_(\w+)\.json/);
           if (match) {
             const [, timestampStr, trigger] = match;
-            const timestamp = new Date(timestampStr.replace(/_/g, ':').replace(/-/g, '-'));
+            // Handle both formats: 2025-01-24_14-30-15 and 2025-07-24T20-01-52
+            const timestamp = new Date(timestampStr.replace(/T/, ' ').replace(/-/g, ':'));
             
             backups.push({
               filename: item.name,
@@ -291,6 +292,12 @@ export class GitHubSync {
       // Sort by timestamp, newest first
       return backups.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
     } catch (error) {
+      // Handle case where backups folder doesn't exist yet
+      if (error instanceof Error && error.message.includes('Not Found')) {
+        this.addSyncLog(`📁 Backups folder not found - will be created on first backup`, true);
+        return [];
+      }
+      
       this.addSyncLog(`❌ Failed to list backups: ${error instanceof Error ? error.message : 'Unknown error'}`, false);
       return [];
     }

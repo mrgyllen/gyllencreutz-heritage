@@ -99,6 +99,28 @@ Both backend implementations provide identical API responses and functionality, 
 - **Usage**: Admin interface sync history and debugging
 - **Implementation**: In-memory log retention with operation details
 
+#### Backup Management API Endpoints (NEW)
+
+**`GET /api/backups`**
+- **Purpose**: List all available backups with metadata
+- **Response**: Array of backup metadata (filename, timestamp, trigger, member count, size)
+- **Usage**: Admin interface backup list display
+- **Implementation**: Reads `/backups` folder from GitHub repository, handles missing folder gracefully
+
+**`POST /api/backups/create`**
+- **Purpose**: Create a new backup with specified trigger type
+- **Request Body**: `{ trigger: 'manual' | 'auto-bulk' | 'pre-restore' }`
+- **Response**: Backup creation confirmation with metadata
+- **Usage**: Manual backup creation button in admin interface
+- **Implementation**: Saves current family data to GitHub with smart naming and auto-cleanup
+
+**`POST /api/backups/restore`**
+- **Purpose**: Restore family data from a specific backup
+- **Request Body**: `{ filename: string }`
+- **Response**: Restore operation results with member counts
+- **Usage**: Backup restore functionality with safety confirmation
+- **Implementation**: Creates pre-restore backup, fetches backup content, performs bulk update
+
 #### Development/Debugging Endpoints
 
 **`GET /api/debug-deployment`** *(Development/Debugging)*
@@ -160,6 +182,17 @@ All endpoints return JSON responses with consistent structure:
 - **Status Monitoring**: Real-time sync status with admin interface widget
 - **Dual Environment Support**: Available in both Express (development) and Azure Functions (production)
 
+### Smart Backup System (NEW)
+- **GitHub Storage**: Backups stored in repository `/backups` folder, not locally or on production
+- **Smart Naming**: `family-data_YYYY-MM-DDTHH-mm-ss_[trigger].json` format with ISO timestamps
+- **Backup Types**: Three trigger types with different retention policies
+  - `manual` - User-initiated backups, **never auto-deleted** (permanent retention)
+  - `auto-bulk` - Created before bulk operations, auto-cleanup keeps last 5
+  - `pre-restore` - Created before restore operations, auto-cleanup keeps last 3
+- **Safety Features**: Pre-restore backup automatically created before any restore operation
+- **Auto-cleanup**: Intelligent retention that preserves manual backups while managing auto-backups
+- **Real-time UI**: Admin interface shows backup list with metadata (timestamp, member count, file size)
+
 ### Data Structure
 The JSON data contains flat records that are processed into hierarchical family relationships:
 - **Flat Structure**: Individual records with parent references
@@ -196,6 +229,12 @@ class GitHubSync {
   async manualRetry()                 // Manually retry failed operations
   getStatus()                         // Returns current sync status and metrics
   getSyncLogs()                       // Returns sync operation history
+  
+  // Backup Management (NEW)
+  async createBackup(familyData, trigger) // Creates backup with smart naming and auto-cleanup
+  async listBackups()                      // Lists all backups with metadata, handles missing folder
+  async getBackupContent(filename)         // Retrieves backup content for restore operations
+  async cleanupOldBackups(trigger)         // Auto-cleanup preserving manual backups
 }
 ```
 
@@ -259,7 +298,15 @@ class GitHubSync {
 - Resolved direct link access and page refresh 404 errors for admin interface
 - Cleaned unnecessary decimal formatting from JSON integer fields (Born, Died, AgeAtDeath)
 
-_Last updated: January 22, 2025_
+### Smart Backup System Implementation (January 24, 2025)
+- Implemented comprehensive GitHub-based backup system with smart retention policies
+- Added three backup types: manual (permanent), auto-bulk (last 5), pre-restore (last 3)
+- Created backup management UI in admin interface with one-click backup/restore
+- Added safety features: pre-restore backups created automatically before any restore
+- Implemented smart naming convention with ISO timestamps for proper sorting
+- Added graceful handling of missing `/backups` folder on first use
+
+_Last updated: January 24, 2025_
 | **Environment** | Replit workspace | Azure cloud infrastructure |
 
 ### File Deployment Considerations
