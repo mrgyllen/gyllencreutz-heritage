@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Github, CheckCircle, AlertCircle, RotateCcw } from 'lucide-react';
+import { useLocation } from 'wouter';
+import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Github, CheckCircle, AlertCircle, RotateCcw, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -34,6 +35,7 @@ export function Admin() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -196,8 +198,44 @@ export function Admin() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="text-center">Loading family data...</div>
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="mb-8">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-primary mb-2">Family Data Administration</h1>
+              <p className="text-muted-foreground">Loading family member information...</p>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => setLocation('/')}
+              className="flex items-center gap-2"
+            >
+              <Home className="w-4 h-4" />
+              Back to Heritage Site
+            </Button>
+          </div>
+        </div>
+        
+        <div className="space-y-4">
+          {/* Loading skeleton */}
+          {[...Array(6)].map((_, i) => (
+            <Card key={i} className="animate-pulse">
+              <CardContent className="p-4">
+                <div className="flex justify-between items-start">
+                  <div className="space-y-2 flex-1">
+                    <div className="h-4 bg-gray-200 rounded w-1/4"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                  </div>
+                  <div className="flex gap-2">
+                    <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                    <div className="h-8 w-8 bg-gray-200 rounded"></div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
     );
   }
@@ -205,8 +243,20 @@ export function Admin() {
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-primary mb-2">Family Data Administration</h1>
-        <p className="text-muted-foreground">Manage and edit Gyllencreutz family member information</p>
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-3xl font-bold text-primary mb-2">Family Data Administration</h1>
+            <p className="text-muted-foreground">Manage and edit Gyllencreutz family member information</p>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => setLocation('/')}
+            className="flex items-center gap-2"
+          >
+            <Home className="w-4 h-4" />
+            Back to Heritage Site
+          </Button>
+        </div>
       </div>
 
       {/* GitHub Sync Status Widget */}
