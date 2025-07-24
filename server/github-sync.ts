@@ -15,6 +15,14 @@ export interface SyncOperation {
   lastError?: string;
 }
 
+export interface BackupMetadata {
+  filename: string;
+  timestamp: Date;
+  trigger: 'manual' | 'auto-bulk' | 'pre-restore';
+  memberCount: number;
+  size: number;
+}
+
 export interface SyncStatus {
   connected: boolean;
   lastSync?: Date;
@@ -207,5 +215,141 @@ export class GitHubSync {
     }
 
     console.log(`[GitHub Sync] ${message}`);
+  }
+
+  // Backup Management Methods
+  async createBackup(familyData: any[], trigger: 'manual' | 'auto-bulk' | 'pre-restore'): Promise<BackupMetadata> {
+    try {
+      const timestamp = new Date();
+      const filename = `family-data_${timestamp.toISOString().slice(0, 19).replace(/[:.]/g, '-')}_${trigger}.json`;
+      const content = JSON.stringify(familyData, null, 2);
+      const path = `backups/${filename}`;
+
+      // Create backup file in GitHub repo
+      await this.octokit.rest.repos.createOrUpdateFileContents({
+        owner: this.owner,
+        repo: this.repo,
+        path,
+        message: `backup: create ${trigger} backup (${familyData.length} members)`,
+        content: Buffer.from(content).toString('base64'),
+      });
+
+      const metadata: BackupMetadata = {
+        filename,
+        timestamp,
+        trigger,
+        memberCount: familyData.length,
+        size: Buffer.byteLength(content, 'utf8')
+      };
+
+      this.addSyncLog(`✅ Created ${trigger} backup: ${filename}`, true);
+      
+      // Auto-cleanup non-manual backups
+      if (trigger !== 'manual') {
+        await this.cleanupOldBackups(trigger);
+      }
+
+      return metadata;
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown backup error';
+      this.addSyncLog(`❌ Failed to create backup: ${errorMessage}`, false);
+      throw error;
+    }
+  }
+
+  async listBackups(): Promise<BackupMetadata[]> {
+    try {
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: 'backups'
+      });
+
+      if (!Array.isArray(data)) {
+        return [];
+      }
+
+      const backups: BackupMetadata[] = [];
+      for (const item of data) {
+        if (item.type === 'file' && item.name.endsWith('.json')) {
+          const match = item.name.match(/family-data_(\d{4}-\d{2}-\d{2}_\d{2}-\d{2}-\d{2})_(\w+)\.json/);
+          if (match) {
+            const [, timestampStr, trigger] = match;
+            const timestamp = new Date(timestampStr.replace(/_/g, ':').replace(/-/g, '-'));
+            
+            backups.push({
+              filename: item.name,
+              timestamp,
+              trigger: trigger as 'manual' | 'auto-bulk' | 'pre-restore',
+              memberCount: 0, // Will be populated when needed
+              size: item.size || 0
+            });
+          }
+        }
+      }
+
+      // Sort by timestamp, newest first
+      return backups.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    } catch (error) {
+      this.addSyncLog(`❌ Failed to list backups: ${error instanceof Error ? error.message : 'Unknown error'}`, false);
+      return [];
+    }
+  }
+
+  async getBackupContent(filename: string): Promise<any[]> {
+    try {
+      const { data } = await this.octokit.rest.repos.getContent({
+        owner: this.owner,
+        repo: this.repo,
+        path: `backups/${filename}`
+      });
+
+      if ('content' in data) {
+        const content = Buffer.from(data.content, 'base64').toString('utf8');
+        return JSON.parse(content);
+      }
+
+      throw new Error('Backup file not found or invalid');
+    } catch (error) {
+      this.addSyncLog(`❌ Failed to get backup content: ${error instanceof Error ? error.message : 'Unknown error'}`, false);
+      throw error;
+    }
+  }
+
+  private async cleanupOldBackups(trigger: 'auto-bulk' | 'pre-restore'): Promise<void> {
+    try {
+      const backups = await this.listBackups();
+      const triggerBackups = backups.filter(b => b.trigger === trigger);
+      
+      const keepCount = trigger === 'auto-bulk' ? 5 : 3;
+      const toDelete = triggerBackups.slice(keepCount);
+
+      for (const backup of toDelete) {
+        try {
+          // Get file SHA for deletion
+          const { data } = await this.octokit.rest.repos.getContent({
+            owner: this.owner,
+            repo: this.repo,
+            path: `backups/${backup.filename}`
+          });
+
+          if ('sha' in data) {
+            await this.octokit.rest.repos.deleteFile({
+              owner: this.owner,
+              repo: this.repo,
+              path: `backups/${backup.filename}`,
+              message: `cleanup: remove old ${backup.trigger} backup`,
+              sha: data.sha
+            });
+
+            this.addSyncLog(`🗑️ Cleaned up old backup: ${backup.filename}`, true);
+          }
+        } catch (deleteError) {
+          this.addSyncLog(`⚠️ Failed to delete backup ${backup.filename}: ${deleteError instanceof Error ? deleteError.message : 'Unknown error'}`, false);
+        }
+      }
+    } catch (error) {
+      this.addSyncLog(`⚠️ Backup cleanup failed: ${error instanceof Error ? error.message : 'Unknown error'}`, false);
+    }
   }
 }

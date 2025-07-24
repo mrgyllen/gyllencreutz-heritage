@@ -657,7 +657,18 @@ export class MemStorage implements IStorage {
 
   async bulkUpdateFamilyMembers(members: InsertFamilyMember[]): Promise<{ updated: number; created: number }> {
     // Create backup before bulk operation
-    await this.createBackup();
+    if (gitHubSync) {
+      try {
+        const currentData = Array.from(this.familyMembers.values());
+        await gitHubSync.createBackup(currentData, 'auto-bulk');
+        console.log('✅ Auto-backup created before bulk update');
+      } catch (error) {
+        console.warn('⚠️ Failed to create GitHub backup, proceeding with local backup');
+        await this.createBackup();
+      }
+    } else {
+      await this.createBackup();
+    }
     
     let updated = 0;
     let created = 0;

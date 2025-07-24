@@ -221,6 +221,102 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Backup Management API Routes
+  app.get("/api/backups", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.status(503).json({ error: "GitHub sync not available" });
+      }
+
+      const backups = await gitHubSync.listBackups();
+      
+      // Get member count for each backup (from current data as approximation)
+      const familyMembers = await storage.getAllFamilyMembers();
+      const currentCount = familyMembers.length;
+      
+      const backupsWithCount = backups.map(backup => ({
+        ...backup,
+        memberCount: backup.memberCount || currentCount // Use current count as fallback
+      }));
+
+      res.json(backupsWithCount);
+    } catch (error) {
+      res.status(500).json({
+        error: "Failed to list backups",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.post("/api/backups/create", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.status(503).json({ error: "GitHub sync not available" });
+      }
+
+      const { trigger = 'manual' } = req.body;
+      
+      if (!['manual', 'auto-bulk', 'pre-restore'].includes(trigger)) {
+        return res.status(400).json({ error: "Invalid trigger type" });
+      }
+
+      const familyMembers = await storage.getAllFamilyMembers();
+      const backup = await gitHubSync.createBackup(familyMembers, trigger);
+
+      res.json({
+        success: true,
+        backup,
+        message: `Created ${trigger} backup with ${backup.memberCount} members`
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to create backup",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
+  app.post("/api/backups/restore", async (req, res) => {
+    try {
+      if (!gitHubSync) {
+        return res.status(503).json({ error: "GitHub sync not available" });
+      }
+
+      const { filename } = req.body;
+      
+      if (!filename) {
+        return res.status(400).json({ error: "Backup filename required" });
+      }
+
+      // Create pre-restore backup first
+      const currentFamilyMembers = await storage.getAllFamilyMembers();
+      await gitHubSync.createBackup(currentFamilyMembers, 'pre-restore');
+
+      // Get backup content
+      const backupData = await gitHubSync.getBackupContent(filename);
+      
+      // Restore data using bulk update
+      const result = await storage.bulkUpdateFamilyMembers(backupData);
+
+      res.json({
+        success: true,
+        message: `Restored ${backupData.length} family members from backup`,
+        result: {
+          restored: backupData.length,
+          updated: result.updated,
+          created: result.created
+        }
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        error: "Failed to restore backup",
+        details: error instanceof Error ? error.message : 'Unknown error'
+      });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

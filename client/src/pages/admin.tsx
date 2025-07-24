@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
-import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Github, CheckCircle, AlertCircle, RotateCcw, Home } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Github, CheckCircle, AlertCircle, RotateCcw, Home, Database, Clock, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,6 +31,14 @@ interface FamilyMember {
   nobleBranch?: string;
 }
 
+interface BackupMetadata {
+  filename: string;
+  timestamp: string;
+  trigger: 'manual' | 'auto-bulk' | 'pre-restore';
+  memberCount: number;
+  size: number;
+}
+
 export function Admin() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMember, setEditingMember] = useState<FamilyMember | null>(null);
@@ -51,6 +59,16 @@ export function Admin() {
       return response.json();
     },
     refetchInterval: 10000, // Refresh every 10 seconds
+  });
+
+  // Backup management queries
+  const { data: backups = [] } = useQuery<BackupMetadata[]>({
+    queryKey: ['/api/backups'],
+    queryFn: async () => {
+      const response = await fetch('/api/backups');
+      return response.json();
+    },
+    refetchInterval: 30000, // Refresh every 30 seconds
   });
 
   // GitHub test connection mutation
@@ -147,6 +165,46 @@ export function Admin() {
     },
     onError: () => {
       toast({ title: 'Error', description: 'Failed to delete family member', variant: 'destructive' });
+    },
+  });
+
+  // Backup mutations
+  const createBackupMutation = useMutation({
+    mutationFn: async () => {
+      const response = await fetch('/api/backups/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ trigger: 'manual' })
+      });
+      if (!response.ok) throw new Error('Failed to create backup');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/backups'] });
+      toast({ title: 'Success', description: data.message });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to create backup', variant: 'destructive' });
+    },
+  });
+
+  const restoreBackupMutation = useMutation({
+    mutationFn: async (filename: string) => {
+      const response = await fetch('/api/backups/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename })
+      });
+      if (!response.ok) throw new Error('Failed to restore backup');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/family-members'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/backups'] });
+      toast({ title: 'Success', description: data.message });
+    },
+    onError: (error) => {
+      toast({ title: 'Error', description: 'Failed to restore backup', variant: 'destructive' });
     },
   });
 
@@ -350,6 +408,94 @@ export function Admin() {
           </CardContent>
         </Card>
       )}
+
+      {/* Data Backup Management */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Database className="w-5 h-5" />
+            Data Backups
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <p className="text-sm text-muted-foreground">
+                Current: {familyMembers.length} members, last modified: {backups.length > 0 ? new Date(backups[0]?.timestamp).toLocaleString() : 'Never'}
+              </p>
+            </div>
+            <Button
+              onClick={() => createBackupMutation.mutate()}
+              disabled={createBackupMutation.isPending || !githubStatus?.connected}
+              className="flex items-center gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              {createBackupMutation.isPending ? 'Creating...' : 'Create Backup Now'}
+            </Button>
+          </div>
+
+          {!githubStatus?.connected && (
+            <div className="mb-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <div className="text-sm text-yellow-800">
+                <strong>Note:</strong> GitHub sync must be connected to create backups.
+              </div>
+            </div>
+          )}
+
+          {/* Recent Backups */}
+          <div className="space-y-2">
+            <h4 className="text-sm font-medium">Recent Backups:</h4>
+            {backups.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No backups available</p>
+            ) : (
+              <div className="space-y-2 max-h-48 overflow-y-auto">
+                {backups.slice(0, 10).map((backup) => (
+                  <div key={backup.filename} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">
+                          {new Date(backup.timestamp).toLocaleString()}
+                        </span>
+                        <Badge 
+                          variant={backup.trigger === 'manual' ? 'default' : 'secondary'}
+                          className="text-xs"
+                        >
+                          {backup.trigger}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        {backup.memberCount} members • {Math.round(backup.size / 1024)}KB
+                      </p>
+                    </div>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => {
+                        if (confirm(`Are you sure you want to restore this backup?\n\nThis will:\n• Create a backup of current data first\n• Replace all family data with backup from ${new Date(backup.timestamp).toLocaleString()}\n\nThis action cannot be undone.`)) {
+                          restoreBackupMutation.mutate(backup.filename);
+                        }
+                      }}
+                      disabled={restoreBackupMutation.isPending}
+                      className="flex items-center gap-1"
+                    >
+                      <Download className="w-3 h-3" />
+                      {restoreBackupMutation.isPending ? 'Restoring...' : 'Restore'}
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Backup Info */}
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="text-sm text-blue-800">
+              <strong>Backup Policy:</strong> Manual backups are kept forever. Auto-backups are cleaned up automatically (last 5 bulk, last 3 restore).
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Actions Bar */}
       <div className="flex flex-col sm:flex-row gap-4 mb-6">
