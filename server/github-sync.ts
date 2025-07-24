@@ -272,11 +272,20 @@ export class GitHubSync {
       const backups: BackupMetadata[] = [];
       for (const item of data) {
         if (item.type === 'file' && item.name.endsWith('.json')) {
-          const match = item.name.match(/family-data_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2})_(\w+)\.json/);
+          const match = item.name.match(/family-data_(\d{4}-\d{2}-\d{2}[T_]\d{2}-\d{2}-\d{2})_(\w+)\.json/);
           if (match) {
             const [, timestampStr, trigger] = match;
-            // Handle both formats: 2025-01-24_14-30-15 and 2025-07-24T20-01-52
-            const timestamp = new Date(timestampStr.replace(/T/, ' ').replace(/-/g, ':'));
+            // Parse timestamp: 2025-07-24T20-01-52 or 2025-01-24_14-30-15
+            let timestamp: Date;
+            if (timestampStr.includes('T')) {
+              // ISO format: 2025-07-24T20-01-52 → 2025-07-24T20:01:52
+              const isoStr = timestampStr.replace(/T(\d{2})-(\d{2})-(\d{2})/, 'T$1:$2:$3');
+              timestamp = new Date(isoStr);
+            } else {
+              // Legacy format: 2025-01-24_14-30-15 → 2025-01-24 14:30:15
+              const dateTimeStr = timestampStr.replace('_', ' ').replace(/-(\d{2})-(\d{2})$/, ':$1:$2');
+              timestamp = new Date(dateTimeStr);
+            }
             
             backups.push({
               filename: item.name,
