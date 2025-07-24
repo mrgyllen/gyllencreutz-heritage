@@ -450,6 +450,7 @@ export class MemStorage implements IStorage {
         id: this.currentFamilyId++,
         externalId: member.externalId,
         name: member.name,
+        generation: null,
         born: member.born ?? null,
         died: member.died ?? null,
         biologicalSex: member.biologicalSex,
@@ -507,6 +508,7 @@ export class MemStorage implements IStorage {
         id: this.currentFamilyId++,
         externalId: member.externalId,
         name: member.name,
+        generation: null,
         born: member.born,
         died: member.died,
         biologicalSex: member.biologicalSex,
@@ -516,7 +518,8 @@ export class MemStorage implements IStorage {
         diedYoung: member.diedYoung,
         isSuccessionSon: member.isSuccessionSon,
         hasMaleChildren: member.hasMaleChildren,
-        nobleBranch: member.nobleBranch
+        nobleBranch: member.nobleBranch,
+        monarchDuringLife: []
       };
       this.familyMembers.set(member.externalId, familyMember);
     });
@@ -552,17 +555,18 @@ export class MemStorage implements IStorage {
       id: this.currentFamilyId++,
       externalId: member.externalId,
       name: member.name,
-      born: member.born,
-      died: member.died,
+      generation: member.generation ?? null,
+      born: member.born ?? null,
+      died: member.died ?? null,
       biologicalSex: member.biologicalSex,
-      notes: member.notes,
-      father: member.father,
-      ageAtDeath: member.ageAtDeath,
-      diedYoung: member.diedYoung,
-      isSuccessionSon: member.isSuccessionSon,
-      hasMaleChildren: member.hasMaleChildren,
-      nobleBranch: member.nobleBranch,
-      monarchDuringLife: member.monarchDuringLife || []
+      notes: member.notes ?? null,
+      father: member.father ?? null,
+      ageAtDeath: member.ageAtDeath ?? null,
+      diedYoung: member.diedYoung ?? null,
+      isSuccessionSon: member.isSuccessionSon ?? null,
+      hasMaleChildren: member.hasMaleChildren ?? null,
+      nobleBranch: member.nobleBranch ?? null,
+      monarchDuringLife: member.monarchDuringLife ?? null
     };
     this.familyMembers.set(member.externalId, familyMember);
     
@@ -665,7 +669,20 @@ export class MemStorage implements IStorage {
         // Update existing member
         const updatedMember: FamilyMember = {
           ...existingMember,
-          ...memberData,
+          externalId: memberData.externalId,
+          name: memberData.name,
+          generation: memberData.generation ?? existingMember.generation,
+          born: memberData.born ?? existingMember.born,
+          died: memberData.died ?? existingMember.died,
+          biologicalSex: memberData.biologicalSex,
+          notes: memberData.notes ?? existingMember.notes,
+          father: memberData.father ?? existingMember.father,
+          ageAtDeath: memberData.ageAtDeath ?? existingMember.ageAtDeath,
+          diedYoung: memberData.diedYoung ?? existingMember.diedYoung,
+          isSuccessionSon: memberData.isSuccessionSon ?? existingMember.isSuccessionSon,
+          hasMaleChildren: memberData.hasMaleChildren ?? existingMember.hasMaleChildren,
+          nobleBranch: memberData.nobleBranch ?? existingMember.nobleBranch,
+          monarchDuringLife: memberData.monarchDuringLife ?? existingMember.monarchDuringLife,
           id: existingMember.id, // Preserve original ID
         };
         this.familyMembers.set(memberData.externalId, updatedMember);
@@ -674,8 +691,20 @@ export class MemStorage implements IStorage {
         // Create new member
         const newMember: FamilyMember = {
           id: this.currentFamilyId++,
-          ...memberData,
-          monarchDuringLife: memberData.monarchDuringLife || []
+          externalId: memberData.externalId,
+          name: memberData.name,
+          generation: memberData.generation ?? null,
+          born: memberData.born ?? null,
+          died: memberData.died ?? null,
+          biologicalSex: memberData.biologicalSex,
+          notes: memberData.notes ?? null,
+          father: memberData.father ?? null,
+          ageAtDeath: memberData.ageAtDeath ?? null,
+          diedYoung: memberData.diedYoung ?? null,
+          isSuccessionSon: memberData.isSuccessionSon ?? null,
+          hasMaleChildren: memberData.hasMaleChildren ?? null,
+          nobleBranch: memberData.nobleBranch ?? null,
+          monarchDuringLife: memberData.monarchDuringLife ?? null
         };
         this.familyMembers.set(memberData.externalId, newMember);
         created++;

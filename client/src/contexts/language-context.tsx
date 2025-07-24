@@ -207,7 +207,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   };
 
   const t = (key: string): string => {
-    return translations[language][key] || key;
+    const translation = translations[language] as Record<string, string>;
+    return translation[key] || key;
   };
 
   return (

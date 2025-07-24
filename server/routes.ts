@@ -138,7 +138,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         available: true,
         connected: connectionTest.connected,
-        ...status,
+        lastSync: status.lastSync,
+        pendingOperations: status.pendingOperations,
+        failedRetries: status.failedRetries,
+        isRetrying: status.isRetrying,
+        error: status.error,
         connectionError: connectionTest.error
       });
     } catch (error) {
