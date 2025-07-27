@@ -104,29 +104,62 @@ class FunctionStorage {
 
     loadData() {
         try {
+            console.log('🔍 Azure Functions: Starting data load...');
+            console.log('📁 Current working directory:', process.cwd());
+            console.log('📁 __dirname:', __dirname);
+            
             // Try multiple possible data locations for robust deployment
             const possiblePaths = [
                 path.resolve(__dirname, '../data/family-members.json'),
                 path.resolve(process.cwd(), 'data/family-members.json'),
-                path.resolve(process.cwd(), 'functions/data/family-members.json')
+                path.resolve(process.cwd(), 'functions/data/family-members.json'),
+                path.resolve(__dirname, '../../data/family-members.json'),
+                '/home/site/wwwroot/data/family-members.json'
             ];
+            
+            console.log('🔍 Searching for data file in paths:', possiblePaths);
             
             let dataPath = null;
             let rawData = null;
             
             for (const testPath of possiblePaths) {
+                console.log(`🔍 Checking path: ${testPath}`);
                 if (fs.existsSync(testPath)) {
+                    console.log(`✅ Found data file at: ${testPath}`);
                     dataPath = testPath;
                     rawData = fs.readFileSync(testPath, 'utf8');
                     break;
+                } else {
+                    console.log(`❌ File not found at: ${testPath}`);
                 }
             }
             
             if (!dataPath) {
+                // List contents of directories to help debug
+                const debugPaths = [
+                    process.cwd(),
+                    __dirname,
+                    path.resolve(__dirname, '..'),
+                    '/home/site/wwwroot'
+                ];
+                
+                for (const debugPath of debugPaths) {
+                    try {
+                        if (fs.existsSync(debugPath)) {
+                            const contents = fs.readdirSync(debugPath);
+                            console.log(`📁 Contents of ${debugPath}:`, contents);
+                        }
+                    } catch (e) {
+                        console.log(`❌ Cannot read directory ${debugPath}:`, e.message);
+                    }
+                }
+                
                 throw new Error(`Data file not found. Searched paths: ${possiblePaths.join(', ')}`);
             }
             
+            console.log(`📄 Reading data file (${rawData.length} characters)...`);
             const data = JSON.parse(rawData);
+            console.log(`✅ Parsed JSON data with ${data.length} entries`);
             
             this.familyMembers = data.map((member, index) => ({
                 id: index + 1,
@@ -159,10 +192,29 @@ class FunctionStorage {
                 })()
             }));
             
-            console.log(`Loaded ${this.familyMembers.length} family members from ${dataPath}`);
+            console.log(`✅ Loaded ${this.familyMembers.length} family members from ${dataPath}`);
         } catch (error) {
-            console.error('Error loading family data:', error);
+            console.error('❌ Error loading family data:', error);
+            console.error('❌ Error stack:', error.stack);
             this.familyMembers = [];
+            
+            // Create a single dummy entry to help identify the issue
+            this.familyMembers = [{
+                id: 1,
+                externalId: "error",
+                name: "Data Loading Error",
+                born: null,
+                died: null,
+                biologicalSex: "Unknown",
+                notes: `Error: ${error.message}`,
+                father: null,
+                ageAtDeath: null,
+                diedYoung: false,
+                isSuccessionSon: false,
+                hasMaleChildren: false,
+                nobleBranch: null,
+                monarchDuringLife: []
+            }];
         }
     }
 
