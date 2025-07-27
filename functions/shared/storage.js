@@ -161,21 +161,27 @@ class FunctionStorage {
             const data = JSON.parse(rawData);
             console.log(`✅ Parsed JSON data with ${data.length} entries`);
             
+            // Check if data is already processed (lowercase fields) or raw (uppercase fields)
+            const isProcessedData = data.length > 0 && 'name' in data[0];
+            
             this.familyMembers = data.map((member, index) => ({
-                id: index + 1,
-                externalId: member.ID || String(index),
-                name: member.Name || '',
-                born: member.Born === null ? null : member.Born,
-                died: member.Died === null || member.Died === 9999 ? null : member.Died,
-                biologicalSex: member.BiologicalSex || null,
-                notes: member.Notes || '',
-                father: member.Father === null || member.Father === 'NaN' || member.Father === undefined ? null : member.Father,
-                ageAtDeath: member.AgeAtDeath === null ? null : member.AgeAtDeath,
-                diedYoung: member.DiedYoung === null ? false : member.DiedYoung,
-                isSuccessionSon: member.IsSuccessionSon === null ? false : member.IsSuccessionSon,
-                hasMaleChildren: member.HasMaleChildren === null ? false : member.HasMaleChildren,
-                nobleBranch: member.NobleBranch === null || member.NobleBranch === 'NaN' || member.NobleBranch === undefined ? null : member.NobleBranch,
+                id: isProcessedData ? member.id : (index + 1),
+                externalId: isProcessedData ? member.externalId : (member.ID || String(index)),
+                name: isProcessedData ? member.name : (member.Name || ''),
+                born: isProcessedData ? member.born : (member.Born === null ? null : member.Born),
+                died: isProcessedData ? member.died : (member.Died === null || member.Died === 9999 ? null : member.Died),
+                biologicalSex: isProcessedData ? member.biologicalSex : (member.BiologicalSex || null),
+                notes: isProcessedData ? member.notes : (member.Notes || ''),
+                father: isProcessedData ? member.father : (member.Father === null || member.Father === 'NaN' || member.Father === undefined ? null : member.Father),
+                ageAtDeath: isProcessedData ? member.ageAtDeath : (member.AgeAtDeath === null ? null : member.AgeAtDeath),
+                diedYoung: isProcessedData ? member.diedYoung : (member.DiedYoung === null ? false : member.DiedYoung),
+                isSuccessionSon: isProcessedData ? member.isSuccessionSon : (member.IsSuccessionSon === null ? false : member.IsSuccessionSon),
+                hasMaleChildren: isProcessedData ? member.hasMaleChildren : (member.HasMaleChildren === null ? false : member.HasMaleChildren),
+                nobleBranch: isProcessedData ? member.nobleBranch : (member.NobleBranch === null || member.NobleBranch === 'NaN' || member.NobleBranch === undefined ? null : member.NobleBranch),
                 monarchDuringLife: (() => {
+                    if (isProcessedData) {
+                        return member.monarchDuringLife || [];
+                    }
                     try {
                         if (typeof member.MonarchDuringLife === 'string') {
                             // Handle Python-style array format with single quotes
@@ -186,7 +192,9 @@ class FunctionStorage {
                         }
                         return [];
                     } catch (e) {
-                        console.log('Failed to parse MonarchDuringLife for', member.Name, ':', member.MonarchDuringLife);
+                        const memberName = isProcessedData ? member.name : member.Name;
+                        const monarchData = isProcessedData ? member.monarchDuringLife : member.MonarchDuringLife;
+                        console.log('Failed to parse MonarchDuringLife for', memberName, ':', monarchData);
                         return [];
                     }
                 })()
