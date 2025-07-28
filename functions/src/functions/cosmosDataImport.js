@@ -214,3 +214,136 @@ app.http('cosmosClearData', {
         }
     }
 });
+
+// POST /api/cosmos/import/restore - Restore Cosmos DB from uploaded JSON backup
+app.http('cosmosRestoreFromJson', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    route: 'cosmos/import/restore',
+    handler: async (request, context) => {
+        try {
+            context.log('🔄 Starting restore from JSON backup...');
+            
+            // Parse the uploaded JSON data
+            const requestBody = await request.text();
+            let jsonData;
+            
+            try {
+                jsonData = JSON.parse(requestBody);
+            } catch (parseError) {
+                return {
+                    status: 400,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: JSON.stringify({ 
+                        error: 'Invalid JSON format',
+                        message: 'The uploaded file does not contain valid JSON data'
+                    })
+                };
+            }
+
+            // Validate the JSON structure
+            if (!Array.isArray(jsonData)) {
+                return {
+                    status: 400,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Access-Control-Allow-Origin': '*'
+                    },
+                    body: JSON.stringify({ 
+                        error: 'Invalid data format',
+                        message: 'JSON data must be an array of family members'
+                    })
+                };
+            }
+
+            context.log(`📄 Found ${jsonData.length} members in JSON backup`);
+
+            // Step 1: Clear all existing data
+            context.log('🗑️ Clearing existing Cosmos DB data...');
+            const existingMembers = await cosmosDbService.getAllMembers();
+            
+            let clearCount = 0;
+            let clearErrors = 0;
+            
+            if (existingMembers && existingMembers.length > 0) {
+                for (const member of existingMembers) {
+                    try {
+                        await cosmosDbService.deleteMember(member.id);
+                        clearCount++;
+                    } catch (error) {
+                        clearErrors++;
+                        context.log.error(`Failed to delete member ${member.id}:`, error);
+                    }
+                }
+            }
+
+            context.log(`🗑️ Cleared ${clearCount} members, ${clearErrors} failures`);
+
+            // Step 2: Import all data from JSON backup
+            context.log('📥 Importing data from JSON backup...');
+            
+            const cosmosMembers = jsonData.map(member => ({
+                id: member.externalId || member.id, // Handle both formats
+                externalId: member.externalId || member.id,
+                name: member.name || 'Unknown',
+                born: member.born || null,
+                died: member.died || null,
+                biologicalSex: member.biologicalSex || 'Unknown',
+                notes: member.notes || null,
+                father: member.father || null,
+                ageAtDeath: member.ageAtDeath || null,
+                diedYoung: member.diedYoung || false,
+                isSuccessionSon: member.isSuccessionSon || false,
+                hasMaleChildren: member.hasMaleChildren || false,
+                nobleBranch: member.nobleBranch || null,
+                monarchDuringLife: member.monarchDuringLife || [],
+                // Add restore metadata
+                importedAt: new Date().toISOString(),
+                importSource: 'json-restore'
+            }));
+
+            // Perform bulk import
+            const importResult = await cosmosDbService.bulkImportMembers(cosmosMembers);
+
+            context.log(`✅ Restore completed: ${importResult.successful} successful, ${importResult.failed} failed`);
+
+            return {
+                status: 200,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({
+                    message: 'JSON restore completed successfully',
+                    summary: {
+                        cleared: clearCount,
+                        clearErrors: clearErrors,
+                        restored: importResult.successful,
+                        restoreErrors: importResult.failed,
+                        totalInBackup: jsonData.length
+                    },
+                    details: {
+                        clearFailures: clearErrors,
+                        importFailures: importResult.results.filter(r => !r.success)
+                    }
+                })
+            };
+        } catch (error) {
+            context.log.error('❌ Error during JSON restore:', error);
+            return {
+                status: 500,
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Access-Control-Allow-Origin': '*'
+                },
+                body: JSON.stringify({ 
+                    error: 'Failed to restore from JSON backup',
+                    message: error.message 
+                })
+            };
+        }
+    }
+});

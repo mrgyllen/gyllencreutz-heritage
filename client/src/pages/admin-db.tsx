@@ -20,6 +20,7 @@ export function AdminDb() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMember, setEditingMember] = useState<CosmosDbFamilyMember | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -145,6 +146,35 @@ export function AdminDb() {
     },
   });
 
+  // Restore data mutation from JSON file
+  const restoreDataMutation = useMutation({
+    mutationFn: async (jsonData: any[]) => {
+      const response = await fetch('/api/cosmos/import/restore', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(jsonData),
+      });
+      if (!response.ok) throw new Error('Failed to restore data');
+      return response.json();
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/import/status'] });
+      setIsRestoreDialogOpen(false);
+      toast({ 
+        title: 'Restore Successful', 
+        description: `Restored ${data.summary.restored} members successfully` 
+      });
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: 'Restore Failed', 
+        description: error.message || 'Failed to restore data',
+        variant: 'destructive' 
+      });
+    },
+  });
+
   const filteredMembers = familyMembers.filter(member =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member.externalId.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -197,6 +227,55 @@ export function AdminDb() {
     linkElement.click();
   };
 
+  const handleFileRestore = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+      toast({ 
+        title: 'Invalid File Type', 
+        description: 'Please select a JSON file.',
+        variant: 'destructive' 
+      });
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const jsonData = JSON.parse(e.target?.result as string);
+        
+        if (!Array.isArray(jsonData)) {
+          toast({ 
+            title: 'Invalid File Format', 
+            description: 'The JSON file must contain an array of family members.',
+            variant: 'destructive' 
+          });
+          return;
+        }
+
+        // Confirm the restore operation
+        const confirmed = confirm(
+          `This will completely replace all current Cosmos DB data with ${jsonData.length} members from the backup file.\n\nThis action cannot be undone. Are you sure you want to continue?`
+        );
+
+        if (confirmed) {
+          restoreDataMutation.mutate(jsonData);
+        }
+      } catch (error) {
+        toast({ 
+          title: 'File Parse Error', 
+          description: 'Failed to parse the JSON file. Please check the file format.',
+          variant: 'destructive' 
+        });
+      }
+    };
+    reader.readAsText(file);
+    
+    // Reset the input so the same file can be selected again
+    event.target.value = '';
+  };
+
   if (isLoading) {
     return (
       <div className="container mx-auto p-6">
@@ -225,64 +304,70 @@ export function AdminDb() {
         </Button>
       </div>
 
-      {/* Import Status Section */}
-      {importStatus && (
-        <Card className="mb-6">
-          <CardHeader className="pb-3">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Database className="w-5 h-5" />
-              Data Import Status
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{importStatus.jsonFile.count}</div>
-                <div className="text-sm text-muted-foreground">JSON File Records</div>
-              </div>
-              <div className="text-center">
-                <div className="text-2xl font-bold text-purple-600">{importStatus.cosmosDb.count}</div>
-                <div className="text-sm text-muted-foreground">Cosmos DB Records</div>
-              </div>
-              <div className="text-center">
-                <div className={`text-2xl font-bold ${importStatus.inSync ? 'text-green-600' : 'text-orange-600'}`}>
-                  {importStatus.inSync ? 'In Sync' : 'Out of Sync'}
-                </div>
-                <div className="text-sm text-muted-foreground">Status</div>
-              </div>
+      {/* Export/Restore Section */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Database className="w-5 h-5" />
+            Data Management
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-600">{familyMembers.length}</div>
+              <div className="text-sm text-muted-foreground">Current Records</div>
             </div>
-            
-            {importStatus.needsImport && (
-              <Alert className="mb-4">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>
-                  Cosmos DB appears to be empty. You may want to import data from the JSON file.
-                </AlertDescription>
-              </Alert>
-            )}
+            <div className="text-center">
+              <div className="text-2xl font-bold text-green-600">Azure Cosmos DB</div>
+              <div className="text-sm text-muted-foreground">Storage Backend</div>
+            </div>
+          </div>
+          
+          <Alert className="mb-4">
+            <CheckCircle className="h-4 w-4" />
+            <AlertDescription>
+              Export your data to create local JSON backups, or restore from a previous backup file.
+            </AlertDescription>
+          </Alert>
 
-            <div className="flex gap-2">
+          <div className="flex gap-2">
+            <Button
+              onClick={exportData}
+              className="flex items-center gap-2"
+            >
+              <Download className="w-4 h-4" />
+              Export to JSON
+            </Button>
+            <div className="relative">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleFileRestore}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                disabled={restoreDataMutation.isPending}
+              />
               <Button
-                onClick={() => importDataMutation.mutate()}
-                disabled={importDataMutation.isPending}
+                disabled={restoreDataMutation.isPending}
+                variant="outline"
                 className="flex items-center gap-2"
               >
                 <Upload className="w-4 h-4" />
-                {importDataMutation.isPending ? 'Importing...' : 'Import from JSON'}
-              </Button>
-              <Button
-                onClick={() => clearDataMutation.mutate()}
-                disabled={clearDataMutation.isPending}
-                variant="destructive"
-                className="flex items-center gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                {clearDataMutation.isPending ? 'Clearing...' : 'Clear All Data'}
+                {restoreDataMutation.isPending ? 'Restoring...' : 'Restore from JSON'}
               </Button>
             </div>
-          </CardContent>
-        </Card>
-      )}
+            <Button
+              onClick={() => clearDataMutation.mutate()}
+              disabled={clearDataMutation.isPending}
+              variant="destructive"
+              className="flex items-center gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {clearDataMutation.isPending ? 'Clearing...' : 'Clear All Data'}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* Search and Actions */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">

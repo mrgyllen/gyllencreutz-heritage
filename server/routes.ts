@@ -454,6 +454,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
         res.status(500).json({ error: "Failed to clear data" });
       }
     });
+
+    // Restore Cosmos DB from JSON backup
+    app.post("/api/cosmos/import/restore", async (req, res) => {
+      try {
+        console.log("🔄 Starting restore from JSON backup...");
+        
+        const jsonData = req.body;
+        
+        // Validate the JSON structure
+        if (!Array.isArray(jsonData)) {
+          return res.status(400).json({ 
+            error: 'Invalid data format',
+            message: 'JSON data must be an array of family members'
+          });
+        }
+
+        console.log(`📄 Found ${jsonData.length} members in JSON backup`);
+
+        // Step 1: Clear all existing data
+        console.log("🗑️ Clearing existing Cosmos DB data...");
+        const clearResult = await cosmosClient.clearAllMembers();
+        
+        // Step 2: Import all data from JSON backup
+        console.log("📥 Importing data from JSON backup...");
+        const importResult = await cosmosClient.importFromJson(jsonData);
+
+        console.log(`✅ Restore completed`);
+
+        res.json({
+          message: 'JSON restore completed successfully',
+          summary: {
+            cleared: clearResult.deleted || 0,
+            clearErrors: 0, // clearAllMembers doesn't return error details
+            restored: importResult.summary?.successful || 0,
+            restoreErrors: importResult.summary?.failed || 0,
+            totalInBackup: jsonData.length
+          }
+        });
+      } catch (error) {
+        console.error("Error restoring from JSON backup:", error);
+        res.status(500).json({ 
+          error: "Failed to restore from JSON backup",
+          message: error.message 
+        });
+      }
+    });
   }
 
   const httpServer = createServer(app);
