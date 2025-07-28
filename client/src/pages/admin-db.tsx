@@ -15,6 +15,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
 import { type CosmosDbFamilyMember, type CreateCosmosDbFamilyMember, type ImportStatus } from '@/types/family';
 
+// Azure Cosmos DB Administration Interface
 export function AdminDb() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMember, setEditingMember] = useState<CosmosDbFamilyMember | null>(null);
