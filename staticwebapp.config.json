@@ -1,7 +1,7 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/api/*"]
+    "exclude": ["/api/*", "/assets/*"]
   },
   "mimeTypes": {
     ".js": "text/javascript",
@@ -14,22 +14,6 @@
     {
       "route": "/api/*",
       "allowedRoles": ["anonymous"]
-    },
-    {
-      "route": "/admindb",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/admin-db",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/cosmos",
-      "rewrite": "/index.html"
-    },
-    {
-      "route": "/admin",
-      "rewrite": "/index.html"
     },
     {
       "route": "/assets/*",
