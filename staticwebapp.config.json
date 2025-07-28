@@ -16,6 +16,10 @@
       "allowedRoles": ["anonymous"]
     },
     {
+      "route": "/admindb",
+      "rewrite": "/index.html"
+    },
+    {
       "route": "/admin-db",
       "rewrite": "/index.html"
     },

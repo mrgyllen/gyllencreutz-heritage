@@ -16,6 +16,7 @@ function Router() {
       <Route path="/admin" component={Admin} />
       <Route path="/admin-db" component={AdminDb} />
       <Route path="/cosmos" component={AdminDb} />
+      <Route path="/admindb" component={AdminDb} />
       <Route component={NotFound} />
     </Switch>
   );
