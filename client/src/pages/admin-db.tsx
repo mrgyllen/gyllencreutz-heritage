@@ -372,12 +372,12 @@ export function AdminDb() {
       {/* Search and Actions */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
         <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
           <Input
             placeholder="Search by name, external ID, or notes..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10"
+            className="pl-11 h-10 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white shadow-sm"
           />
         </div>
         <div className="flex gap-2">
@@ -387,14 +387,6 @@ export function AdminDb() {
           >
             <Plus className="w-4 h-4" />
             Add Member
-          </Button>
-          <Button
-            onClick={exportData}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <Download className="w-4 h-4" />
-            Export Data
           </Button>
         </div>
       </div>
