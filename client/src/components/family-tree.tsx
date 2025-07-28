@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { buildFamilyTree } from "@/data/family-data";
-import { type FamilyMember, type FamilyTreeNode } from "@/types/family";
+import { type FamilyMember, type FamilyTreeNode, type CosmosDbFamilyMember } from "@/types/family";
 import { useLanguage } from "@/contexts/language-context";
 import { getRoyalPortrait } from "@/components/royal-portraits";
 import { getSuccessionIcon, FamilyCoatOfArms } from "@/components/family-coat-of-arms";
@@ -24,18 +24,43 @@ export function FamilyTree() {
   const [selectedGeneration, setSelectedGeneration] = useState<number | undefined>(undefined);
   const [branchFilter, setBranchFilter] = useState<'all' | 'main' | 'elder' | 'younger'>('all');
 
-  const { data: rawFamilyMembers = [], isLoading, error } = useQuery<FamilyMember[]>({
-    queryKey: ['/api/family-members'],
+  // Transform Cosmos DB data to FamilyMember format
+  const transformCosmosToFamilyMember = (cosmosData: CosmosDbFamilyMember[]): FamilyMember[] => {
+    return cosmosData.map(member => ({
+      id: parseInt(member.externalId.replace(/\D/g, '')) || 0, // Extract number from externalId
+      externalId: member.externalId,
+      name: member.name,
+      born: member.born,
+      died: member.died,
+      biologicalSex: member.biologicalSex,
+      notes: member.notes,
+      father: member.father,
+      ageAtDeath: member.ageAtDeath,
+      diedYoung: member.diedYoung,
+      isSuccessionSon: member.isSuccessionSon,
+      hasMaleChildren: member.hasMaleChildren,
+      nobleBranch: member.nobleBranch,
+      monarchDuringLife: member.monarchDuringLife || []
+    }));
+  };
+
+  const { data: rawCosmosData = [], isLoading, error } = useQuery<CosmosDbFamilyMember[]>({
+    queryKey: ['/api/cosmos/members'],
   });
 
-  // Add generation data to family members
+  // Transform and add generation data to family members
+  const rawFamilyMembers = transformCosmosToFamilyMember(rawCosmosData);
   const familyMembers = addGenerationData(rawFamilyMembers);
   const generationStats = calculateGenerationStats(familyMembers, branchFilter);
 
-  const { data: searchResults = [] } = useQuery<FamilyMember[]>({
-    queryKey: ['/api/family-members/search', searchQuery],
-    enabled: searchQuery.length >= 2,
-  });
+  // For search, we'll filter the existing data locally since we have all members loaded
+  const searchResults = searchQuery.length >= 2 
+    ? rawFamilyMembers.filter(member => 
+        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.externalId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        member.notes?.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   const handleSearch = (member: FamilyMember) => {
     setSelectedMember(member);
