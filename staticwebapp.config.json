@@ -1,7 +1,7 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/api/*"]
+    "exclude": ["/api/*", "/assets/*"]
   },
   "mimeTypes": {
     ".js": "text/javascript",
@@ -16,16 +16,6 @@
       "allowedRoles": ["anonymous"]
     },
     {
-      "route": "/admin",
-      "serve": "/index.html",
-      "statusCode": 200
-    },
-    {
-      "route": "/admin/*",
-      "serve": "/index.html", 
-      "statusCode": 200
-    },
-    {
       "route": "/admin-db",
       "serve": "/index.html",
       "statusCode": 200
@@ -33,6 +23,16 @@
     {
       "route": "/admin-db/*",
       "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/admin",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/admin/*",
+      "serve": "/index.html", 
       "statusCode": 200
     },
     {
