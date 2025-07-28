@@ -8,3 +8,5 @@ require('./src/functions/debugDeployment');
 require('./src/functions/githubSync');
 require('./src/functions/debugData');
 require('./src/functions/backups');
+require('./src/functions/cosmosDbMembers');
+require('./src/functions/cosmosDataImport');

@@ -4,6 +4,17 @@ import { storage, gitHubSync } from "./storage";
 import { z } from "zod";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Import Cosmos DB functionality for local development
+  let cosmosClient: any = null;
+  try {
+    // Only import if we're in an environment that should use Cosmos DB
+    if (process.env.COSMOS_DB_ENDPOINT && process.env.COSMOS_DB_PRIMARY_KEY) {
+      const cosmosModule = await import("./cosmosClient.js");
+      cosmosClient = cosmosModule.default;
+    }
+  } catch (error) {
+    console.log("Cosmos DB not available in local development:", error);
+  }
   // Family members routes
   app.get("/api/family-members", async (req, res) => {
     try {
@@ -316,6 +327,134 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+
+  // Cosmos DB routes (for local development)
+  if (cosmosClient) {
+    // Get all Cosmos DB members
+    app.get("/api/cosmos/members", async (req, res) => {
+      try {
+        const members = await cosmosClient.getAllMembers();
+        res.json(members);
+      } catch (error) {
+        console.error("Error fetching Cosmos DB members:", error);
+        res.status(500).json({ error: "Failed to fetch Cosmos DB members" });
+      }
+    });
+
+    // Get single Cosmos DB member
+    app.get("/api/cosmos/members/:id", async (req, res) => {
+      try {
+        const member = await cosmosClient.getMember(req.params.id);
+        if (!member) {
+          return res.status(404).json({ error: "Member not found" });
+        }
+        res.json(member);
+      } catch (error) {
+        console.error("Error fetching Cosmos DB member:", error);
+        res.status(500).json({ error: "Failed to fetch member" });
+      }
+    });
+
+    // Create Cosmos DB member
+    app.post("/api/cosmos/members", async (req, res) => {
+      try {
+        const memberData = req.body;
+        const newMember = await cosmosClient.createMember(memberData);
+        res.status(201).json(newMember);
+      } catch (error) {
+        console.error("Error creating Cosmos DB member:", error);
+        res.status(500).json({ error: "Failed to create member" });
+      }
+    });
+
+    // Update Cosmos DB member
+    app.put("/api/cosmos/members/:id", async (req, res) => {
+      try {
+        const memberData = req.body;
+        const updatedMember = await cosmosClient.updateMember(req.params.id, memberData);
+        if (!updatedMember) {
+          return res.status(404).json({ error: "Member not found" });
+        }
+        res.json(updatedMember);
+      } catch (error) {
+        console.error("Error updating Cosmos DB member:", error);
+        res.status(500).json({ error: "Failed to update member" });
+      }
+    });
+
+    // Delete Cosmos DB member
+    app.delete("/api/cosmos/members/:id", async (req, res) => {
+      try {
+        const deleted = await cosmosClient.deleteMember(req.params.id);
+        if (!deleted) {
+          return res.status(404).json({ error: "Member not found" });
+        }
+        res.json({ message: "Member deleted successfully" });
+      } catch (error) {
+        console.error("Error deleting Cosmos DB member:", error);
+        res.status(500).json({ error: "Failed to delete member" });
+      }
+    });
+
+    // Import status
+    app.get("/api/cosmos/import/status", async (req, res) => {
+      try {
+        // Get JSON file count
+        const jsonMembers = await storage.getAllFamilyMembers();
+        const jsonCount = jsonMembers.length;
+
+        // Get Cosmos DB count
+        const cosmosMembers = await cosmosClient.getAllMembers();
+        const cosmosCount = cosmosMembers.length;
+
+        const status = {
+          jsonFile: {
+            count: jsonCount,
+            available: true
+          },
+          cosmosDb: {
+            count: cosmosCount,
+            available: true
+          },
+          needsImport: cosmosCount === 0 && jsonCount > 0,
+          inSync: cosmosCount === jsonCount
+        };
+
+        res.json(status);
+      } catch (error) {
+        console.error("Error getting import status:", error);
+        res.status(500).json({ error: "Failed to get import status" });
+      }
+    });
+
+    // Import data from JSON to Cosmos DB
+    app.post("/api/cosmos/import", async (req, res) => {
+      try {
+        const jsonMembers = await storage.getAllFamilyMembers();
+        
+        if (jsonMembers.length === 0) {
+          return res.status(400).json({ error: "No data to import from JSON file" });
+        }
+
+        const results = await cosmosClient.importFromJson(jsonMembers);
+        res.json(results);
+      } catch (error) {
+        console.error("Error importing data:", error);
+        res.status(500).json({ error: "Failed to import data" });
+      }
+    });
+
+    // Clear all Cosmos DB data
+    app.delete("/api/cosmos/import/clear", async (req, res) => {
+      try {
+        const result = await cosmosClient.clearAllMembers();
+        res.json(result);
+      } catch (error) {
+        console.error("Error clearing Cosmos DB data:", error);
+        res.status(500).json({ error: "Failed to clear data" });
+      }
+    });
+  }
 
   const httpServer = createServer(app);
   return httpServer;

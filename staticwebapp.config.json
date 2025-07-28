@@ -26,6 +26,16 @@
       "statusCode": 200
     },
     {
+      "route": "/admin-db",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
+      "route": "/admin-db/*",
+      "serve": "/index.html",
+      "statusCode": 200
+    },
+    {
       "route": "/assets/*",
       "headers": {
         "Cache-Control": "public, max-age=31536000, immutable"
