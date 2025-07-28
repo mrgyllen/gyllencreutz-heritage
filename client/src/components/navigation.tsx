@@ -62,7 +62,7 @@ export function Navigation() {
               >
                 {t('nav.about')}
               </button>
-              <Link href="/admin">
+              <Link href="/admin-db">
                 <Button variant="ghost" size="sm" className="text-warm-stone hover:text-antique-brass">
                   <Settings className="h-4 w-4" />
                 </Button>

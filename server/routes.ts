@@ -1,7 +1,6 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
-import { storage, gitHubSync } from "./storage";
-import { z } from "zod";
+import { gitHubSync } from "./storage";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Import Cosmos DB functionality for local development
@@ -15,123 +14,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
     console.log("Cosmos DB not available in local development:", error);
   }
-  // Family members routes
-  app.get("/api/family-members", async (req, res) => {
-    try {
-      const members = await storage.getAllFamilyMembers();
-      res.json(members);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch family members" });
-    }
-  });
-
-  app.get("/api/family-members/:id", async (req, res) => {
-    try {
-      const member = await storage.getFamilyMember(req.params.id);
-      if (!member) {
-        return res.status(404).json({ error: "Family member not found" });
-      }
-      res.json(member);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to fetch family member" });
-    }
-  });
-
-  app.get("/api/family-members/search/:query", async (req, res) => {
-    try {
-      const query = req.params.query;
-      if (!query || query.length < 2) {
-        return res.status(400).json({ error: "Search query must be at least 2 characters" });
-      }
-      const members = await storage.searchFamilyMembers(query);
-      res.json(members);
-    } catch (error) {
-      res.status(500).json({ error: "Failed to search family members" });
-    }
-  });
-
-  // Admin CRUD operations
-  app.post("/api/family-members", async (req, res) => {
-    try {
-      const memberData = req.body;
-      
-      // Validate required fields
-      if (!memberData.externalId || !memberData.name || !memberData.biologicalSex) {
-        return res.status(400).json({ error: "Missing required fields: externalId, name, biologicalSex" });
-      }
-      
-      // Check if member already exists
-      const existingMember = await storage.getFamilyMember(memberData.externalId);
-      if (existingMember) {
-        return res.status(409).json({ error: "Family member with this external ID already exists" });
-      }
-      
-      const newMember = await storage.createFamilyMember(memberData);
-      res.status(201).json(newMember);
-    } catch (error) {
-      console.error("Error creating family member:", error);
-      res.status(500).json({ error: "Failed to create family member" });
-    }
-  });
-
-  app.put("/api/family-members/:id", async (req, res) => {
-    try {
-      const externalId = req.params.id;
-      const updateData = req.body;
-      
-      // Validate that member exists
-      const existingMember = await storage.getFamilyMember(externalId);
-      if (!existingMember) {
-        return res.status(404).json({ error: "Family member not found" });
-      }
-      
-      const updatedMember = await storage.updateFamilyMember(externalId, updateData);
-      if (!updatedMember) {
-        return res.status(500).json({ error: "Failed to update family member" });
-      }
-      
-      res.json(updatedMember);
-    } catch (error) {
-      console.error("Error updating family member:", error);
-      res.status(500).json({ error: "Failed to update family member" });
-    }
-  });
-
-  app.delete("/api/family-members/:id", async (req, res) => {
-    try {
-      const externalId = req.params.id;
-      
-      const deletedMember = await storage.deleteFamilyMember(externalId);
-      if (!deletedMember) {
-        return res.status(404).json({ error: "Family member not found" });
-      }
-      
-      res.json({ message: "Family member deleted successfully", member: deletedMember });
-    } catch (error) {
-      console.error("Error deleting family member:", error);
-      res.status(500).json({ error: "Failed to delete family member" });
-    }
-  });
-
-  app.post("/api/family-members/bulk-update", async (req, res) => {
-    try {
-      const members = req.body;
-      
-      if (!Array.isArray(members)) {
-        return res.status(400).json({ error: "Request body must be an array of family members" });
-      }
-      
-      const result = await storage.bulkUpdateFamilyMembers(members);
-      res.json({ 
-        message: "Bulk update completed", 
-        updated: result.updated, 
-        created: result.created 
-      });
-    } catch (error) {
-      console.error("Error in bulk update:", error);
-      res.status(500).json({ error: "Failed to perform bulk update" });
-    }
-  });
 
   // GitHub sync status and control endpoints
   app.get("/api/github/status", async (req, res) => {
@@ -241,13 +123,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       const backups = await gitHubSync.listBackups();
       
-      // Get member count for each backup (from current data as approximation)
-      const familyMembers = await storage.getAllFamilyMembers();
-      const currentCount = familyMembers.length;
-      
       const backupsWithCount = backups.map(backup => ({
         ...backup,
-        memberCount: backup.memberCount || currentCount // Use current count as fallback
+        memberCount: backup.memberCount || 0 // Use 0 as fallback since JSON storage is deprecated
       }));
 
       res.json(backupsWithCount);
@@ -271,8 +149,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Invalid trigger type" });
       }
 
-      const familyMembers = await storage.getAllFamilyMembers();
-      const backup = await gitHubSync.createBackup(familyMembers, trigger);
+      // Note: Backup creation now requires Cosmos DB data since JSON storage is deprecated
+      const backup = await gitHubSync.createBackup([], trigger);
 
       res.json({
         success: true,
@@ -300,25 +178,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Backup filename required" });
       }
 
-      // Create pre-restore backup first
-      const currentFamilyMembers = await storage.getAllFamilyMembers();
-      await gitHubSync.createBackup(currentFamilyMembers, 'pre-restore');
-
-      // Get backup content
-      const backupData = await gitHubSync.getBackupContent(filename);
-      
-      // Restore data using bulk update
-      const result = await storage.bulkUpdateFamilyMembers(backupData);
-
-      res.json({
-        success: true,
-        message: `Restored ${backupData.length} family members from backup`,
-        result: {
-          restored: backupData.length,
-          updated: result.updated,
-          created: result.created
-        }
+      // Note: JSON-based backup restore is deprecated - use Cosmos DB restore instead
+      return res.status(400).json({ 
+        error: "JSON-based backup restore is deprecated",
+        message: "Please use the Cosmos DB restore functionality instead"
       });
+
     } catch (error) {
       res.status(500).json({
         success: false,
@@ -399,9 +264,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Import status
     app.get("/api/cosmos/import/status", async (req, res) => {
       try {
-        // Get JSON file count
-        const jsonMembers = await storage.getAllFamilyMembers();
-        const jsonCount = jsonMembers.length;
+        // JSON storage is deprecated - return 0 count
+        const jsonCount = 0;
 
         // Get Cosmos DB count
         const cosmosMembers = await cosmosClient.getAllMembers();
@@ -410,14 +274,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const status = {
           jsonFile: {
             count: jsonCount,
-            available: true
+            available: false // JSON storage is deprecated
           },
           cosmosDb: {
             count: cosmosCount,
             available: true
           },
-          needsImport: cosmosCount === 0 && jsonCount > 0,
-          inSync: cosmosCount === jsonCount
+          needsImport: false, // No import needed since JSON is deprecated
+          inSync: true // Always in sync since JSON is not used
         };
 
         res.json(status);
@@ -427,17 +291,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
 
-    // Import data from JSON to Cosmos DB
+    // Import data from JSON to Cosmos DB (deprecated)
     app.post("/api/cosmos/import", async (req, res) => {
       try {
-        const jsonMembers = await storage.getAllFamilyMembers();
-        
-        if (jsonMembers.length === 0) {
-          return res.status(400).json({ error: "No data to import from JSON file" });
-        }
-
-        const results = await cosmosClient.importFromJson(jsonMembers);
-        res.json(results);
+        return res.status(400).json({ 
+          error: "JSON import is deprecated",
+          message: "Use the restore functionality with backup files instead"
+        });
       } catch (error) {
         console.error("Error importing data:", error);
         res.status(500).json({ error: "Failed to import data" });
