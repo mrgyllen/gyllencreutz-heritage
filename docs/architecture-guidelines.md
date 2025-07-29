@@ -1,10 +1,10 @@
 # Architecture Guidelines - Gyllencreutz Family Heritage Website
 
-## 📐 Backend Overview
+## Backend Architecture Overview
 
 The Gyllencreutz Family Heritage Website employs a **dual backend architecture** designed for optimal development workflow and production deployment:
 
-- **Development Environment**: Express.js server running on Replit for rapid iteration and testing
+- **Development Environment**: Express.js server running locally for rapid iteration and testing
 - **Production Environment**: Azure Functions v4 model deployed via Azure Static Web Apps
 - **Data Storage**: JSON-based genealogical records with 148+ family members
 - **Architecture Pattern**: RESTful API design with consistent endpoints across both environments
@@ -19,11 +19,9 @@ Both backend implementations provide identical API responses and functionality, 
 
 ---
 
-## 🔌 API Endpoints
+## API Endpoints
 
-### Current Endpoints
-
-#### Public API Endpoints
+### Public API Endpoints
 
 **`GET /api/family-members`**
 - **Purpose**: Retrieve all family members with complete genealogical data
@@ -36,7 +34,7 @@ Both backend implementations provide identical API responses and functionality, 
 - **Response**: Filtered array of family members matching the search criteria
 - **Usage**: Real-time search functionality for finding specific family members
 
-#### Admin API Endpoints (IMPLEMENTED)
+### Admin API Endpoints
 
 **`GET /api/family-members/{id}`**
 - **Purpose**: Retrieve specific family member by ID
@@ -73,7 +71,7 @@ Both backend implementations provide identical API responses and functionality, 
 - **Usage**: Admin interface for mass data operations and imports
 - **Implementation**: Automatic backup creation and GitHub sync for bulk operations
 
-#### GitHub Sync API Endpoints (NEW)
+### GitHub Sync API Endpoints
 
 **`GET /api/github/status`**
 - **Purpose**: Get current GitHub sync configuration and status
@@ -99,7 +97,7 @@ Both backend implementations provide identical API responses and functionality, 
 - **Usage**: Admin interface sync history and debugging
 - **Implementation**: In-memory log retention with operation details
 
-#### Backup Management API Endpoints (NEW)
+### Backup Management API Endpoints
 
 **`GET /api/backups`**
 - **Purpose**: List all available backups with metadata
@@ -121,9 +119,9 @@ Both backend implementations provide identical API responses and functionality, 
 - **Usage**: Backup restore functionality with safety confirmation
 - **Implementation**: Creates pre-restore backup, fetches backup content, performs bulk update
 
-#### Development/Debugging Endpoints
+### Development/Debugging Endpoints
 
-**`GET /api/debug-deployment`** *(Development/Debugging)*
+**`GET /api/debug-deployment`**
 - **Purpose**: Verify deployment status and file system accessibility
 - **Response**: Deployment diagnostics including file paths and data loading status
 - **Usage**: Troubleshooting Azure Functions deployment issues
@@ -132,23 +130,27 @@ Both backend implementations provide identical API responses and functionality, 
 All endpoints return JSON responses with consistent structure:
 ```javascript
 {
-  id: number,           // Unique identifier
-  externalId: string,   // Original data ID
-  name: string,         // Full name
-  birthDate: string,    // Birth year or date
-  deathDate: string,    // Death year or date
-  biologicalSex: string, // Male/Female
-  notes: string,        // Historical notes and descriptions
-  father: string,       // Father's name for genealogical relationships
-  monarch: string,      // Ruling monarch during lifetime
-  monarchYears: string, // Years of monarch's reign
-  successionSon: boolean // Indicates succession line significance
+  id: number,                // Unique identifier
+  externalId: string,        // Original data ID
+  name: string,              // Full name
+  born: number | null,       // Birth year
+  died: number | null,       // Death year
+  biologicalSex: string,     // Male/Female
+  notes: string,             // Historical notes and descriptions
+  father: string,            // Father's external ID for relationships
+  ageAtDeath: number | null,
+  diedYoung: boolean,
+  isSuccessionSon: boolean,
+  hasMaleChildren: boolean,
+  nobleBranch: string | null,
+  monarchDuringLife: string[],
+  generation?: number
 }
 ```
 
 ---
 
-## 📁 Data Management
+## Data Management
 
 ### Data Source
 - **File Location**: `functions/data/family-members.json`
@@ -164,7 +166,7 @@ All endpoints return JSON responses with consistent structure:
 - **Processing**: Raw JSON transformed into structured family member objects
 - **Backup System**: Automatic timestamped backups created before bulk operations
 
-### Data Persistence (NEW)
+### Data Persistence
 - **Admin Interface**: Real-time data editing through Azure Functions
 - **File-based Storage**: Direct JSON file manipulation for data persistence
 - **CRUD Operations**: Full Create, Read, Update, Delete functionality
@@ -173,7 +175,7 @@ All endpoints return JSON responses with consistent structure:
 - **Relationship Integrity**: Validation of father references and genealogical connections
 - **GitHub Integration**: Automatic commits to repository for all data changes with [data-only] prefix
 
-### GitHub Sync System (NEW)
+### GitHub Sync System
 - **Automatic Commits**: All admin data changes automatically commit to GitHub repository
 - **GitHub API Integration**: Uses Fine-Grained Personal Access Tokens for secure repository access
 - **Commit Message Format**: `[data-only] admin: <operation description>` to identify admin changes
@@ -182,7 +184,7 @@ All endpoints return JSON responses with consistent structure:
 - **Status Monitoring**: Real-time sync status with admin interface widget
 - **Dual Environment Support**: Available in both Express (development) and Azure Functions (production)
 
-### Smart Backup System (NEW)
+### Smart Backup System
 - **GitHub Storage**: Backups stored in repository `/backups` folder, not locally or on production
 - **Smart Naming**: `family-data_YYYY-MM-DDTHH-mm-ss_[trigger].json` format with ISO timestamps
 - **Backup Types**: Three trigger types with different retention policies
@@ -211,13 +213,13 @@ class FunctionStorage {
   async searchFamilyMembers(query)    // Filters members by search term
   async getFamilyMember(id)           // Gets specific member by externalId
   
-  // Write Operations (IMPLEMENTED)
+  // Write Operations
   async createFamilyMember(data)      // Creates new member with auto-generated ID + GitHub sync
   async updateFamilyMember(id, data)  // Updates existing member by externalId + GitHub sync
   async deleteFamilyMember(id)        // Removes member by externalId + GitHub sync
   async bulkUpdateFamilyMembers(data) // Mass update/create operations + GitHub sync
   
-  // Data Persistence (IMPLEMENTED)
+  // Data Persistence
   async persistToFile()               // Writes changes to JSON file
   async createBackup()                // Creates timestamped backup before bulk ops
 }
@@ -230,7 +232,7 @@ class GitHubSync {
   getStatus()                         // Returns current sync status and metrics
   getSyncLogs()                       // Returns sync operation history
   
-  // Backup Management (NEW)
+  // Backup Management
   async createBackup(familyData, trigger) // Creates backup with smart naming and auto-cleanup
   async listBackups()                      // Lists all backups with metadata, handles missing folder
   async getBackupContent(filename)         // Retrieves backup content for restore operations
@@ -240,7 +242,7 @@ class GitHubSync {
 
 ---
 
-## 🛠️ Deployment
+## Deployment Architecture
 
 ### Azure Static Web Apps Integration
 - **Frontend**: Static files deployed to Azure CDN from `dist/public/`
@@ -261,53 +263,10 @@ class GitHubSync {
 |--------|----------------------|------------------------------|
 | **Runtime** | Node.js with tsx | Azure Functions Node.js runtime |
 | **Data Path** | `attached_assets/` | `functions/data/` |
-| **Port** | 5000 (Replit) | Managed by Azure |
+| **Port** | 5000 | Managed by Azure |
 | **Scaling** | Single instance | Auto-scaling |
 | **Deployment** | Instant restart | GitHub Actions build |
-| **Data Write** | Read-only operations | Full CRUD via admin interface |
-
-### Security Considerations (Future Implementation)
-- **Authentication**: Azure Static Web Apps built-in authentication (GitHub, Azure AD)
-- **Authorization**: Role-based access control for admin operations
-- **Data Validation**: Server-side validation for all data modifications
-- **Audit Trail**: Logging and backup system for all data changes
-- **Rate Limiting**: Protection against excessive API usage
-
----
-
-## 📝 Recent Updates
-
-### Admin Interface Implementation (January 21, 2025)
-- Added comprehensive CRUD operations for family data management
-- Implemented Azure Functions backend for data persistence
-- Created admin interface at `/admin` route with full data management capabilities
-- Added automatic backup system for bulk operations
-- Enhanced API endpoints with full family member lifecycle management
-
-### GitHub Sync Integration (January 21, 2025)
-- Implemented automatic GitHub commits for all admin data changes
-- Added GitHub API integration with Fine-Grained Personal Access Token authentication
-- Created sync status monitoring with real-time admin interface widget
-- Added retry logic with exponential backoff for failed sync operations
-- Updated GitHub Actions workflow to skip deployments for [data-only] commits
-- Implemented dual backend support (Express + Azure Functions) for GitHub sync
-
-### Production Deployment Fixes (January 22, 2025)
-- Fixed Azure Static Web Apps routing configuration for SPA admin page navigation
-- Added missing GitHub sync API endpoints to Azure Functions for production parity
-- Resolved direct link access and page refresh 404 errors for admin interface
-- Cleaned unnecessary decimal formatting from JSON integer fields (Born, Died, AgeAtDeath)
-
-### Smart Backup System Implementation (January 24, 2025)
-- Implemented comprehensive GitHub-based backup system with smart retention policies
-- Added three backup types: manual (permanent), auto-bulk (last 5), pre-restore (last 3)
-- Created backup management UI in admin interface with one-click backup/restore
-- Added safety features: pre-restore backups created automatically before any restore
-- Implemented smart naming convention with ISO timestamps for proper sorting
-- Added graceful handling of missing `/backups` folder on first use
-
-_Last updated: January 24, 2025_
-| **Environment** | Replit workspace | Azure cloud infrastructure |
+| **Data Write** | Full CRUD operations | Full CRUD via admin interface |
 
 ### File Deployment Considerations
 - **Data Inclusion**: `functions/package.json` explicitly includes data files
@@ -323,9 +282,36 @@ _Last updated: January 24, 2025_
 5. **Integration Test**: Automated verification of API endpoints
 6. **Live Deployment**: Updated site available on custom domain
 
+## Security Considerations
 
+### Current Implementation
+- **Data Validation**: Server-side validation for all data modifications
+- **GitHub Authentication**: Fine-grained Personal Access Tokens for repository access
+- **Audit Trail**: Complete logging and backup system for all data changes
+- **Rate Limiting**: Built-in Azure Functions throttling
+
+### Future Enhancements
+- **Authentication**: Azure Static Web Apps built-in authentication (GitHub, Azure AD)
+- **Authorization**: Role-based access control for admin operations
+- **Encryption**: Data encryption at rest and in transit
+- **Key Management**: Azure Key Vault integration for secrets
 
 ---
 
-_Maintained by Claude AI_  
-_Last updated: 2025-01-21_
+## Cosmos DB Integration (Optional)
+
+### Architecture
+- **Dual System**: Works alongside JSON-based system without interference
+- **NoSQL Storage**: Azure Cosmos DB with partitioned containers
+- **Admin Interface**: Dedicated `/admin-db` page for Cosmos DB operations
+- **Migration Ready**: Full CRUD operations with import/export capabilities
+
+### Configuration
+- **Environment Variables**: `COSMOS_DB_ENDPOINT`, `COSMOS_DB_PRIMARY_KEY`
+- **Database**: `familyTreeDb` database with `members` container
+- **Partition Key**: `/id` for optimal performance
+- **Client**: `@azure/cosmos` SDK integration
+
+---
+
+_Last updated: January 29, 2025_

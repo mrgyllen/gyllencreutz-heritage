@@ -167,5 +167,3 @@ The overall tone is scholarly, respectful, and dignified—appropriate for docum
 - **Cultural Sensitivity**: Present noble heritage with appropriate dignity and respect
 
 ---
-
-_Last updated: 2025-01-19_
