@@ -26,16 +26,17 @@ jobs:
       # Check for data-only commits and backup commits to skip deployment
       - name: Check for deployment skip conditions
         id: check_commit
+        env:
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
         run: |
-          commit_msg="${{ github.event.head_commit.message }}"
-          if [[ "$commit_msg" == *"[data-only]"* ]]; then
+          if [[ "$COMMIT_MSG" == *"[data-only]"* ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "⏭️ Skipping deployment - data-only commit detected"
-            echo "Commit message: $commit_msg"
-          elif [[ "$commit_msg" == *"backup: create"* ]] || [[ "$commit_msg" == *"backup: remove"* ]] || [[ "$commit_msg" == *"cleanup: remove old"* ]]; then
+            echo "Commit message: $COMMIT_MSG"
+          elif [[ "$COMMIT_MSG" == *"backup: create"* ]] || [[ "$COMMIT_MSG" == *"backup: remove"* ]] || [[ "$COMMIT_MSG" == *"cleanup: remove old"* ]]; then
             echo "skip=true" >> $GITHUB_OUTPUT
             echo "⏭️ Skipping deployment - backup operation detected"
-            echo "Commit message: $commit_msg"
+            echo "Commit message: $COMMIT_MSG"
           else
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀 Proceeding with deployment - code changes detected"
