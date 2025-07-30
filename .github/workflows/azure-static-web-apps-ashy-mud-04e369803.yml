@@ -18,6 +18,11 @@ jobs:
        id-token: write
        contents: read
     steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+          lfs: false
+      
       # Check for data-only commits and backup commits to skip deployment
       - name: Check for deployment skip conditions
         id: check_commit
@@ -35,12 +40,6 @@ jobs:
             echo "skip=false" >> $GITHUB_OUTPUT
             echo "🚀 Proceeding with deployment - code changes detected"
           fi
-      
-      - uses: actions/checkout@v3
-        if: steps.check_commit.outputs.skip == 'false'
-        with:
-          submodules: true
-          lfs: false
       
       - name: Install dependencies and build (Vite)
         if: steps.check_commit.outputs.skip == 'false'
