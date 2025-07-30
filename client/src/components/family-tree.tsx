@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Search, X, Users, ChevronDown, ChevronRight, Minus, Plus, Crown, TreePine, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -24,8 +24,8 @@ export function FamilyTree() {
   const [selectedGeneration, setSelectedGeneration] = useState<number | undefined>(undefined);
   const [branchFilter, setBranchFilter] = useState<'all' | 'main' | 'elder' | 'younger'>('all');
 
-  // Transform Cosmos DB data to FamilyMember format
-  const transformCosmosToFamilyMember = (cosmosData: CosmosDbFamilyMember[]): FamilyMember[] => {
+  // Memoized transformation function to prevent unnecessary re-computations
+  const transformCosmosToFamilyMember = useCallback((cosmosData: CosmosDbFamilyMember[]): FamilyMember[] => {
     return cosmosData.map(member => ({
       id: parseInt(member.externalId.replace(/\D/g, '')) || 0, // Extract number from externalId
       externalId: member.externalId,
@@ -42,35 +42,56 @@ export function FamilyTree() {
       nobleBranch: member.nobleBranch,
       monarchDuringLife: member.monarchDuringLife || []
     }));
-  };
+  }, []);
 
   const { data: rawCosmosData = [], isLoading, error } = useQuery<CosmosDbFamilyMember[]>({
     queryKey: ['/api/cosmos/members'],
+    queryFn: async () => {
+      const response = await fetch('/api/cosmos/members');
+      if (!response.ok) {
+        throw new Error('Failed to fetch family members');
+      }
+      const result = await response.json();
+      // Handle both direct array and wrapped response formats
+      return Array.isArray(result) ? result : result.data || [];
+    },
   });
 
-  // Transform and add generation data to family members
-  const rawFamilyMembers = transformCosmosToFamilyMember(rawCosmosData);
-  const familyMembers = addGenerationData(rawFamilyMembers);
-  const generationStats = calculateGenerationStats(familyMembers, branchFilter);
+  // Memoized data transformations to prevent expensive recalculations
+  const rawFamilyMembers = useMemo(() => 
+    transformCosmosToFamilyMember(rawCosmosData), 
+    [rawCosmosData, transformCosmosToFamilyMember]
+  );
+  
+  const familyMembers = useMemo(() => 
+    addGenerationData(rawFamilyMembers), 
+    [rawFamilyMembers]
+  );
+  
+  const generationStats = useMemo(() => 
+    calculateGenerationStats(familyMembers, branchFilter), 
+    [familyMembers, branchFilter]
+  );
 
-  // For search, we'll filter the existing data locally since we have all members loaded
-  const searchResults = searchQuery.length >= 2 
-    ? rawFamilyMembers.filter(member => 
-        member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.externalId.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        member.notes?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
+  // Debug logging to verify data is loading correctly
+  if (process.env.NODE_ENV === 'development' && familyMembers.length > 0) {
+    console.log(`🌳 Family Tree loaded: ${familyMembers.length} members`);
+  }
 
-  const handleSearch = (member: FamilyMember) => {
-    setSelectedMember(member);
-    setSearchQuery("");
-    // Switch to tree view and expand path to the selected member
-    setViewMode('tree');
-    expandPathToMember(member.externalId);
-  };
+  // Memoized search results to prevent unnecessary filtering on every render
+  const searchResults = useMemo(() => {
+    if (searchQuery.length < 2) return [];
+    
+    const lowerQuery = searchQuery.toLowerCase();
+    return rawFamilyMembers.filter(member => 
+      member.name.toLowerCase().includes(lowerQuery) ||
+      member.externalId.toLowerCase().includes(lowerQuery) ||
+      member.notes?.toLowerCase().includes(lowerQuery)
+    );
+  }, [rawFamilyMembers, searchQuery]);
 
-  const expandPathToMember = (externalId: string) => {
+  // Memoized event handlers to prevent unnecessary re-renders of child components
+  const expandPathToMember = useCallback((externalId: string) => {
     const newExpanded = new Set(expandedNodes);
     
     // Find the member and all their ancestors
@@ -98,9 +119,17 @@ export function FamilyTree() {
     
     expandAncestors(externalId);
     setExpandedNodes(newExpanded);
-  };
+  }, [expandedNodes, familyMembers]);
 
-  const toggleNode = (nodeId: string) => {
+  const handleSearch = useCallback((member: FamilyMember) => {
+    setSelectedMember(member);
+    setSearchQuery("");
+    // Switch to tree view and expand path to the selected member
+    setViewMode('tree');
+    expandPathToMember(member.externalId);
+  }, [expandPathToMember]);
+
+  const toggleNode = useCallback((nodeId: string) => {
     const newExpanded = new Set(expandedNodes);
     if (newExpanded.has(nodeId)) {
       newExpanded.delete(nodeId);
@@ -108,31 +137,35 @@ export function FamilyTree() {
       newExpanded.add(nodeId);
     }
     setExpandedNodes(newExpanded);
-  };
+  }, [expandedNodes]);
 
-  const expandAll = () => {
+  const expandAll = useCallback(() => {
     const allIds = new Set(familyMembers.map(m => m.externalId));
     setExpandedNodes(allIds);
-  };
+  }, [familyMembers]);
 
-  const collapseAll = () => {
+  const collapseAll = useCallback(() => {
     setExpandedNodes(new Set(["0"])); // Keep only root expanded
-  };
+  }, []);
 
-  // Only filter for generation view, other views should see all members
-  let filteredMembers = familyMembers;
-  
-  if (viewMode === 'generations') {
+  // Memoized filtered members to prevent expensive filtering on every render
+  const filteredMembers = useMemo(() => {
+    if (viewMode !== 'generations') {
+      return familyMembers;
+    }
+    
     // Apply branch filter first for generation view
-    filteredMembers = filterMembersByBranch(familyMembers, branchFilter);
+    let filtered = filterMembersByBranch(familyMembers, branchFilter);
     
     // Then filter by selected generation if any
     if (selectedGeneration) {
-      filteredMembers = filteredMembers.filter(m => m.generation === selectedGeneration);
+      filtered = filtered.filter(m => m.generation === selectedGeneration);
     }
-  }
+    
+    return filtered;
+  }, [familyMembers, viewMode, branchFilter, selectedGeneration]);
 
-  const getBranchColors = (nobleBranch: string | null) => {
+  const getBranchColors = useCallback((nobleBranch: string | null) => {
     switch (nobleBranch) {
       case null:
       case '':
@@ -164,7 +197,12 @@ export function FamilyTree() {
           text: 'text-green-800'
         };
     }
-  };
+  }, []);
+
+  // Memoized family tree building to prevent expensive recalculation
+  const root = useMemo(() => {
+    return filteredMembers.length > 0 ? buildFamilyTree(filteredMembers) : null;
+  }, [filteredMembers]);
 
   const renderFamilyNode = (node: FamilyTreeNode, depth: number = 0, isLast: boolean = false): JSX.Element => {
     const isSelected = selectedMember?.externalId === node.externalId;
@@ -284,9 +322,6 @@ export function FamilyTree() {
       </div>
     );
   }
-
-  // Create family tree from filtered data  
-  const root = filteredMembers.length > 0 ? buildFamilyTree(filteredMembers) : null;
 
   return (
     <section id="tree" className="py-20 bg-white">
