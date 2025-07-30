@@ -1,6 +1,8 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { gitHubSync } from "./storage";
+import fs from "fs";
+import path from "path";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Import Cosmos DB functionality for local development
@@ -193,15 +195,158 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Cosmos DB routes (for local development)
+  // Family member API endpoints
+  // If Cosmos DB is available, use it. Otherwise, fall back to JSON data
   if (cosmosClient) {
+    console.log("📊 Using Cosmos DB for family member data");
+  } else {
+    console.log("📄 Using JSON fallback for family member data");
+    
+    // Helper function to load JSON data
+    const loadFamilyData = () => {
+      try {
+        const jsonPath = path.join(process.cwd(), 'attached_assets', 'Gyllencreutz_Ancestry_Flat_CLEAN_Final_1752612544769.json');
+        const rawData = fs.readFileSync(jsonPath, 'utf-8');
+        const familyData = JSON.parse(rawData);
+        
+        // Transform JSON format to match CosmosDbFamilyMember format
+        return familyData.map((member: any) => ({
+          id: member.ID,
+          externalId: member.ID,
+          name: member.Name,
+          born: member.Born,
+          died: member.Died,
+          biologicalSex: member.BiologicalSex || 'Unknown',
+          notes: member.Notes,
+          father: member.Father,
+          ageAtDeath: member.AgeAtDeath,
+          diedYoung: member.DiedYoung || false,
+          isSuccessionSon: member.IsSuccessionSon || false,
+          hasMaleChildren: member.HasMaleChildren || false,
+          nobleBranch: member.NobleBranch,
+          monarchDuringLife: member.MonarchDuringLife || [],
+          importedAt: new Date().toISOString(),
+          importSource: 'json_fallback'
+        }));
+      } catch (error) {
+        console.error('Error loading family JSON data:', error);
+        return [];
+      }
+    };
+
+    // Main family-members endpoints (matching Azure Functions API)
+    app.get("/api/family-members", async (req, res) => {
+      try {
+        console.log("🔍 Fetching all family members from JSON fallback...");
+        const members = loadFamilyData();
+        console.log(`✅ Retrieved ${members.length} family members from JSON`);
+        res.json(members);
+      } catch (error) {
+        console.error("❌ Error serving family members from JSON:", error);
+        res.status(500).json({ error: "Failed to load family members" });
+      }
+    });
+
+    app.get("/api/family-members/search/:query", async (req, res) => {
+      try {
+        const query = req.params.query.toLowerCase();
+        console.log(`🔍 Searching family members for: "${query}"`);
+        const members = loadFamilyData();
+        
+        const filteredMembers = members.filter((member: any) => 
+          member.name?.toLowerCase().includes(query) ||
+          member.notes?.toLowerCase().includes(query) ||
+          member.nobleBranch?.toLowerCase().includes(query)
+        );
+        
+        console.log(`✅ Found ${filteredMembers.length} matching family members`);
+        res.json(filteredMembers);
+      } catch (error) {
+        console.error("❌ Error searching family members:", error);
+        res.status(500).json({ error: "Failed to search family members" });
+      }
+    });
+
+    // Fallback endpoints that serve JSON data
+    app.get("/api/cosmos/members", async (req, res) => {
+      try {
+        console.log("🔍 Fetching family members from JSON fallback...");
+        const members = loadFamilyData();
+        console.log(`✅ Retrieved ${members.length} family members from JSON`);
+        res.json(members);
+      } catch (error) {
+        console.error("❌ Error serving family members from JSON:", error);
+        res.status(500).json({ error: "Failed to load family members" });
+      }
+    });
+
+    app.get("/api/cosmos/import/status", async (req, res) => {
+      try {
+        const members = loadFamilyData();
+        const status = {
+          jsonFile: {
+            count: members.length,
+            available: true
+          },
+          cosmosDb: {
+            count: 0,
+            available: false
+          },
+          needsImport: false,
+          inSync: true
+        };
+        res.json(status);
+      } catch (error) {
+        console.error("Error getting import status:", error);
+        res.status(500).json({ error: "Failed to get import status" });
+      }
+    });
+  }
+
+  // Cosmos DB routes (for local development when available)
+  if (cosmosClient) {
+    // Main family-members endpoints using Cosmos DB
+    app.get("/api/family-members", async (req, res) => {
+      try {
+        console.log("🔍 Fetching family members from Cosmos DB...");
+        const members = await cosmosClient.getAllMembers();
+        console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
+        res.json(members);
+      } catch (error) {
+        console.error("❌ Error fetching Cosmos DB members:", error);
+        res.status(500).json({ error: "Failed to fetch Cosmos DB members" });
+      }
+    });
+
+    app.get("/api/family-members/search/:query", async (req, res) => {
+      try {
+        const query = req.params.query.toLowerCase();
+        console.log(`🔍 Searching family members in Cosmos DB for: "${query}"`);
+        const members = await cosmosClient.getAllMembers();
+        
+        const filteredMembers = members.filter((member: any) => 
+          member.name?.toLowerCase().includes(query) ||
+          member.notes?.toLowerCase().includes(query) ||
+          member.nobleBranch?.toLowerCase().includes(query)
+        );
+        
+        console.log(`✅ Found ${filteredMembers.length} matching family members in Cosmos DB`);
+        res.json(filteredMembers);
+      } catch (error) {
+        console.error("❌ Error searching family members in Cosmos DB:", error);
+        res.status(500).json({ error: "Failed to search family members" });
+      }
+    });
+
     // Get all Cosmos DB members
     app.get("/api/cosmos/members", async (req, res) => {
       try {
+        console.log("🔍 Fetching family members from Cosmos DB...");
         const members = await cosmosClient.getAllMembers();
+        console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
         res.json(members);
       } catch (error) {
-        console.error("Error fetching Cosmos DB members:", error);
+        console.error("❌ Error fetching Cosmos DB members:", error);
         res.status(500).json({ error: "Failed to fetch Cosmos DB members" });
       }
     });
@@ -354,9 +499,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         });
       } catch (error) {
         console.error("Error restoring from JSON backup:", error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
         res.status(500).json({ 
           error: "Failed to restore from JSON backup",
-          message: error.message 
+          message: errorMessage 
         });
       }
     });

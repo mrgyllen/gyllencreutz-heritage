@@ -5,9 +5,13 @@ import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
 import { copyFileSync } from "fs";
 
 export default defineConfig({
+  // Suppress source map warnings in development
+  define: {
+    __DEV__: JSON.stringify(process.env.NODE_ENV !== 'production'),
+  },
   plugins: [
     react(),
-    runtimeErrorOverlay(),
+    // runtimeErrorOverlay(), // Temporarily disabled - causing React hooks conflicts
     // Copy staticwebapp.config.json to build output for Azure Static Web Apps
     {
       name: 'copy-staticwebapp-config',
@@ -42,11 +46,21 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    sourcemap: true,
   },
   server: {
     fs: {
       strict: true,
       deny: ["**/.*"],
     },
+  },
+  // Improve source map handling in development
+  css: {
+    devSourcemap: true,
+  },
+  // Optimize dependencies to reduce source map warnings
+  optimizeDeps: {
+    include: ['react', 'react-dom', '@tanstack/react-query'],
+    exclude: [],
   },
 });
