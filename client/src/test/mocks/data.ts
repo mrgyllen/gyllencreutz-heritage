@@ -1,0 +1,117 @@
+/**
+ * Mock data for testing
+ * Provides sample family member data that mirrors the production data structure
+ */
+
+import type { CosmosDbFamilyMember } from '@/types/family';
+
+export const mockFamilyMembers: CosmosDbFamilyMember[] = [
+  {
+    id: '0',
+    externalId: '0',
+    name: 'Lars Tygesson',
+    born: 1515,
+    died: 1560,
+    biologicalSex: 'Male',
+    notes: 'Founder of the Gyllencreutz family line',
+    father: null,
+    ageAtDeath: 45,
+    diedYoung: false,
+    isSuccessionSon: true,
+    hasMaleChildren: true,
+    nobleBranch: null,
+    monarchDuringLife: ['Gustav Vasa'],
+    importedAt: '2024-07-24T20:00:00.000Z',
+    importSource: 'initial_import',
+  },
+  {
+    id: '1',
+    externalId: '1',
+    name: 'Erik Larsson Gyllencreutz',
+    born: 1545,
+    died: 1600,
+    biologicalSex: 'Male',
+    notes: 'First to use the Gyllencreutz surname',
+    father: 'Lars Tygesson',
+    ageAtDeath: 55,
+    diedYoung: false,
+    isSuccessionSon: true,
+    hasMaleChildren: true,
+    nobleBranch: null,
+    monarchDuringLife: ['Erik XIV', 'Johan III'],
+    importedAt: '2024-07-24T20:00:00.000Z',
+    importSource: 'initial_import',
+  },
+  {
+    id: '2',
+    externalId: '2',
+    name: 'Lars Eriksson Gyllencreutz',
+    born: 1580,
+    died: 1620,
+    biologicalSex: 'Male',
+    notes: 'Military officer in the Thirty Years War',
+    father: 'Erik Larsson Gyllencreutz',
+    ageAtDeath: 40,
+    diedYoung: false,
+    isSuccessionSon: false,
+    hasMaleChildren: false,
+    nobleBranch: 'Elder line',
+    monarchDuringLife: ['Sigismund', 'Karl IX'],
+    importedAt: '2024-07-24T20:00:00.000Z',
+    importSource: 'initial_import',
+  },
+  {
+    id: '3',
+    externalId: '3',
+    name: 'Anna Gyllencreutz',
+    born: 1590,
+    died: 1650,
+    biologicalSex: 'Female',
+    notes: 'Married into the nobility',
+    father: 'Erik Larsson Gyllencreutz',
+    ageAtDeath: 60,
+    diedYoung: false,
+    isSuccessionSon: false,
+    hasMaleChildren: false,
+    nobleBranch: 'Younger line',
+    monarchDuringLife: ['Karl IX', 'Gustav II Adolf'],
+    importedAt: '2024-07-24T20:00:00.000Z',
+    importSource: 'initial_import',
+  },
+  {
+    id: '4',
+    externalId: '4',
+    name: 'Johan Gyllencreutz',
+    born: 1615,
+    died: 1625,
+    biologicalSex: 'Male',
+    notes: 'Died in childhood',
+    father: 'Lars Eriksson Gyllencreutz',
+    ageAtDeath: 10,
+    diedYoung: true,
+    isSuccessionSon: false,
+    hasMaleChildren: false,
+    nobleBranch: 'Elder line',
+    monarchDuringLife: ['Gustav II Adolf'],
+    importedAt: '2024-07-24T20:00:00.000Z',
+    importSource: 'initial_import',
+  },
+];
+
+export const mockSearchResults = mockFamilyMembers.slice(0, 3);
+
+export const mockImportStatus = {
+  jsonFile: { count: mockFamilyMembers.length, available: true },
+  cosmosDb: { count: mockFamilyMembers.length, available: true },
+  needsImport: false,
+  inSync: true,
+};
+
+export const mockGitHubStatus = {
+  available: true,
+  connected: true,
+  configured: true,
+  lastSync: '2024-07-24T20:00:00.000Z',
+  pendingOperations: 0,
+  error: null,
+};

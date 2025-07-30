@@ -1,0 +1,36 @@
+/**
+ * Type declarations for CosmosDB client module
+ */
+
+export interface CosmosDbMember {
+  id: string;
+  externalId: string;
+  name: string;
+  born: number | null;
+  died: number | null;
+  biologicalSex: string;
+  notes: string | null;
+  father: string | null;
+  ageAtDeath: number | null;
+  diedYoung: boolean;
+  isSuccessionSon: boolean;
+  hasMaleChildren: boolean;
+  nobleBranch: string | null;
+  monarchDuringLife: string[];
+  importedAt?: string;
+  importSource?: string;
+}
+
+export interface CosmosClient {
+  getAllMembers(): Promise<CosmosDbMember[]>;
+  getMemberById(id: string): Promise<CosmosDbMember | null>;
+  createMember(memberData: Omit<CosmosDbMember, 'id'>): Promise<CosmosDbMember>;
+  updateMember(id: string, memberData: Partial<CosmosDbMember>): Promise<CosmosDbMember | null>;
+  deleteMember(id: string): Promise<CosmosDbMember | null>;
+  importFromJson(jsonData: any[]): Promise<{ successful: number; failed: number; errors: string[] }>;
+  clearAllMembers(): Promise<{ deleted: number }>;
+  restoreFromBackup(backupData: any[]): Promise<{ restored: number; failed: number; errors: string[] }>;
+}
+
+declare const cosmosClient: CosmosClient;
+export default cosmosClient;

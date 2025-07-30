@@ -3,8 +3,41 @@ import { createServer, type Server } from "http";
 import { gitHubSync } from "./storage";
 import fs from "fs";
 import path from "path";
+import { 
+  sendSuccessResponse, 
+  sendErrorResponse, 
+  asyncHandler, 
+  HttpStatus, 
+  ErrorSeverity, 
+  ResponseMessages,
+  validateRequiredFields 
+} from "./lib/api-response";
+import {
+  validateMemberId,
+  validateCreateFamilyMember,
+  validateUpdateFamilyMember,
+  validateSearchQuery,
+  validateRestore,
+  validatePagination,
+  BusinessRules,
+  validateData,
+  CreateFamilyMemberSchema,
+  UpdateFamilyMemberSchema
+} from "./lib/validation";
+import {
+  performanceMonitor,
+  performanceMiddleware,
+  errorTrackingMiddleware,
+  PerformanceUtils
+} from "./lib/performance-monitor";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Add performance monitoring middleware
+  app.use(performanceMiddleware);
+  
+  // Add error tracking middleware (should be last)
+  app.use(errorTrackingMiddleware);
+  
   // Import Cosmos DB functionality for local development
   let cosmosClient: any = null;
   try {
@@ -16,6 +49,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
   } catch (error) {
     console.log("Cosmos DB not available in local development:", error);
   }
+
+  // Performance monitoring endpoints
+  app.get("/api/performance/stats", asyncHandler(async (req, res) => {
+    const stats = performanceMonitor.getApiStats();
+    sendSuccessResponse(res, stats, HttpStatus.OK, 'Performance statistics retrieved successfully');
+  }));
+
+  app.get("/api/performance/health", asyncHandler(async (req, res) => {
+    const health = performanceMonitor.getSystemHealth();
+    const stats = performanceMonitor.getApiStats();
+    const issues = PerformanceUtils.detectIssues(stats, health);
+    const score = PerformanceUtils.getPerformanceScore(stats);
+    
+    const healthData = {
+      ...health,
+      performanceScore: score,
+      issues,
+      formattedMemory: PerformanceUtils.formatMemoryUsage(health.memoryUsage),
+      formattedUptime: PerformanceUtils.formatUptime(health.uptime)
+    };
+    
+    sendSuccessResponse(res, healthData, HttpStatus.OK, 'System health retrieved successfully');
+  }));
+
+  app.get("/api/performance/analytics", asyncHandler(async (req, res) => {
+    const analytics = performanceMonitor.getUserAnalytics();
+    sendSuccessResponse(res, analytics, HttpStatus.OK, 'User analytics retrieved successfully');
+  }));
+
+  app.post("/api/performance/clear", asyncHandler(async (req, res) => {
+    const { olderThanHours = 24 } = req.body;
+    const clearedCount = performanceMonitor.clearOldMetrics(olderThanHours);
+    sendSuccessResponse(res, { clearedCount }, HttpStatus.OK, `Cleared ${clearedCount} old metrics`);
+  }));
+
+  app.get("/api/performance/metrics/:endpoint", validateMemberId, asyncHandler(async (req, res) => {
+    const { id: endpoint } = req.params;
+    const { method = 'GET' } = req.query;
+    
+    const metrics = performanceMonitor.getMetricsForEndpoint(method as string, `/${endpoint}`);
+    sendSuccessResponse(res, metrics, HttpStatus.OK, `Retrieved ${metrics.length} metrics for ${method} /${endpoint}`);
+  }));
 
   // GitHub sync status and control endpoints
   app.get("/api/github/status", async (req, res) => {
@@ -247,265 +322,275 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     });
 
-    app.get("/api/family-members/search/:query", async (req, res) => {
-      try {
-        const query = req.params.query.toLowerCase();
-        console.log(`🔍 Searching family members for: "${query}"`);
-        const members = loadFamilyData();
-        
-        const filteredMembers = members.filter((member: any) => 
-          member.name?.toLowerCase().includes(query) ||
-          member.notes?.toLowerCase().includes(query) ||
-          member.nobleBranch?.toLowerCase().includes(query)
-        );
-        
-        console.log(`✅ Found ${filteredMembers.length} matching family members`);
-        res.json(filteredMembers);
-      } catch (error) {
-        console.error("❌ Error searching family members:", error);
-        res.status(500).json({ error: "Failed to search family members" });
-      }
-    });
+    app.get("/api/family-members/search/:query", validateSearchQuery, asyncHandler(async (req, res) => {
+      const { query } = req.params;
+      const lowerQuery = query.toLowerCase();
+      console.log(`🔍 Searching family members for: "${query}"`);
+      const members = loadFamilyData();
+      
+      const filteredMembers = members.filter((member: any) => 
+        member.name?.toLowerCase().includes(lowerQuery) ||
+        member.notes?.toLowerCase().includes(lowerQuery) ||
+        member.nobleBranch?.toLowerCase().includes(lowerQuery)
+      );
+      
+      console.log(`✅ Found ${filteredMembers.length} matching family members`);
+      sendSuccessResponse(res, filteredMembers, HttpStatus.OK, `Found ${filteredMembers.length} matching family members`);
+    }));
 
-    // Fallback endpoints that serve JSON data
-    app.get("/api/cosmos/members", async (req, res) => {
-      try {
-        console.log("🔍 Fetching family members from JSON fallback...");
-        const members = loadFamilyData();
-        console.log(`✅ Retrieved ${members.length} family members from JSON`);
-        res.json(members);
-      } catch (error) {
-        console.error("❌ Error serving family members from JSON:", error);
-        res.status(500).json({ error: "Failed to load family members" });
-      }
-    });
+    // Fallback endpoints that serve JSON data with standardized responses
+    app.get("/api/cosmos/members", asyncHandler(async (req, res) => {
+      console.log("🔍 Fetching family members from JSON fallback...");
+      const members = loadFamilyData();
+      console.log(`✅ Retrieved ${members.length} family members from JSON`);
+      sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members`);
+    }));
 
-    app.get("/api/cosmos/import/status", async (req, res) => {
-      try {
-        const members = loadFamilyData();
-        const status = {
-          jsonFile: {
-            count: members.length,
-            available: true
-          },
-          cosmosDb: {
-            count: 0,
-            available: false
-          },
-          needsImport: false,
-          inSync: true
-        };
-        res.json(status);
-      } catch (error) {
-        console.error("Error getting import status:", error);
-        res.status(500).json({ error: "Failed to get import status" });
-      }
-    });
+    app.get("/api/cosmos/import/status", asyncHandler(async (req, res) => {
+      const members = loadFamilyData();
+      const status = {
+        jsonFile: {
+          count: members.length,
+          available: true
+        },
+        cosmosDb: {
+          count: 0,
+          available: false
+        },
+        needsImport: false,
+        inSync: true
+      };
+      sendSuccessResponse(res, status, HttpStatus.OK, 'Import status retrieved successfully');
+    }));
   }
 
   // Cosmos DB routes (for local development when available)
   if (cosmosClient) {
     // Main family-members endpoints using Cosmos DB
-    app.get("/api/family-members", async (req, res) => {
-      try {
-        console.log("🔍 Fetching family members from Cosmos DB...");
-        const members = await cosmosClient.getAllMembers();
-        console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
-        res.json(members);
-      } catch (error) {
-        console.error("❌ Error fetching Cosmos DB members:", error);
-        res.status(500).json({ error: "Failed to fetch Cosmos DB members" });
-      }
-    });
+    app.get("/api/family-members", asyncHandler(async (req, res) => {
+      console.log("🔍 Fetching family members from Cosmos DB...");
+      const members = await cosmosClient.getAllMembers();
+      console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
+      sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members from Cosmos DB`);
+    }));
 
-    app.get("/api/family-members/search/:query", async (req, res) => {
-      try {
-        const query = req.params.query.toLowerCase();
-        console.log(`🔍 Searching family members in Cosmos DB for: "${query}"`);
-        const members = await cosmosClient.getAllMembers();
-        
-        const filteredMembers = members.filter((member: any) => 
-          member.name?.toLowerCase().includes(query) ||
-          member.notes?.toLowerCase().includes(query) ||
-          member.nobleBranch?.toLowerCase().includes(query)
-        );
-        
-        console.log(`✅ Found ${filteredMembers.length} matching family members in Cosmos DB`);
-        res.json(filteredMembers);
-      } catch (error) {
-        console.error("❌ Error searching family members in Cosmos DB:", error);
-        res.status(500).json({ error: "Failed to search family members" });
-      }
-    });
+    app.get("/api/family-members/search/:query", validateSearchQuery, asyncHandler(async (req, res) => {
+      const { query } = req.params;
+      const lowerQuery = query.toLowerCase();
+      console.log(`🔍 Searching family members in Cosmos DB for: "${query}"`);
+      const members = await cosmosClient.getAllMembers();
+      
+      const filteredMembers = members.filter((member: any) => 
+        member.name?.toLowerCase().includes(lowerQuery) ||
+        member.notes?.toLowerCase().includes(lowerQuery) ||
+        member.nobleBranch?.toLowerCase().includes(lowerQuery)
+      );
+      
+      console.log(`✅ Found ${filteredMembers.length} matching family members in Cosmos DB`);
+      sendSuccessResponse(res, filteredMembers, HttpStatus.OK, `Found ${filteredMembers.length} matching family members`);
+    }));
 
     // Get all Cosmos DB members
-    app.get("/api/cosmos/members", async (req, res) => {
-      try {
-        console.log("🔍 Fetching family members from Cosmos DB...");
-        const members = await cosmosClient.getAllMembers();
-        console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
-        res.json(members);
-      } catch (error) {
-        console.error("❌ Error fetching Cosmos DB members:", error);
-        res.status(500).json({ error: "Failed to fetch Cosmos DB members" });
-      }
-    });
+    app.get("/api/cosmos/members", asyncHandler(async (req, res) => {
+      console.log("🔍 Fetching family members from Cosmos DB...");
+      const members = await cosmosClient.getAllMembers();
+      console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
+      sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members from Cosmos DB`);
+    }));
 
     // Get single Cosmos DB member
-    app.get("/api/cosmos/members/:id", async (req, res) => {
-      try {
-        const member = await cosmosClient.getMember(req.params.id);
-        if (!member) {
-          return res.status(404).json({ error: "Member not found" });
-        }
-        res.json(member);
-      } catch (error) {
-        console.error("Error fetching Cosmos DB member:", error);
-        res.status(500).json({ error: "Failed to fetch member" });
+    app.get("/api/cosmos/members/:id", validateMemberId, asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const member = await cosmosClient.getMember(id);
+      if (!member) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
       }
-    });
+      sendSuccessResponse(res, member, HttpStatus.OK, ResponseMessages.RETRIEVED);
+    }));
 
     // Create Cosmos DB member
-    app.post("/api/cosmos/members", async (req, res) => {
-      try {
-        const memberData = req.body;
-        const newMember = await cosmosClient.createMember(memberData);
-        res.status(201).json(newMember);
-      } catch (error) {
-        console.error("Error creating Cosmos DB member:", error);
-        res.status(500).json({ error: "Failed to create member" });
+    app.post("/api/cosmos/members", validateCreateFamilyMember, asyncHandler(async (req, res) => {
+      const memberData = req.body;
+      
+      // Apply business rules validation
+      const existingMembers = await cosmosClient.getAllMembers();
+      
+      // Validate external ID format
+      const externalIdErrors = BusinessRules.validateExternalIdFormat(memberData.externalId);
+      if (externalIdErrors.length > 0) {
+        return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, externalIdErrors, ErrorSeverity.LOW);
       }
-    });
+      
+      // Validate father exists
+      const fatherErrors = BusinessRules.validateFatherExists(memberData, existingMembers);
+      if (fatherErrors.length > 0) {
+        return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, fatherErrors, ErrorSeverity.LOW);
+      }
+      
+      // Validate age at death consistency
+      const ageErrors = BusinessRules.validateAgeAtDeath(memberData);
+      if (ageErrors.length > 0) {
+        return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, ageErrors, ErrorSeverity.LOW);
+      }
+      
+      const newMember = await cosmosClient.createMember(memberData);
+      sendSuccessResponse(res, newMember, HttpStatus.CREATED, ResponseMessages.CREATED);
+    }));
 
     // Update Cosmos DB member
-    app.put("/api/cosmos/members/:id", async (req, res) => {
-      try {
-        const memberData = req.body;
-        const updatedMember = await cosmosClient.updateMember(req.params.id, memberData);
-        if (!updatedMember) {
-          return res.status(404).json({ error: "Member not found" });
+    app.put("/api/cosmos/members/:id", validateMemberId, validateUpdateFamilyMember, asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const memberData = req.body;
+      
+      // Apply business rules validation for updates
+      const existingMembers = await cosmosClient.getAllMembers();
+      
+      // If external ID is being updated, validate format
+      if (memberData.externalId) {
+        const externalIdErrors = BusinessRules.validateExternalIdFormat(memberData.externalId);
+        if (externalIdErrors.length > 0) {
+          return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, externalIdErrors, ErrorSeverity.LOW);
         }
-        res.json(updatedMember);
-      } catch (error) {
-        console.error("Error updating Cosmos DB member:", error);
-        res.status(500).json({ error: "Failed to update member" });
       }
-    });
+      
+      // If father is being updated, validate father exists
+      if (memberData.father !== undefined) {
+        const fatherErrors = BusinessRules.validateFatherExists(memberData, existingMembers);
+        if (fatherErrors.length > 0) {
+          return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, fatherErrors, ErrorSeverity.LOW);
+        }
+      }
+      
+      // Validate age at death consistency if relevant fields are being updated
+      if (memberData.born !== undefined || memberData.died !== undefined || memberData.ageAtDeath !== undefined) {
+        // Get current member data to check consistency
+        const currentMember = await cosmosClient.getMember(id);
+        if (currentMember) {
+          const updatedMemberData = { ...currentMember, ...memberData };
+          const ageErrors = BusinessRules.validateAgeAtDeath(updatedMemberData);
+          if (ageErrors.length > 0) {
+            return sendErrorResponse(res, ResponseMessages.VALIDATION_FAILED, HttpStatus.BAD_REQUEST, ageErrors, ErrorSeverity.LOW);
+          }
+        }
+      }
+      
+      const updatedMember = await cosmosClient.updateMember(id, memberData);
+      if (!updatedMember) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
+      }
+      sendSuccessResponse(res, updatedMember, HttpStatus.OK, ResponseMessages.UPDATED);
+    }));
 
     // Delete Cosmos DB member
-    app.delete("/api/cosmos/members/:id", async (req, res) => {
-      try {
-        const deleted = await cosmosClient.deleteMember(req.params.id);
-        if (!deleted) {
-          return res.status(404).json({ error: "Member not found" });
-        }
-        res.json({ message: "Member deleted successfully" });
-      } catch (error) {
-        console.error("Error deleting Cosmos DB member:", error);
-        res.status(500).json({ error: "Failed to delete member" });
+    app.delete("/api/cosmos/members/:id", validateMemberId, asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const deleted = await cosmosClient.deleteMember(id);
+      if (!deleted) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
       }
-    });
+      sendSuccessResponse(res, { id }, HttpStatus.OK, ResponseMessages.DELETED);
+    }));
 
     // Import status
-    app.get("/api/cosmos/import/status", async (req, res) => {
-      try {
-        // JSON storage is deprecated - return 0 count
-        const jsonCount = 0;
+    app.get("/api/cosmos/import/status", asyncHandler(async (req, res) => {
+      // JSON storage is deprecated - return 0 count
+      const jsonCount = 0;
 
-        // Get Cosmos DB count
-        const cosmosMembers = await cosmosClient.getAllMembers();
-        const cosmosCount = cosmosMembers.length;
+      // Get Cosmos DB count
+      const cosmosMembers = await cosmosClient.getAllMembers();
+      const cosmosCount = cosmosMembers.length;
 
-        const status = {
-          jsonFile: {
-            count: jsonCount,
-            available: false // JSON storage is deprecated
-          },
-          cosmosDb: {
-            count: cosmosCount,
-            available: true
-          },
-          needsImport: false, // No import needed since JSON is deprecated
-          inSync: true // Always in sync since JSON is not used
-        };
+      const status = {
+        jsonFile: {
+          count: jsonCount,
+          available: false // JSON storage is deprecated
+        },
+        cosmosDb: {
+          count: cosmosCount,
+          available: true
+        },
+        needsImport: false, // No import needed since JSON is deprecated
+        inSync: true // Always in sync since JSON is not used
+      };
 
-        res.json(status);
-      } catch (error) {
-        console.error("Error getting import status:", error);
-        res.status(500).json({ error: "Failed to get import status" });
-      }
-    });
+      sendSuccessResponse(res, status, HttpStatus.OK, 'Import status retrieved successfully');
+    }));
 
     // Import data from JSON to Cosmos DB (deprecated)
-    app.post("/api/cosmos/import", async (req, res) => {
-      try {
-        return res.status(400).json({ 
-          error: "JSON import is deprecated",
-          message: "Use the restore functionality with backup files instead"
-        });
-      } catch (error) {
-        console.error("Error importing data:", error);
-        res.status(500).json({ error: "Failed to import data" });
-      }
-    });
+    app.post("/api/cosmos/import", asyncHandler(async (req, res) => {
+      sendErrorResponse(
+        res, 
+        "JSON import is deprecated. Use the restore functionality with backup files instead.", 
+        HttpStatus.BAD_REQUEST, 
+        undefined, 
+        ErrorSeverity.LOW
+      );
+    }));
 
     // Clear all Cosmos DB data
-    app.delete("/api/cosmos/import/clear", async (req, res) => {
-      try {
-        const result = await cosmosClient.clearAllMembers();
-        res.json(result);
-      } catch (error) {
-        console.error("Error clearing Cosmos DB data:", error);
-        res.status(500).json({ error: "Failed to clear data" });
-      }
-    });
+    app.delete("/api/cosmos/import/clear", asyncHandler(async (req, res) => {
+      const result = await cosmosClient.clearAllMembers();
+      sendSuccessResponse(res, result, HttpStatus.OK, 'All Cosmos DB data cleared successfully');
+    }));
 
     // Restore Cosmos DB from JSON backup
-    app.post("/api/cosmos/import/restore", async (req, res) => {
-      try {
-        console.log("🔄 Starting restore from JSON backup...");
+    app.post("/api/cosmos/import/restore", validateRestore, asyncHandler(async (req, res) => {
+      console.log("🔄 Starting restore from JSON backup...");
+      
+      const jsonData = req.body; // Already validated by validateRestore middleware
+
+      console.log(`📄 Found ${jsonData.length} members in JSON backup`);
+
+      // Additional business rules validation for the entire dataset
+      const validationErrors = [];
+      for (const member of jsonData) {
+        // Validate external ID format for each member
+        const externalIdErrors = BusinessRules.validateExternalIdFormat(member.externalId);
+        validationErrors.push(...externalIdErrors);
         
-        const jsonData = req.body;
-        
-        // Validate the JSON structure
-        if (!Array.isArray(jsonData)) {
-          return res.status(400).json({ 
-            error: 'Invalid data format',
-            message: 'JSON data must be an array of family members'
-          });
-        }
-
-        console.log(`📄 Found ${jsonData.length} members in JSON backup`);
-
-        // Step 1: Clear all existing data
-        console.log("🗑️ Clearing existing Cosmos DB data...");
-        const clearResult = await cosmosClient.clearAllMembers();
-        
-        // Step 2: Import all data from JSON backup
-        console.log("📥 Importing data from JSON backup...");
-        const importResult = await cosmosClient.importFromJson(jsonData);
-
-        console.log(`✅ Restore completed`);
-
-        res.json({
-          message: 'JSON restore completed successfully',
-          summary: {
-            cleared: clearResult.deleted || 0,
-            clearErrors: 0, // clearAllMembers doesn't return error details
-            restored: importResult.summary?.successful || 0,
-            restoreErrors: importResult.summary?.failed || 0,
-            totalInBackup: jsonData.length
-          }
-        });
-      } catch (error) {
-        console.error("Error restoring from JSON backup:", error);
-        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-        res.status(500).json({ 
-          error: "Failed to restore from JSON backup",
-          message: errorMessage 
-        });
+        // Validate age at death consistency
+        const ageErrors = BusinessRules.validateAgeAtDeath(member);
+        validationErrors.push(...ageErrors);
       }
-    });
+      
+      // Check for father references within the dataset
+      for (const member of jsonData) {
+        if (member.father) {
+          const fatherErrors = BusinessRules.validateFatherExists(member, jsonData);
+          validationErrors.push(...fatherErrors);
+        }
+      }
+      
+      if (validationErrors.length > 0) {
+        return sendErrorResponse(
+          res, 
+          'Backup data validation failed', 
+          HttpStatus.BAD_REQUEST, 
+          validationErrors.slice(0, 10), // Limit to first 10 errors to avoid overwhelming response
+          ErrorSeverity.MEDIUM
+        );
+      }
+
+      // Step 1: Clear all existing data
+      console.log("🗑️ Clearing existing Cosmos DB data...");
+      const clearResult = await cosmosClient.clearAllMembers();
+      
+      // Step 2: Import all data from JSON backup
+      console.log("📥 Importing data from JSON backup...");
+      const importResult = await cosmosClient.importFromJson(jsonData);
+
+      console.log(`✅ Restore completed`);
+
+      const summary = {
+        cleared: clearResult.deleted || 0,
+        clearErrors: 0, // clearAllMembers doesn't return error details
+        restored: importResult.summary?.successful || 0,
+        restoreErrors: importResult.summary?.failed || 0,
+        totalInBackup: jsonData.length
+      };
+
+      sendSuccessResponse(res, summary, HttpStatus.OK, 'JSON restore completed successfully');
+    }));
   }
 
   const httpServer = createServer(app);

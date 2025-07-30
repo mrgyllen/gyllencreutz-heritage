@@ -20,6 +20,12 @@ The Gyllencreutz Family Heritage Website is a comprehensive genealogical web app
 - `npm run start` - Start production server
 - `npm run check` - Run TypeScript type checking
 
+### Testing
+- `npm test` - Run all tests with Vitest
+- `npm run test:ui` - Run tests with interactive UI
+- `npm run test:run` - Run tests once (non-watch mode)
+- `npm run test:coverage` - Run tests with coverage report
+
 ### Database
 - `npm run db:push` - Push Drizzle schema changes (PostgreSQL ready, currently using JSON)
 
@@ -82,17 +88,35 @@ This project uses a **dual backend architecture**:
 - `POST /api/backups/create` - Create backup
 - `POST /api/backups/restore` - Restore from backup
 
+**Performance Monitoring APIs:**
+- `GET /api/performance/stats` - API usage statistics and performance metrics
+- `GET /api/performance/health` - System health with performance score and issues
+- `GET /api/performance/analytics` - User analytics and behavior data
+- `POST /api/performance/clear` - Clear old metrics (maintenance)
+
 ### Data Flow
 1. **Development**: Express server loads data from `attached_assets/`
 2. **Production**: Azure Functions load from `functions/data/`
 3. **Admin Operations**: Direct JSON file manipulation with GitHub sync
 4. **Backup System**: GitHub repository `/backups` folder with smart retention
 
-### Cosmos DB Integration
+### Advanced Features
+
+#### Cosmos DB Integration
 - **Client**: `server/cosmosClient.js` provides Cosmos DB operations
 - **Types**: Extended types in `client/src/types/family.ts`
 - **APIs**: `/api/cosmos/*` endpoints for Cosmos DB operations
 - **Migration**: Ready for future migration from JSON to Cosmos DB
+
+#### Performance Optimizations
+- **Frontend**: React memoization (useMemo, useCallback, React.memo) prevents unnecessary re-renders
+- **D3.js Visualization**: Progressive loading (50 initial nodes, batches of 25), depth limiting, viewport culling
+- **API Monitoring**: Real-time performance tracking with response times, error rates, system health
+
+#### Validation & Error Handling
+- **Zod Schemas**: Comprehensive input validation with business rules (external ID format validation, family relationship validation)
+- **Standardized Responses**: Unified API response format with proper HTTP status codes and error severity
+- **Error Tracking**: Automatic error recording with performance metrics
 
 ## Development Workflow
 
@@ -133,10 +157,12 @@ This project uses a **dual backend architecture**:
 - **D3.js Integration**: Family tree visualization in `family-tree.tsx`
 
 ### Testing & Quality
-- **Type Safety**: TypeScript strict mode enabled
+- **Test Framework**: Vitest with React Testing Library and MSW for API mocking
+- **Comprehensive Coverage**: 129+ tests covering validation, performance monitoring, business logic, and React components
+- **Type Safety**: TypeScript strict mode enabled throughout codebase
 - **Build Verification**: Always run `npm run check` before deployment  
 - **API Testing**: Test both Express and Azure Functions environments
-- **Data Validation**: Validate against shared schemas in `shared/schema.ts`
+- **Data Validation**: Zod schemas for all API inputs with business rule validation
 
 ## Documentation Structure
 
@@ -148,15 +174,52 @@ This project includes comprehensive technical documentation:
 - `/docs/cosmos-db-setup.md`: Optional Cosmos DB integration guide
 - `/docs/admin-interface-detailed.md`: Admin interface usage documentation
 
+## Key Architecture Patterns
+
+### Data Flow Architecture
+The application follows a sophisticated data flow that handles both development and production environments:
+
+1. **API Response Standardization**: All endpoints use `server/lib/api-response.ts` for consistent response format with proper HTTP status codes, error handling, and validation
+2. **Performance Monitoring**: `server/lib/performance-monitor.ts` automatically tracks all API requests, response times, error rates, and system health
+3. **Validation Layer**: `server/lib/validation.ts` provides Zod schemas with business rules validation for all API inputs
+
+### Frontend Performance Optimization
+The family tree visualization handles large datasets (148+ members) efficiently:
+
+1. **React Optimization**: Components use `useMemo`, `useCallback`, and `React.memo` to prevent unnecessary re-renders
+2. **Progressive Loading**: D3.js tree starts with 50 nodes, loads remaining in batches of 25
+3. **Viewport Culling**: Only renders nodes visible in current viewport for better performance
+4. **Data Transformation**: Expensive operations are memoized to prevent repeated calculations
+
+### API Response Format
+All APIs return standardized responses:
+```typescript
+{
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+  errors?: ValidationError[];
+  timestamp: string;
+  path?: string;
+}
+```
+
+### Validation Pipeline
+1. **Schema Validation**: Zod schemas validate structure, types, and constraints
+2. **Business Rules**: Custom validation for family relationships, external ID format, age consistency
+3. **Error Response**: Standardized error format with field-level validation details
+
 ## Development Guidelines
 
 When working on this project:
 
 1. **Follow CLAUDE.md First**: This file is the primary reference - always consult it before making changes
-2. **Follow Global User Memory**: This file, ~/.claude/CLAUDE.md, consist of personal preferences that apply across all projects.
-3. **Maintain Documentation**: Update relevant docs when making architectural changes
-4. **Test Thoroughly**: Use both Express (dev) and Azure Functions (prod) environments
-5. **Preserve History**: Respect the historical authenticity and Swedish nobility aesthetic
+2. **Test-Driven Development**: Always run `npm test` after changes - maintain 129+ passing tests
+3. **Performance Monitoring**: Use `/api/performance/health` endpoint to monitor system performance
+4. **Validation First**: All new API endpoints must use Zod validation middleware
+5. **Response Standardization**: Use `sendSuccessResponse` and `sendErrorResponse` from `server/lib/api-response.ts`
 6. **Data Safety**: Always use backup systems before bulk data operations
+7. **Type Safety**: Run `npm run check` to ensure TypeScript compliance
 
-This is a single-developer project with comprehensive documentation to ensure consistent development practices and maintainable code.
+This is a single-developer project with comprehensive monitoring, validation, and testing infrastructure.

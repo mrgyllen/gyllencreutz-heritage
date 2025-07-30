@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Database, CheckCircle, AlertCircle, RotateCcw, ArrowLeft } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Database, CheckCircle, AlertCircle, RotateCcw, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,83 +14,158 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
 import { type CosmosDbFamilyMember, type CreateCosmosDbFamilyMember, type ImportStatus } from '@/types/family';
+import { AdminErrorBoundary, useErrorHandler } from '@/components/error-boundary';
+import { familyApi } from '@/lib/api';
+import { 
+  validateFamilyMember, 
+  validateFamilyMemberUpdate, 
+  validateSearchQuery,
+  safeValidateInput,
+  cosmosFamilyMemberSchema,
+  createFamilyMemberSchema,
+  ValidationError 
+} from '@/lib/validation';
+import { handleError, ErrorSeverity, createErrorContext } from '@/lib/errors';
 
-// Azure Cosmos DB Administration Interface
-export function AdminDb() {
+/**
+ * Enhanced Azure Cosmos DB Administration Interface
+ * 
+ * Provides comprehensive family member management with:
+ * - Input validation using Zod schemas
+ * - Error boundaries for graceful error handling
+ * - Optimistic updates with proper error recovery
+ * - Bulk operations with preview and confirmation
+ */
+function AdminDbContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [editingMember, setEditingMember] = useState<CosmosDbFamilyMember | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const reportError = useErrorHandler('AdminInterface');
 
-  // Main data query
-  const { data: familyMembers = [], isLoading } = useQuery<CosmosDbFamilyMember[]>({
+  // Main data query with error handling
+  const { data: familyMembers = [], isLoading, error: queryError } = useQuery<CosmosDbFamilyMember[]>({
     queryKey: ['/api/cosmos/members'],
+    queryFn: familyApi.getMembers,
+    retry: (failureCount, error: any) => {
+      // Don't retry validation errors
+      if (error instanceof ValidationError) return false;
+      return failureCount < 3;
+    },
   });
 
   // Import status query
   const { data: importStatus } = useQuery<ImportStatus>({
     queryKey: ['/api/cosmos/import/status'],
+    queryFn: familyApi.getImportStatus,
     refetchInterval: 30000, // Refresh every 30 seconds
   });
 
-  // CRUD mutations
+  // CRUD mutations with enhanced error handling
   const updateMemberMutation = useMutation({
     mutationFn: async (member: CosmosDbFamilyMember) => {
-      const response = await fetch(`/api/cosmos/members/${member.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(member),
-      });
-      if (!response.ok) throw new Error('Failed to update member');
-      return response.json();
+      // Validate the data before sending
+      const validationResult = safeValidateInput(cosmosFamilyMemberSchema, member);
+      if (!validationResult.success) {
+        throw validationResult.error;
+      }
+      
+      return await familyApi.updateMember(member.id, validationResult.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
-      toast({ title: 'Success', description: 'Family member updated successfully' });
+      toast({ 
+        title: 'Success', 
+        description: 'Family member updated successfully',
+        duration: 3000 
+      });
       setEditingMember(null);
+      setValidationErrors({});
+      setIsSubmitting(false);
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to update family member', variant: 'destructive' });
+    onError: (error) => {
+      setIsSubmitting(false);
+      if (error instanceof ValidationError) {
+        // Handle validation errors by showing field-specific messages
+        const fieldErrors: Record<string, string> = {};
+        if (error.field) {
+          fieldErrors[error.field] = error.userMessage;
+        }
+        setValidationErrors(fieldErrors);
+        toast({ 
+          title: 'Validation Error', 
+          description: error.userMessage, 
+          variant: 'destructive',
+          duration: 5000
+        });
+      } else {
+        reportError(error, 'updateMember');
+        setValidationErrors({});
+      }
     },
   });
 
   const addMemberMutation = useMutation({
     mutationFn: async (member: CreateCosmosDbFamilyMember) => {
-      const response = await fetch('/api/cosmos/members', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(member),
-      });
-      if (!response.ok) throw new Error('Failed to add member');
-      return response.json();
+      // Validate the data before sending
+      const validationResult = safeValidateInput(createFamilyMemberSchema, member);
+      if (!validationResult.success) {
+        throw validationResult.error;
+      }
+      
+      return await familyApi.createMember(validationResult.data);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
-      toast({ title: 'Success', description: 'Family member added successfully' });
+      toast({ 
+        title: 'Success', 
+        description: 'Family member added successfully',
+        duration: 3000 
+      });
       setIsAddingNew(false);
+      setValidationErrors({});
+      setIsSubmitting(false);
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to add family member', variant: 'destructive' });
+    onError: (error) => {
+      setIsSubmitting(false);
+      if (error instanceof ValidationError) {
+        const fieldErrors: Record<string, string> = {};
+        if (error.field) {
+          fieldErrors[error.field] = error.userMessage;
+        }
+        setValidationErrors(fieldErrors);
+        toast({ 
+          title: 'Validation Error', 
+          description: error.userMessage, 
+          variant: 'destructive',
+          duration: 5000
+        });
+      } else {
+        reportError(error, 'addMember');
+        setValidationErrors({});
+      }
     },
   });
 
   const deleteMemberMutation = useMutation({
     mutationFn: async (id: string) => {
-      const response = await fetch(`/api/cosmos/members/${id}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) throw new Error('Failed to delete member');
-      return response.json();
+      return await familyApi.deleteMember(id);
     },
-    onSuccess: () => {
+    onSuccess: (_, deletedId) => {
       queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
-      toast({ title: 'Success', description: 'Family member deleted successfully' });
+      toast({ 
+        title: 'Success', 
+        description: 'Family member deleted successfully',
+        duration: 3000 
+      });
     },
-    onError: () => {
-      toast({ title: 'Error', description: 'Failed to delete family member', variant: 'destructive' });
+    onError: (error) => {
+      reportError(error, 'deleteMember');
     },
   });
 
@@ -175,43 +250,80 @@ export function AdminDb() {
     },
   });
 
+  // Enhanced search with validation
+  const handleSearchChange = (query: string) => {
+    try {
+      if (query.trim()) {
+        validateSearchQuery({ query: query.trim() });
+      }
+      setSearchQuery(query);
+    } catch (error) {
+      if (error instanceof ValidationError) {
+        toast({
+          title: 'Invalid Search',
+          description: error.userMessage,
+          variant: 'destructive',
+          duration: 3000
+        });
+      }
+    }
+  };
+
   const filteredMembers = familyMembers.filter(member =>
     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member.externalId.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member.notes?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSubmit = (formData: FormData, isNew: boolean = false) => {
-    const bornValue = formData.get('born') as string;
-    const diedValue = formData.get('died') as string;
-    const monarchValue = formData.get('monarchDuringLife') as string;
-    
-    const memberData = {
-      externalId: formData.get('externalId') as string,
-      name: formData.get('name') as string,
-      born: bornValue ? parseInt(bornValue) : null,
-      died: diedValue ? parseInt(diedValue) : null,
-      biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
-      notes: formData.get('notes') as string || null,
-      father: formData.get('father') as string || null,
-      monarchDuringLife: monarchValue ? [monarchValue] : [],
-      isSuccessionSon: formData.get('isSuccessionSon') === 'on',
-      diedYoung: false,
-      hasMaleChildren: false,
-      nobleBranch: null,
-      ageAtDeath: null,
-    };
+  /**
+   * Enhanced form submission with comprehensive validation
+   */
+  const handleSubmit = async (formData: FormData, isNew: boolean = false) => {
+    if (isSubmitting) return;
 
-    if (isNew) {
-      addMemberMutation.mutate({
-        ...memberData,
-        id: memberData.externalId, // Use externalId as Cosmos DB id
-      });
-    } else if (editingMember) {
-      updateMemberMutation.mutate({
-        ...editingMember,
-        ...memberData,
-      });
+    setIsSubmitting(true);
+    setValidationErrors({});
+
+    try {
+      const bornValue = formData.get('born') as string;
+      const diedValue = formData.get('died') as string;
+      const monarchValue = formData.get('monarchDuringLife') as string;
+      const ageAtDeathValue = formData.get('ageAtDeath') as string;
+      
+      const notesValue = formData.get('notes') as string;
+      const fatherValue = formData.get('father') as string;
+      const nobleBranchValue = formData.get('nobleBranch') as string;
+      
+      const memberData = {
+        externalId: formData.get('externalId') as string,
+        name: formData.get('name') as string,
+        born: bornValue ? parseInt(bornValue) : null,
+        died: diedValue ? parseInt(diedValue) : null,
+        biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
+        notes: notesValue || null,
+        father: fatherValue || null,
+        monarchDuringLife: monarchValue ? monarchValue.split(',').map(m => m.trim()) : [],
+        isSuccessionSon: formData.get('isSuccessionSon') === 'on' || false,
+        diedYoung: formData.get('diedYoung') === 'on' || false,
+        hasMaleChildren: formData.get('hasMaleChildren') === 'on' || false,
+        nobleBranch: nobleBranchValue || null,
+        ageAtDeath: ageAtDeathValue ? parseInt(ageAtDeathValue) : null,
+      };
+
+      if (isNew) {
+        await addMemberMutation.mutateAsync({
+          ...memberData,
+          id: memberData.externalId, // Use externalId as Cosmos DB id
+        });
+      } else if (editingMember) {
+        await updateMemberMutation.mutateAsync({
+          ...editingMember,
+          ...memberData,
+        });
+      }
+    } catch (error) {
+      // Error handling is done in the mutation onError callbacks
+      console.error('Form submission error:', error);
     }
   };
 
@@ -276,10 +388,48 @@ export function AdminDb() {
     event.target.value = '';
   };
 
+  // Enhanced loading and error states
   if (isLoading) {
     return (
-      <div className="container mx-auto p-6">
-        <div className="text-center">Loading Cosmos DB data...</div>
+      <div className="container mx-auto p-6 max-w-6xl">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-muted-foreground">Loading Cosmos DB data...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (queryError) {
+    return (
+      <div className="container mx-auto p-6 max-w-6xl">
+        <Card className="max-w-lg mx-auto">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-red-600">
+              <AlertTriangle className="h-5 w-5" />
+              Error Loading Data
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Alert>
+              <AlertDescription>
+                Failed to load family member data. Please check your connection and try again.
+              </AlertDescription>
+            </Alert>
+            <div className="flex gap-2 mt-4">
+              <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] })}>
+                <RotateCcw className="h-4 w-4 mr-2" />
+                Retry
+              </Button>
+              <Button variant="outline" onClick={() => setLocation('/')}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Go Home
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
@@ -376,8 +526,9 @@ export function AdminDb() {
           <Input
             placeholder="Search by name, external ID, or notes..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => handleSearchChange(e.target.value)}
             className="pl-11 h-10 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white shadow-sm"
+            aria-label="Search family members"
           />
         </div>
         <div className="flex gap-2">
@@ -511,7 +662,15 @@ export function AdminDb() {
                   name="externalId"
                   defaultValue={editingMember?.externalId || ''}
                   required
+                  className={validationErrors.externalId ? 'border-red-500' : ''}
+                  placeholder="e.g., 0, 0.1, 1.2.3"
+                  aria-describedby={validationErrors.externalId ? 'externalId-error' : undefined}
                 />
+                {validationErrors.externalId && (
+                  <p id="externalId-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.externalId}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="name">Name *</Label>
@@ -520,7 +679,15 @@ export function AdminDb() {
                   name="name"
                   defaultValue={editingMember?.name || ''}
                   required
+                  className={validationErrors.name ? 'border-red-500' : ''}
+                  placeholder="e.g., Lars Tygesson"
+                  aria-describedby={validationErrors.name ? 'name-error' : undefined}
                 />
+                {validationErrors.name && (
+                  <p id="name-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.name}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -532,7 +699,15 @@ export function AdminDb() {
                   name="born"
                   type="number"
                   defaultValue={editingMember?.born || ''}
+                  className={validationErrors.born ? 'border-red-500' : ''}
+                  placeholder="e.g., 1515"
+                  aria-describedby={validationErrors.born ? 'born-error' : undefined}
                 />
+                {validationErrors.born && (
+                  <p id="born-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.born}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="died">Died</Label>
@@ -541,12 +716,20 @@ export function AdminDb() {
                   name="died"
                   type="number"
                   defaultValue={editingMember?.died || ''}
+                  className={validationErrors.died ? 'border-red-500' : ''}
+                  placeholder="e.g., 1560"
+                  aria-describedby={validationErrors.died ? 'died-error' : undefined}
                 />
+                {validationErrors.died && (
+                  <p id="died-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.died}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="biologicalSex">Biological Sex</Label>
                 <Select name="biologicalSex" defaultValue={editingMember?.biologicalSex || 'Unknown'}>
-                  <SelectTrigger>
+                  <SelectTrigger className={validationErrors.biologicalSex ? 'border-red-500' : ''}>
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -555,6 +738,11 @@ export function AdminDb() {
                     <SelectItem value="Unknown">Unknown</SelectItem>
                   </SelectContent>
                 </Select>
+                {validationErrors.biologicalSex && (
+                  <p className="text-sm text-red-600" role="alert">
+                    {validationErrors.biologicalSex}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -565,7 +753,15 @@ export function AdminDb() {
                   id="father"
                   name="father"
                   defaultValue={editingMember?.father || ''}
+                  className={validationErrors.father ? 'border-red-500' : ''}
+                  placeholder="e.g., Lars Tygesson"
+                  aria-describedby={validationErrors.father ? 'father-error' : undefined}
                 />
+                {validationErrors.father && (
+                  <p id="father-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.father}
+                  </p>
+                )}
               </div>
               <div className="space-y-2">
                 <Label htmlFor="monarchDuringLife">Monarch During Life</Label>
@@ -573,7 +769,15 @@ export function AdminDb() {
                   id="monarchDuringLife"
                   name="monarchDuringLife"
                   defaultValue={editingMember?.monarchDuringLife?.join(', ') || ''}
+                  className={validationErrors.monarchDuringLife ? 'border-red-500' : ''}
+                  placeholder="e.g., Gustav Vasa, Erik XIV"
+                  aria-describedby={validationErrors.monarchDuringLife ? 'monarchDuringLife-error' : undefined}
                 />
+                {validationErrors.monarchDuringLife && (
+                  <p id="monarchDuringLife-error" className="text-sm text-red-600" role="alert">
+                    {validationErrors.monarchDuringLife}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -584,7 +788,15 @@ export function AdminDb() {
                 name="notes"
                 defaultValue={editingMember?.notes || ''}
                 rows={3}
+                className={validationErrors.notes ? 'border-red-500' : ''}
+                placeholder="Biographical information, achievements, historical context..."
+                aria-describedby={validationErrors.notes ? 'notes-error' : undefined}
               />
+              {validationErrors.notes && (
+                <p id="notes-error" className="text-sm text-red-600" role="alert">
+                  {validationErrors.notes}
+                </p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
@@ -603,19 +815,45 @@ export function AdminDb() {
                 onClick={() => {
                   setEditingMember(null);
                   setIsAddingNew(false);
+                  setValidationErrors({});
                 }}
+                disabled={isSubmitting}
               >
                 <X className="w-4 h-4 mr-2" />
                 Cancel
               </Button>
-              <Button type="submit">
-                <Save className="w-4 h-4 mr-2" />
-                {isAddingNew ? 'Add Member' : 'Save Changes'}
+              <Button 
+                type="submit" 
+                disabled={isSubmitting}
+                className="min-w-[140px]"
+              >
+                {isSubmitting ? (
+                  <>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                    {isAddingNew ? 'Adding...' : 'Saving...'}
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-4 h-4 mr-2" />
+                    {isAddingNew ? 'Add Member' : 'Save Changes'}
+                  </>
+                )}
               </Button>
             </div>
           </form>
         </DialogContent>
       </Dialog>
     </div>
+  );
+}
+
+/**
+ * Admin database page wrapped with error boundary for graceful error handling
+ */
+export default function AdminDbPage() {
+  return (
+    <AdminErrorBoundary>
+      <AdminDbContent />
+    </AdminErrorBoundary>
   );
 }

@@ -1,0 +1,25 @@
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+[dotenv@17.2.0] injecting env (7) from .env (tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' })
+🔍 Checking environment variables:
+  GITHUB_TOKEN: SET
+  GITHUB_REPO_OWNER: mrgyllen
+  GITHUB_REPO_NAME: gyllencreutz-heritage
+✅ GitHub sync initialized
+Loaded 148 family members with complete monarchs data
+📊 Using Cosmos DB for family member data
+4:38:18 PM [express] serving on port 5000
+4:38:20 PM [express] GET /api/family-members 200 in 24ms
+4:38:24 PM [express] GET /api/family-members 200 in 2ms
+4:38:28 PM [express] GET /api/family-members 200 in 1ms
+4:38:33 PM [express] GET /api/family-members 200 in 3ms
+🔍 Fetching family members from Cosmos DB...
+✅ Retrieved 148 family members from Cosmos DB
+4:38:51 PM [express] GET /api/cosmos/members 200 in 558ms :: [{"id":"0","externalId":"0","name":"Lar…
+4:39:26 PM [express] GET /api/family-members 200 in 2ms
+4:39:26 PM [express] GET /api/family-members/search/Lars 200 in 2ms
+4:39:32 PM [express] HEAD /api/family-members 200 in 2ms
+4:39:32 PM [express] GET /api/family-members 200 in 2ms
+4:39:44 PM [express] GET /api/family-members 200 in 2ms

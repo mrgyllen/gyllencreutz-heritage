@@ -1,17 +1,42 @@
 import { type FamilyMember } from "@/types/family";
 
+/**
+ * Calculates the generation number for a family member based on their external ID
+ * 
+ * The external ID follows a hierarchical dot notation where:
+ * - "0" represents the root ancestor (Generation 1)
+ * - "0.1" represents a child of the root (Generation 2)
+ * - "1.2.3" represents a great-grandchild (Generation 4)
+ * 
+ * @param externalId - The external ID of the family member in dot notation
+ * @returns The generation number (1-based indexing)
+ * 
+ * @example
+ * calculateGeneration("0") // returns 1
+ * calculateGeneration("0.1") // returns 2
+ * calculateGeneration("1.2.3") // returns 4
+ */
 export function calculateGeneration(externalId: string): number {
-  // Parse the lineage ID to determine generation depth
-  // "0" = Generation 1 (root)
-  // "0.1" = Generation 2 (child of root)
-  // "1.2.3" = Generation 4, etc.
-  
   if (externalId === "0") return 1;
   
   const parts = externalId.split('.');
   return parts.length;
 }
 
+/**
+ * Enhances family member data by adding generation information
+ * 
+ * Takes an array of family members and calculates their generation
+ * based on their external ID, adding this information to each member.
+ * 
+ * @param members - Array of family members to enhance
+ * @returns Array of family members with generation data added
+ * 
+ * @example
+ * const members = [{ externalId: "0", name: "Lars" }, { externalId: "0.1", name: "Erik" }];
+ * const enhanced = addGenerationData(members);
+ * // enhanced[0].generation === 1, enhanced[1].generation === 2
+ */
 export function addGenerationData(members: FamilyMember[]): FamilyMember[] {
   return members.map(member => ({
     ...member,
@@ -19,17 +44,48 @@ export function addGenerationData(members: FamilyMember[]): FamilyMember[] {
   }));
 }
 
+/**
+ * Statistical information about a specific generation
+ */
 export interface GenerationStats {
+  /** The generation number (1-based) */
   generation: number;
+  /** Total number of family members in this generation */
   count: number;
+  /** Time span covered by this generation */
   timeSpan: {
+    /** Earliest birth year in this generation */
     earliest: number | null;
+    /** Latest death year in this generation */
     latest: number | null;
   };
+  /** Average lifespan for members with known birth/death dates */
   avgLifespan: number | null;
+  /** Number of succession sons in this generation */
   successionSons: number;
 }
 
+/**
+ * Filters family members by noble branch lineage
+ * 
+ * The Gyllencreutz family split into multiple noble branches over time.
+ * This function allows filtering to show only specific lineages for
+ * genealogical analysis and visualization.
+ * 
+ * @param members - Array of all family members to filter
+ * @param branchFilter - Which branch lineage to include
+ *   - 'all': Include all family members regardless of branch
+ *   - 'main': Only succession sons and root ancestor (primary inheritance line)
+ *   - 'elder': Elder line branch plus early pre-split members and succession sons
+ *   - 'younger': Younger line branch plus root ancestor and early succession sons
+ * 
+ * @returns Filtered array of family members matching the branch criteria
+ * 
+ * @example
+ * const allMembers = getFamilyMembers();
+ * const mainLine = filterMembersByBranch(allMembers, 'main');
+ * const elderBranch = filterMembersByBranch(allMembers, 'elder');
+ */
 export function filterMembersByBranch(members: FamilyMember[], branchFilter: 'all' | 'main' | 'elder' | 'younger'): FamilyMember[] {
   if (branchFilter === 'all') return members;
   
@@ -60,7 +116,29 @@ export function filterMembersByBranch(members: FamilyMember[], branchFilter: 'al
   return members;
 }
 
+/**
+ * Calculates comprehensive statistical data for each generation within a family branch
+ * 
+ * Analyzes family member data to provide insights into generational patterns,
+ * including population counts, lifespans, time periods, and succession information.
+ * This is particularly useful for genealogical research and historical analysis.
+ * 
+ * @param members - Array of all family members to analyze
+ * @param branchFilter - Which noble branch to analyze (defaults to 'all')
+ * @returns Array of generation statistics, sorted by generation number
+ * 
+ * @example
+ * const allMembers = getFamilyMembers();
+ * const stats = calculateGenerationStats(allMembers, 'main');
+ * // stats[0] = { generation: 1, count: 1, timeSpan: {...}, avgLifespan: 45, successionSons: 1 }
+ * 
+ * @throws {Error} If members array is empty or contains invalid data
+ */
 export function calculateGenerationStats(members: FamilyMember[], branchFilter: 'all' | 'main' | 'elder' | 'younger' = 'all'): GenerationStats[] {
+  if (!Array.isArray(members) || members.length === 0) {
+    return [];
+  }
+
   const filteredMembers = filterMembersByBranch(members, branchFilter);
   const generationMap = new Map<number, FamilyMember[]>();
   

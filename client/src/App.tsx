@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/home";
-import { AdminDb } from "@/pages/admin-db";
+import AdminDb from "@/pages/admin-db";
 import NotFound from "@/pages/not-found";
 import { LanguageProvider } from "@/contexts/language-context";
 

@@ -59,8 +59,16 @@ export interface CosmosDbFamilyMember {
   _ts?: number; // Cosmos DB timestamp
 }
 
-export interface CreateCosmosDbFamilyMember extends Omit<CosmosDbFamilyMember, 'id' | '_rid' | '_self' | '_etag' | '_attachments' | '_ts' | 'importedAt' | 'importSource'> {
+export interface CreateCosmosDbFamilyMember extends Omit<CosmosDbFamilyMember, 'id' | '_rid' | '_self' | '_etag' | '_attachments' | '_ts' | 'importedAt' | 'importSource' | 'notes' | 'father' | 'nobleBranch' | 'ageAtDeath' | 'diedYoung' | 'isSuccessionSon' | 'hasMaleChildren' | 'monarchDuringLife'> {
   id?: string; // Optional for creation, will be generated if not provided
+  notes?: string | null; // Allow undefined for form handling
+  father?: string | null; // Allow undefined for form handling
+  nobleBranch?: string | null; // Allow undefined for form handling
+  ageAtDeath?: number | null; // Allow undefined for form handling
+  diedYoung?: boolean; // Allow undefined for form handling
+  isSuccessionSon?: boolean; // Allow undefined for form handling
+  hasMaleChildren?: boolean; // Allow undefined for form handling
+  monarchDuringLife?: string[]; // Allow undefined for form handling
 }
 
 export interface ImportStatus {

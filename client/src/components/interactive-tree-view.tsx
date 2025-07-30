@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import * as d3 from 'd3';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +14,7 @@ interface InteractiveTreeViewProps {
   highlightMember?: string; // External ID to highlight and center on
 }
 
-export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
+const InteractiveTreeViewComponent: React.FC<InteractiveTreeViewProps> = ({
   root,
   onMemberSelect,
   selectedMember,
@@ -23,21 +23,74 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
   const svgRef = useRef<SVGSVGElement>(null);
   const [transform, setTransform] = useState({ x: 0, y: 0, k: 1 });
   
-  const nodeWidth = 220;
-  const nodeHeight = 100;
-  const levelHeight = 140; // Increased for org chart style spacing
+  // Memoized constants to prevent recreation on every render
+  const treeConfig = useMemo(() => ({
+    nodeWidth: 220,
+    nodeHeight: 100,
+    levelHeight: 140,
+    width: 1200,
+    height: 800
+  }), []);
+  
+  const { nodeWidth, nodeHeight, levelHeight } = treeConfig;
+
+  // Performance settings for progressive loading
+  const performanceConfig = useMemo(() => ({
+    maxInitialNodes: 50, // Start with first 50 nodes for better initial render
+    maxDepth: 5, // Limit initial depth to prevent massive trees from overwhelming
+    batchSize: 25, // Render nodes in batches for progressive loading
+    animationDuration: 300, // Reduced animation time for better performance
+    viewportBuffer: 200 // Buffer pixels around viewport for culling
+  }), []);
+
+  // Viewport-based culling for better performance with large trees
+  const getVisibleNodes = useCallback((nodes: d3.HierarchyPointNode<FamilyTreeNode>[], transform: { x: number; y: number; k: number }) => {
+    const { width, height } = treeConfig;
+    const buffer = performanceConfig.viewportBuffer;
+    
+    const viewportBounds = {
+      left: (-transform.x) / transform.k - buffer,
+      right: (-transform.x + width) / transform.k + buffer,
+      top: (-transform.y) / transform.k - buffer,
+      bottom: (-transform.y + height) / transform.k + buffer
+    };
+    
+    return nodes.filter(node => 
+      node.x >= viewportBounds.left && 
+      node.x <= viewportBounds.right &&
+      node.y >= viewportBounds.top &&
+      node.y <= viewportBounds.bottom
+    );
+  }, [treeConfig, performanceConfig]);
+
+  // Memoized hierarchy and tree data with performance optimizations
+  const treeData = useMemo(() => {
+    if (!root) return null;
+    
+    const hierarchy = d3.hierarchy(root);
+    
+    // Apply depth limiting for initial render performance
+    const limitedHierarchy = hierarchy.copy();
+    limitedHierarchy.each(node => {
+      if (node.depth > performanceConfig.maxDepth) {
+        node.children = undefined;
+      }
+    });
+    
+    const treeLayout = d3.tree<FamilyTreeNode>()
+      .size([treeConfig.width - 100, treeConfig.height - 100])
+      .nodeSize([nodeWidth + 60, levelHeight + 40]);
+      
+    return treeLayout(limitedHierarchy);
+  }, [root, treeConfig, nodeWidth, levelHeight, performanceConfig]);
 
   useEffect(() => {
-    if (!svgRef.current || !root) return;
+    if (!svgRef.current || !root || !treeData) return;
 
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove(); // Clear previous content
 
-    const width = 1200;
-    const height = 800;
-    
-    // Create hierarchy
-    const hierarchy = d3.hierarchy(root);
+    const { width, height } = treeConfig;
     
     // Add gradient definitions for coat of arms background
     const defs = svg.append('defs');
@@ -57,11 +110,6 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       .attr('offset', '100%')
       .style('stop-color', '#f59e0b') // amber-500
       .style('stop-opacity', 1);
-    const treeLayout = d3.tree<FamilyTreeNode>()
-      .size([width - 100, height - 100])
-      .nodeSize([nodeWidth + 60, levelHeight + 40]); // More space for org chart connectors
-
-    const treeData = treeLayout(hierarchy);
 
     // Create zoom behavior
     const zoom = d3.zoom<SVGSVGElement, unknown>()
@@ -136,18 +184,29 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         .style('fill', '#8B7355');
     });
 
-    // Create node groups
+    // Progressive rendering: create nodes in batches for better performance
+    const allNodes = treeData.descendants();
+    const initialNodes = allNodes.slice(0, performanceConfig.maxInitialNodes);
+    
+    // Create initial node groups
     const nodes = g.selectAll('.node')
-      .data(treeData.descendants())
+      .data(initialNodes)
       .enter()
       .append('g')
       .attr('class', 'node')
       .attr('transform', d => `translate(${d.x},${d.y})`)
       .style('cursor', 'pointer')
+      .style('opacity', 0) // Start invisible for animation
       .on('click', (event: MouseEvent, d: d3.HierarchyPointNode<FamilyTreeNode>) => {
         event.stopPropagation();
         onMemberSelect(d.data);
       });
+
+    // Animate nodes in with staggered timing for better UX
+    nodes.transition()
+      .duration(performanceConfig.animationDuration)
+      .delay((d, i) => i * 10) // Stagger by 10ms per node
+      .style('opacity', 1);
 
     // Add node backgrounds
     nodes.append('rect')
@@ -358,6 +417,73 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       }
     });
 
+    // Progressive loading of remaining nodes after initial render
+    if (allNodes.length > performanceConfig.maxInitialNodes) {
+      const remainingNodes = allNodes.slice(performanceConfig.maxInitialNodes);
+      
+      // Load remaining nodes in batches with delays
+      const loadRemainingNodes = (startIndex: number = 0) => {
+        const batch = remainingNodes.slice(startIndex, startIndex + performanceConfig.batchSize);
+        if (batch.length === 0) return;
+        
+        setTimeout(() => {
+          const additionalNodes = g.selectAll('.node-additional')
+            .data(batch)
+            .enter()
+            .append('g')
+            .attr('class', 'node node-additional')
+            .attr('transform', d => `translate(${d.x},${d.y})`)
+            .style('cursor', 'pointer')
+            .style('opacity', 0)
+            .on('click', (event: MouseEvent, d: d3.HierarchyPointNode<FamilyTreeNode>) => {
+              event.stopPropagation();
+              onMemberSelect(d.data);
+            });
+
+          // Add the same styling as initial nodes
+          additionalNodes.append('rect')
+            .attr('x', -nodeWidth/2)
+            .attr('y', -nodeHeight/2)
+            .attr('width', nodeWidth)
+            .attr('height', nodeHeight)
+            .attr('rx', 8)
+            .style('fill', (d: d3.HierarchyPointNode<FamilyTreeNode>) => {
+              const isSelected = selectedMember && d.data.externalId === selectedMember.externalId;
+              const isHighlighted = highlightMember && d.data.externalId === highlightMember;
+              
+              if (isSelected || isHighlighted) return '#dbeafe';
+              switch (d.data.nobleBranch) {
+                case 'Elder line': return '#fef3c7';
+                case 'Younger line': return '#fed7aa';
+                default: return '#f0fdf4';
+              }
+            })
+            .style('stroke', '#d1d5db')
+            .style('stroke-width', '1px');
+
+          // Add text labels (simplified for performance)
+          additionalNodes.append('text')
+            .attr('text-anchor', 'middle')
+            .attr('dy', '0.35em')
+            .style('font-size', '11px')
+            .style('font-weight', 'bold')
+            .style('fill', '#374151')
+            .text(d => d.data.name.length > 20 ? d.data.name.substring(0, 17) + '...' : d.data.name);
+
+          // Animate in
+          additionalNodes.transition()
+            .duration(performanceConfig.animationDuration / 2)
+            .style('opacity', 1);
+
+          // Load next batch
+          loadRemainingNodes(startIndex + performanceConfig.batchSize);
+        }, performanceConfig.animationDuration + (startIndex / performanceConfig.batchSize) * 100);
+      };
+      
+      // Start progressive loading after initial nodes are rendered
+      setTimeout(() => loadRemainingNodes(), performanceConfig.animationDuration * 2);
+    }
+
     // Store zoom instance for external controls
     (svg.node() as any).__zoom__ = zoom;
 
@@ -378,27 +504,28 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
       }
     }
 
-  }, [root, selectedMember, onMemberSelect, highlightMember]);
+  }, [root, selectedMember, onMemberSelect, highlightMember, treeData, treeConfig, nodeWidth, nodeHeight, performanceConfig]);
 
-  const handleZoomIn = () => {
+  // Memoized zoom control handlers to prevent unnecessary re-renders
+  const handleZoomIn = useCallback(() => {
     if (svgRef.current) {
       const svg = d3.select(svgRef.current);
       svg.transition().call(
         (svg.node() as any).__zoom__.scaleBy, 1.5
       );
     }
-  };
+  }, []);
 
-  const handleZoomOut = () => {
+  const handleZoomOut = useCallback(() => {
     if (svgRef.current) {
       const svg = d3.select(svgRef.current);
       svg.transition().call(
         (svg.node() as any).__zoom__.scaleBy, 1 / 1.5
       );
     }
-  };
+  }, []);
 
-  const handleReset = () => {
+  const handleReset = useCallback(() => {
     if (svgRef.current) {
       const svg = d3.select(svgRef.current);
       svg.transition().call(
@@ -406,9 +533,9 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         d3.zoomIdentity.translate(600, 50)
       );
     }
-  };
+  }, []);
 
-  const handleFitToScreen = () => {
+  const handleFitToScreen = useCallback(() => {
     if (svgRef.current) {
       const svg = d3.select(svgRef.current);
       const treeGroup = svg.select('.tree-group').node() as SVGGElement | null;
@@ -429,7 +556,7 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
         );
       }
     }
-  };
+  }, []);
 
   return (
     <div className="relative bg-white border rounded-lg overflow-hidden">
@@ -484,3 +611,6 @@ export const InteractiveTreeView: React.FC<InteractiveTreeViewProps> = ({
     </div>
   );
 };
+
+// Export memoized component to prevent unnecessary re-renders
+export const InteractiveTreeView = React.memo(InteractiveTreeViewComponent);
