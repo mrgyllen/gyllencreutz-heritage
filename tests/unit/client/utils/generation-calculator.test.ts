@@ -12,8 +12,8 @@ import {
   filterMembersByBranch,
   calculateGenerationStats,
   type GenerationStats,
-} from './generation-calculator';
-import type { FamilyMember } from '@/types/family';
+} from '@/utils/generation-calculator';
+import type { FamilyMember } from '@shared/schema';
 
 // Mock data for testing
 const mockFamilyMembers: FamilyMember[] = [

@@ -17,7 +17,7 @@ import {
   validateInput,
   safeValidateInput,
   createValidator,
-} from './validation';
+} from '@/lib/validation';
 import { ValidationError } from '@/lib/errors';
 
 describe('externalIdSchema', () => {

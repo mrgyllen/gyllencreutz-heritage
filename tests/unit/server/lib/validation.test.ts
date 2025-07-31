@@ -14,7 +14,7 @@ import {
   MemberIdSchema,
   BusinessRules,
   validateData
-} from './validation';
+} from '../../../../server/lib/validation';
 
 describe('FamilyMemberSchema', () => {
   const validMember = {

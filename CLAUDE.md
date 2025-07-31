@@ -59,12 +59,30 @@ This project uses a **dual backend architecture**:
 - **Backup System**: GitHub-based automatic backups with smart retention
 - **GitHub Sync**: Automatic commits for data changes with `[data-only]` prefix
 
+## Test Structure
+
+The project now uses a centralized test structure in the `/tests` directory:
+
+### Test Organization
+- `/tests/unit` - Unit tests organized by client/server/shared components
+- `/tests/integration` - Integration tests for API and component interactions
+- `/tests/e2e` - End-to-end tests for complete user workflows
+- `/tests/mocks` - Mock data and utilities organized by client/server
+- `/tests/utils` - Test utilities and helpers
+
+### Test Conventions
+- Unit tests: `[filename].test.ts`
+- Integration tests: `[filename].integration.test.ts`
+- E2E tests: `[feature].e2e.test.ts`
+- Use proper path aliases: `@/`, `@shared/`, `@tests/`
+
 ## Key Patterns
 
 ### Path Aliases
 - `@/*` → `client/src/*`
 - `@shared/*` → `shared/*`
 - `@assets/*` → `attached_assets/*`
+- `@tests/*` → `tests/*`
 
 ### API Endpoints
 **Public APIs:**
@@ -158,7 +176,7 @@ This project uses a **dual backend architecture**:
 
 ### Testing & Quality
 - **Test Framework**: Vitest with React Testing Library and MSW for API mocking
-- **Comprehensive Coverage**: 129+ tests covering validation, performance monitoring, business logic, and React components
+- **Comprehensive Coverage**: 135+ tests covering validation, performance monitoring, business logic, and React components
 - **Type Safety**: TypeScript strict mode enabled throughout codebase
 - **Build Verification**: Always run `npm run check` before deployment  
 - **API Testing**: Test both Express and Azure Functions environments
@@ -215,11 +233,12 @@ All APIs return standardized responses:
 When working on this project:
 
 1. **Follow CLAUDE.md First**: This file is the primary reference - always consult it before making changes
-2. **Test-Driven Development**: Always run `npm test` after changes - maintain 129+ passing tests
+2. **Test-Driven Development**: Always run `npm test` after changes - maintain 135+ passing tests
 3. **Performance Monitoring**: Use `/api/performance/health` endpoint to monitor system performance
 4. **Validation First**: All new API endpoints must use Zod validation middleware
 5. **Response Standardization**: Use `sendSuccessResponse` and `sendErrorResponse` from `server/lib/api-response.ts`
 6. **Data Safety**: Always use backup systems before bulk data operations
 7. **Type Safety**: Run `npm run check` to ensure TypeScript compliance
+8. **Test Structure**: Place new tests in the appropriate directory under `/tests` following naming conventions
 
 This is a single-developer project with comprehensive monitoring, validation, and testing infrastructure.
