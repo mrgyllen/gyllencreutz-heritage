@@ -29,6 +29,11 @@ The Gyllencreutz Family Heritage Website is a comprehensive genealogical web app
 ### Database
 - `npm run db:push` - Push Drizzle schema changes (PostgreSQL ready, currently using JSON)
 
+### Monarchs Management
+- `npm run import-monarchs` - Import Swedish monarchs data from JSON file
+- `npm run bulk-update-monarchs` - Update all family members with proper monarch IDs (using date-based calculation)
+- `npm run test-monarchs-api` - Test the new monarchs API endpoints
+
 ## Architecture Overview
 
 This project uses a **dual backend architecture**:
@@ -54,10 +59,28 @@ This project uses a **dual backend architecture**:
 
 ### Data Management
 - **Primary Data**: `functions/data/family-members.json` (148+ family members)
+- **Monarchs Data**: `swedish_monarchs.json` (Swedish monarchs with reign dates and portraits)
 - **Schema**: Shared TypeScript types in `shared/schema.ts`
 - **Admin Interface**: Full CRUD operations through Azure Functions
 - **Backup System**: GitHub-based automatic backups with smart retention
 - **GitHub Sync**: Automatic commits for data changes with `[data-only]` prefix
+
+## Test Structure
+
+The project now uses a centralized test structure in the `/tests` directory:
+
+### Test Organization
+- `/tests/unit` - Unit tests organized by client/server/shared components
+- `/tests/integration` - Integration tests for API and component interactions
+- `/tests/e2e` - End-to-end tests for complete user workflows
+- `/tests/mocks` - Mock data and utilities organized by client/server
+- `/tests/utils` - Test utilities and helpers
+
+### Test Conventions
+- Unit tests: `[filename].test.ts`
+- Integration tests: `[filename].integration.test.ts`
+- E2E tests: `[feature].e2e.test.ts`
+- Use proper path aliases: `@/`, `@shared/`, `@tests/`
 
 ## Key Patterns
 
@@ -65,6 +88,7 @@ This project uses a **dual backend architecture**:
 - `@/*` → `client/src/*`
 - `@shared/*` → `shared/*`
 - `@assets/*` → `attached_assets/*`
+- `@tests/*` → `tests/*`
 
 ### API Endpoints
 **Public APIs:**
@@ -77,6 +101,16 @@ This project uses a **dual backend architecture**:
 - `POST /api/family-members` - Create member
 - `DELETE /api/family-members/{id}` - Delete member
 - `POST /api/family-members/bulk-update` - Bulk operations
+
+**Monarchs APIs:**
+- `GET /api/cosmos/monarchs` - Get all Swedish monarchs
+- `GET /api/cosmos/monarchs/{id}` - Get specific monarch
+- `POST /api/cosmos/monarchs` - Create new monarch
+- `PUT /api/cosmos/monarchs/{id}` - Update existing monarch
+- `DELETE /api/cosmos/monarchs/{id}` - Delete monarch
+- `POST /api/cosmos/monarchs/import` - Import monarchs from JSON data
+- `GET /api/cosmos/members/{id}/monarchs` - Get monarchs during family member's lifetime
+- `POST /api/cosmos/members/bulk-update-monarchs` - Bulk update family members with monarch IDs
 
 **GitHub Sync APIs:**
 - `GET /api/github/status` - Sync status monitoring
@@ -99,6 +133,15 @@ This project uses a **dual backend architecture**:
 2. **Production**: Azure Functions load from `functions/data/`
 3. **Admin Operations**: Direct JSON file manipulation with GitHub sync
 4. **Backup System**: GitHub repository `/backups` folder with smart retention
+
+### Monarchs Data Model
+The application now includes a separate data model for Swedish monarchs with proper relationships to family members:
+
+- **Monarchs Container**: Stores detailed information about Swedish monarchs including reign dates, portraits, and biographies
+- **Relationship Model**: Family members now reference monarchs by ID instead of storing text descriptions
+- **Migration Support**: Backward compatibility with existing `monarchDuringLife` field while using new `monarchIds` field
+- **Lifetime Matching**: Automatic calculation of which monarchs reigned during a family member's lifetime using accurate date-based logic (reignFrom/reignTo instead of name matching)
+- **Bulk Operations**: Admin interface includes dry-run capability and execution buttons for bulk monarch ID updates
 
 ### Advanced Features
 
@@ -158,7 +201,7 @@ This project uses a **dual backend architecture**:
 
 ### Testing & Quality
 - **Test Framework**: Vitest with React Testing Library and MSW for API mocking
-- **Comprehensive Coverage**: 129+ tests covering validation, performance monitoring, business logic, and React components
+- **Comprehensive Coverage**: 135+ tests covering validation, performance monitoring, business logic, and React components
 - **Type Safety**: TypeScript strict mode enabled throughout codebase
 - **Build Verification**: Always run `npm run check` before deployment  
 - **API Testing**: Test both Express and Azure Functions environments
@@ -215,11 +258,12 @@ All APIs return standardized responses:
 When working on this project:
 
 1. **Follow CLAUDE.md First**: This file is the primary reference - always consult it before making changes
-2. **Test-Driven Development**: Always run `npm test` after changes - maintain 129+ passing tests
+2. **Test-Driven Development**: Always run `npm test` after changes - maintain 135+ passing tests
 3. **Performance Monitoring**: Use `/api/performance/health` endpoint to monitor system performance
 4. **Validation First**: All new API endpoints must use Zod validation middleware
 5. **Response Standardization**: Use `sendSuccessResponse` and `sendErrorResponse` from `server/lib/api-response.ts`
 6. **Data Safety**: Always use backup systems before bulk data operations
 7. **Type Safety**: Run `npm run check` to ensure TypeScript compliance
+8. **Test Structure**: Place new tests in the appropriate directory under `/tests` following naming conventions
 
 This is a single-developer project with comprehensive monitoring, validation, and testing infrastructure.

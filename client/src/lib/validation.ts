@@ -21,21 +21,36 @@ export const externalIdSchema = z
   .max(50, 'External ID must be 50 characters or less')
   .regex(
     /^[0-9]+(\.[0-9]+)*$/,
-    'External ID must follow dot notation format (e.g., "0", "0.1", "1.2.3")'
+    'External ID must follow hierarchical format like "0", "0.1", or "1.2.3"'
   );
 
 /**
+ * XSS prevention utility function
+ * Allows historical data patterns while blocking actual security threats
+ */
+function preventXSS(input: string): boolean {
+  const dangerousPatterns = [
+    /<script[^>]*>/i,
+    /javascript:/i,
+    /on\w+\s*=/i,
+    /\x00/,
+    /<iframe[^>]*>/i,
+    /<object[^>]*>/i,
+    /<embed[^>]*>/i,
+    /data:.*base64/i
+  ];
+  return !dangerousPatterns.some(pattern => pattern.test(input));
+}
+
+/**
  * Schema for validating person names
- * Supports Swedish noble naming conventions
+ * Pragmatic approach: focuses on security rather than character restrictions
  */
 export const nameSchema = z
   .string()
-  .min(2, 'Name must be at least 2 characters long')
-  .max(100, 'Name must be 100 characters or less')
-  .regex(
-    /^[a-zA-ZåäöÅÄÖ\s\-'\.]+$/,
-    'Name can only contain letters, spaces, hyphens, apostrophes, and periods'
-  );
+  .min(1, 'Name is required')
+  .max(200, 'Name must be 200 characters or less')
+  .refine(preventXSS, 'Name contains invalid or potentially unsafe content');
 
 /**
  * Schema for validating birth/death years
@@ -65,24 +80,24 @@ export const nobleBranchSchema = z
 
 /**
  * Schema for validating biographical notes
+ * Security-focused with generous length limits
  */
 export const notesSchema = z
   .string()
   .max(2000, 'Notes must be 2000 characters or less')
+  .refine(preventXSS, 'Notes contain invalid or potentially unsafe content')
   .nullable()
   .optional();
 
 /**
- * Schema for validating monarch names during lifetime
+ * Schema for validating monarch names during lifetime  
+ * Accepts all historical formatting patterns
  */
 export const monarchSchema = z
   .string()
-  .min(2, 'Monarch name must be at least 2 characters')
-  .max(50, 'Monarch name must be 50 characters or less')
-  .regex(
-    /^[a-zA-ZåäöÅÄÖ\s\-'\.0-9]+$/,
-    'Monarch name contains invalid characters'
-  );
+  .min(1, 'Monarch name is required')
+  .max(150, 'Monarch name must be 150 characters or less')
+  .refine(preventXSS, 'Monarch name contains invalid or potentially unsafe content');
 
 export const monarchArraySchema = z.array(monarchSchema).optional();
 
@@ -96,7 +111,7 @@ const baseFamilyMemberSchema = z.object({
   died: yearSchema,
   biologicalSex: biologicalSexSchema,
   notes: notesSchema,
-  father: nameSchema.nullable().optional(),
+  father: z.string().max(200, 'Father field must be 200 characters or less').refine(preventXSS, 'Father field contains invalid content').nullable().optional(),
   ageAtDeath: z.number().int().min(0).max(150).nullable().optional(),
   diedYoung: z.boolean().optional().default(false),
   isSuccessionSon: z.boolean().optional().default(false),
@@ -106,11 +121,11 @@ const baseFamilyMemberSchema = z.object({
 });
 
 /**
- * Complete schema for creating a new family member with validation refinements
+ * Complete schema for creating a new family member with essential validation only
  */
 export const createFamilyMemberSchema = baseFamilyMemberSchema
 .refine((data) => {
-  // Validate that died year is after born year
+  // Only validate that died year is after born year (essential business rule)
   if (data.born && data.died && data.died <= data.born) {
     return false;
   }
@@ -118,29 +133,6 @@ export const createFamilyMemberSchema = baseFamilyMemberSchema
 }, {
   message: 'Death year must be after birth year',
   path: ['died'],
-})
-.refine((data) => {
-  // Validate age at death calculation
-  if (data.born && data.died && data.ageAtDeath) {
-    const calculatedAge = data.died - data.born;
-    if (Math.abs(calculatedAge - data.ageAtDeath) > 1) {
-      return false;
-    }
-  }
-  return true;
-}, {
-  message: 'Age at death does not match birth and death years',
-  path: ['ageAtDeath'],
-})
-.refine((data) => {
-  // Validate diedYoung flag
-  if (data.diedYoung && data.ageAtDeath && data.ageAtDeath > 18) {
-    return false;
-  }
-  return true;
-}, {
-  message: 'Members who died young should be 18 years old or younger',
-  path: ['diedYoung'],
 });
 
 /**

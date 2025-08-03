@@ -14,7 +14,7 @@ import {
   MemberIdSchema,
   BusinessRules,
   validateData
-} from './validation';
+} from '../../../../server/lib/validation';
 
 describe('FamilyMemberSchema', () => {
   const validMember = {
@@ -68,9 +68,9 @@ describe('FamilyMemberSchema', () => {
     const result = FamilyMemberSchema.safeParse(invalidMember);
     expect(result.success).toBe(false);
     if (!result.success) {
-      expect(result.error.errors).toHaveLength(2);
-      expect(result.error.errors[0].message).toContain('External ID is required');
-      expect(result.error.errors[1].message).toContain('Name is required');
+      expect(result.error.errors).toHaveLength(3); // External ID, External ID format, Name
+      expect(result.error.errors.some(e => e.message.includes('External ID is required'))).toBe(true);
+      expect(result.error.errors.some(e => e.message.includes('Name is required'))).toBe(true);
     }
   });
 

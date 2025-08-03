@@ -1,0 +1,75 @@
+/**
+ * Mock data for Swedish monarchs
+ * Provides sample monarch data for testing the date-based matching functionality
+ */
+
+import type { Monarch } from '@shared/schema';
+
+export const mockMonarchs: Monarch[] = [
+  {
+    id: 'gustav-i-vasa',
+    name: 'Gustav I Vasa',
+    born: '1496-05-12',
+    died: '1560-09-29',
+    reignFrom: '1523-06-06',
+    reignTo: '1560-09-29',
+    quote: 'We must stand together as one people.',
+    about: 'Founder of the modern Swedish state',
+    portraitFileName: 'gustav-i-vasa.jpg'
+  },
+  {
+    id: 'erik-xiv',
+    name: 'Erik XIV',
+    born: '1533-12-25',
+    died: '1577-06-26',
+    reignFrom: '1560-09-29',
+    reignTo: '1568-09-25',
+    quote: 'I am the anointed king of Sweden.',
+    about: 'Son of Gustav Vasa, first king of the Vasa dynasty',
+    portraitFileName: 'erik-xiv.jpg'
+  },
+  {
+    id: 'johan-iii',
+    name: 'Johan III',
+    born: '1537-12-20',
+    died: '1592-11-17',
+    reignFrom: '1568-09-25',
+    reignTo: '1592-11-17',
+    quote: 'Faith and learning shall guide us.',
+    about: 'King of Sweden and Grand Duke of Finland',
+    portraitFileName: 'johan-iii.jpg'
+  },
+  {
+    id: 'sigismund',
+    name: 'Sigismund',
+    born: '1566-06-09',
+    died: '1632-04-30',
+    reignFrom: '1592-11-17',
+    reignTo: '1599-07-24',
+    quote: 'Poland and Sweden shall be united.',
+    about: 'Catholic king of Sweden and king of Poland',
+    portraitFileName: 'sigismund.jpg'
+  },
+  {
+    id: 'karl-ix',
+    name: 'Karl IX',
+    born: '1550-10-24',
+    died: '1611-10-30',
+    reignFrom: '1599-07-24',
+    reignTo: '1611-10-30',
+    quote: 'For Sweden and the Protestant faith.',
+    about: 'King of Sweden who consolidated the Protestant Reformation',
+    portraitFileName: 'karl-ix.jpg'
+  },
+  {
+    id: 'gustav-ii-adolf',
+    name: 'Gustav II Adolf',
+    born: '1594-12-09',
+    died: '1632-11-06',
+    reignFrom: '1611-10-30',
+    reignTo: '1632-11-06',
+    quote: 'I will make Sweden a great power.',
+    about: 'The Lion of the North, king during the Thirty Years War',
+    portraitFileName: 'gustav-ii-adolf.jpg'
+  }
+];

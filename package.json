@@ -12,7 +12,10 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "import-monarchs": "tsx scripts/import-monarchs.ts",
+    "bulk-update-monarchs": "tsx scripts/bulk-update-monarchs.ts",
+    "test-monarchs-api": "tsx scripts/test-monarchs-api.ts"
   },
   "dependencies": {
     "@azure/cosmos": "^4.5.0",
@@ -104,6 +107,7 @@
     "@types/react-dom": "^18.3.1",
     "@types/ws": "^8.5.13",
     "@vitejs/plugin-react": "^4.3.2",
+    "@vitest/coverage-v8": "^3.2.4",
     "@vitest/ui": "^3.2.4",
     "autoprefixer": "^10.4.20",
     "drizzle-kit": "^0.30.4",

@@ -6,7 +6,7 @@
 import { setupServer } from 'msw/node';
 import { http, HttpResponse } from 'msw';
 import { mockFamilyMembers } from './data';
-import type { CosmosDbFamilyMember } from '@/types/family';
+import type { CosmosDbFamilyMember } from '@shared/schema';
 
 export const handlers = [
   // GET /api/cosmos/members - Mock family members API

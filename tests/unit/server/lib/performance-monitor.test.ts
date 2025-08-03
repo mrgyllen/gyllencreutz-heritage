@@ -3,7 +3,7 @@
  */
 
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { performanceMonitor, PerformanceUtils, type PerformanceMetrics } from './performance-monitor';
+import { performanceMonitor, PerformanceUtils, type PerformanceMetrics } from '../../../../server/lib/performance-monitor';
 
 // Mock process.memoryUsage and process.cpuUsage
 vi.mock('process', () => ({

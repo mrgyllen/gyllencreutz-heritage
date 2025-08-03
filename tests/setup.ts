@@ -6,7 +6,7 @@
 import '@testing-library/jest-dom';
 import { beforeAll, afterEach, afterAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
-import { server } from './mocks/server';
+import { server } from './mocks/client/server';
 
 // Establish API mocking before all tests
 beforeAll(() => server.listen());

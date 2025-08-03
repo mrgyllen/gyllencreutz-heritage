@@ -8,20 +8,24 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['./client/src/test/setup.ts'],
-    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    setupFiles: ['./tests/setup.ts'],
+    include: ['tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['node_modules', 'dist', '.git', '.cache'],
     coverage: {
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
-        'src/test/',
         '**/*.d.ts',
         '**/*.config.*',
         'dist/',
         'functions/',
-        'server/',
       ],
+      thresholds: {
+        lines: 9,
+        functions: 25,
+        branches: 65,
+        statements: 9
+      }
     },
   },
   resolve: {
@@ -29,6 +33,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './client/src'),
       '@shared': path.resolve(__dirname, './shared'),
       '@assets': path.resolve(__dirname, './attached_assets'),
+      '@tests': path.resolve(__dirname, './tests'),
     },
   },
 });

@@ -10,8 +10,8 @@ import {
   buildFamilyTree,
   searchFamilyMembers,
   getFamilyMemberById,
-} from './family-data';
-import type { FamilyMember } from '@/types/family';
+} from '@/data/family-data';
+import type { FamilyMember } from '@shared/schema';
 
 // Mock data for testing
 const mockFamilyMembers: FamilyMember[] = [

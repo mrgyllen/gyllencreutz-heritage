@@ -591,6 +591,122 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
       sendSuccessResponse(res, summary, HttpStatus.OK, 'JSON restore completed successfully');
     }));
+
+    // Monarch endpoints
+    app.get("/api/cosmos/monarchs", asyncHandler(async (req, res) => {
+      console.log("🔍 Fetching all monarchs from Cosmos DB...");
+      const monarchs = await cosmosClient.getAllMonarchs();
+      console.log(`✅ Retrieved ${monarchs.length} monarchs from Cosmos DB`);
+      sendSuccessResponse(res, monarchs, HttpStatus.OK, `Retrieved ${monarchs.length} monarchs from Cosmos DB`);
+    }));
+
+    app.get("/api/cosmos/monarchs/:id", asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const monarch = await cosmosClient.getMonarch(id);
+      if (!monarch) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
+      }
+      sendSuccessResponse(res, monarch, HttpStatus.OK, ResponseMessages.RETRIEVED);
+    }));
+
+    app.post("/api/cosmos/monarchs", asyncHandler(async (req, res) => {
+      const monarchData = req.body;
+      
+      // Validate required fields
+      if (!monarchData.id) {
+        return sendErrorResponse(res, 'Monarch ID is required', HttpStatus.BAD_REQUEST, undefined, ErrorSeverity.LOW);
+      }
+
+      if (!monarchData.name) {
+        return sendErrorResponse(res, 'Monarch name is required', HttpStatus.BAD_REQUEST, undefined, ErrorSeverity.LOW);
+      }
+
+      try {
+        const newMonarch = await cosmosClient.createMonarch(monarchData);
+        sendSuccessResponse(res, newMonarch, HttpStatus.CREATED, ResponseMessages.CREATED);
+      } catch (error) {
+        return sendErrorResponse(res, 'Failed to create monarch', HttpStatus.INTERNAL_SERVER_ERROR, undefined, ErrorSeverity.HIGH);
+      }
+    }));
+
+    app.put("/api/cosmos/monarchs/:id", asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const monarchData = req.body;
+      
+      const updatedMonarch = await cosmosClient.updateMonarch(id, monarchData);
+      if (!updatedMonarch) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
+      }
+      sendSuccessResponse(res, updatedMonarch, HttpStatus.OK, ResponseMessages.UPDATED);
+    }));
+
+    app.delete("/api/cosmos/monarchs/:id", asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      const deleted = await cosmosClient.deleteMonarch(id);
+      if (!deleted) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
+      }
+      sendSuccessResponse(res, { id }, HttpStatus.OK, ResponseMessages.DELETED);
+    }));
+
+    // Monarch import endpoint
+    app.post("/api/cosmos/monarchs/import", asyncHandler(async (req, res) => {
+      const { monarchs } = req.body;
+      
+      if (!monarchs || !Array.isArray(monarchs)) {
+        return sendErrorResponse(res, 'Invalid data format. Expected { monarchs: [...] }', HttpStatus.BAD_REQUEST, undefined, ErrorSeverity.LOW);
+      }
+
+      try {
+        const importResult = await cosmosClient.importMonarchsFromJson(monarchs);
+        sendSuccessResponse(res, importResult, HttpStatus.OK, 'Monarchs imported successfully');
+      } catch (error) {
+        return sendErrorResponse(res, 'Failed to import monarchs', HttpStatus.INTERNAL_SERVER_ERROR, undefined, ErrorSeverity.HIGH);
+      }
+    }));
+
+    // Get monarchs during a family member's lifetime
+    app.get("/api/cosmos/members/:id/monarchs", asyncHandler(async (req, res) => {
+      const { id } = req.params;
+      
+      // First get the family member
+      const member = await cosmosClient.getMember(id);
+      if (!member) {
+        return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
+      }
+
+      // Validate that member has born date
+      if (member.born === null || member.born === undefined) {
+        return sendErrorResponse(res, 'Family member must have a birth year', HttpStatus.BAD_REQUEST, undefined, ErrorSeverity.LOW);
+      }
+
+      // Get monarchs during the member's lifetime
+      const monarchs = await cosmosClient.getMonarchsDuringLifetime(member.born, member.died || 9999);
+      sendSuccessResponse(res, monarchs, HttpStatus.OK, `Found ${monarchs.length} monarchs during ${member.name}'s lifetime`);
+    }));
+
+    // Bulk update family members with monarch IDs
+    app.post("/api/cosmos/members/bulk-update-monarchs", asyncHandler(async (req, res) => {
+      try {
+        // Check for dryRun query parameter
+        const dryRun = req.query.dryRun === 'true';
+        
+        const result = await cosmosClient.bulkUpdateMembersWithMonarchIds({ dryRun });
+        sendSuccessResponse(res, result, HttpStatus.OK, result.message);
+      } catch (error) {
+        return sendErrorResponse(res, 'Failed to bulk update members with monarch IDs', HttpStatus.INTERNAL_SERVER_ERROR, undefined, ErrorSeverity.HIGH);
+      }
+    }));
+
+    // Bulk update family members with monarch IDs (dry run only)
+    app.post("/api/cosmos/members/bulk-update-monarchs-dry-run", asyncHandler(async (req, res) => {
+      try {
+        const result = await cosmosClient.bulkUpdateMembersWithMonarchIds({ dryRun: true });
+        sendSuccessResponse(res, result, HttpStatus.OK, result.message);
+      } catch (error) {
+        return sendErrorResponse(res, 'Failed to perform dry run of bulk update members with monarch IDs', HttpStatus.INTERNAL_SERVER_ERROR, undefined, ErrorSeverity.HIGH);
+      }
+    }));
   }
 
   const httpServer = createServer(app);

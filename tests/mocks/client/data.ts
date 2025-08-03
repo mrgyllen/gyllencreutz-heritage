@@ -3,7 +3,7 @@
  * Provides sample family member data that mirrors the production data structure
  */
 
-import type { CosmosDbFamilyMember } from '@/types/family';
+import type { CosmosDbFamilyMember } from '@shared/schema';
 
 export const mockFamilyMembers: CosmosDbFamilyMember[] = [
   {

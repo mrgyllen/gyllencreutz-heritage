@@ -40,7 +40,8 @@ export function FamilyTree() {
       isSuccessionSon: member.isSuccessionSon,
       hasMaleChildren: member.hasMaleChildren,
       nobleBranch: member.nobleBranch,
-      monarchDuringLife: member.monarchDuringLife || []
+      monarchDuringLife: member.monarchDuringLife || [],
+      monarchIds: member.monarchIds || []
     }));
   }, []);
 
@@ -57,11 +58,34 @@ export function FamilyTree() {
     },
   });
 
+  // Fetch all monarchs for lookup
+  const { data: monarchsData = [] } = useQuery<any[]>({
+    queryKey: ['/api/cosmos/monarchs'],
+    queryFn: async () => {
+      const response = await fetch('/api/cosmos/monarchs');
+      if (!response.ok) {
+        throw new Error('Failed to fetch monarchs');
+      }
+      const result = await response.json();
+      return Array.isArray(result) ? result : result.data || [];
+    },
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+  });
+
   // Memoized data transformations to prevent expensive recalculations
   const rawFamilyMembers = useMemo(() => 
     transformCosmosToFamilyMember(rawCosmosData), 
     [rawCosmosData, transformCosmosToFamilyMember]
   );
+
+  // Create a lookup map for monarchs by ID
+  const monarchsLookup = useMemo(() => {
+    const lookup: Record<string, any> = {};
+    monarchsData.forEach(monarch => {
+      lookup[monarch.id] = monarch;
+    });
+    return lookup;
+  }, [monarchsData]);
   
   const familyMembers = useMemo(() => 
     addGenerationData(rawFamilyMembers), 
@@ -637,7 +661,8 @@ export function FamilyTree() {
               </div>
               
               {/* Monarch timeline card */}
-              {selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0 && (
+              {(selectedMember.monarchIds && selectedMember.monarchIds.length > 0) || 
+               (selectedMember.monarchDuringLife && selectedMember.monarchDuringLife.length > 0) ? (
                 <div className="md:col-span-1">
                   <Card>
                     <CardContent className="p-4">
@@ -648,25 +673,65 @@ export function FamilyTree() {
                         
                         {/* Timeline points */}
                         <div className="space-y-3">
-                          {selectedMember.monarchDuringLife.map((monarch, index) => (
-                            <div key={index} className="flex items-center gap-3 relative">
-                              {/* Royal portrait */}
-                              <div className="relative z-10">
-                                {getRoyalPortrait(monarch, 'small')}
-                              </div>
+                          {/* Use monarchIds if available, otherwise fall back to monarchDuringLife */}
+                          {selectedMember.monarchIds && selectedMember.monarchIds.length > 0 ? (
+                            selectedMember.monarchIds
+                              .sort((a, b) => {
+                                const monarchA = monarchsLookup[a];
+                                const monarchB = monarchsLookup[b];
+                                if (!monarchA?.reignFrom || !monarchB?.reignFrom) return 0;
+                                return new Date(monarchA.reignFrom).getTime() - new Date(monarchB.reignFrom).getTime();
+                              })
+                              .map((monarchId, index) => {
+                              const monarch = monarchsLookup[monarchId];
+                              const reignFromYear = monarch?.reignFrom ? new Date(monarch.reignFrom).getFullYear() : '';
+                              const reignToYear = monarch?.reignTo ? new Date(monarch.reignTo).getFullYear() : '';
+                              const reignDates = reignFromYear && reignToYear ? ` (${reignFromYear}-${reignToYear})` : '';
                               
-                              {/* Monarch info */}
-                              <div className="bg-blue-50 px-3 py-2 rounded-lg text-xs text-blue-800 border border-blue-200 flex-1">
-                                <span>{monarch}</span>
+                              return (
+                                <div key={monarchId} className="flex items-center gap-3 relative">
+                                  {/* Royal portrait */}
+                                  <div className="relative z-10">
+                                    {getRoyalPortrait(monarch?.name || 'Unknown Monarch', 'small')}
+                                  </div>
+                                  
+                                  {/* Monarch info */}
+                                  <div className="bg-blue-50 px-3 py-2 rounded-lg text-xs text-blue-800 border border-blue-200 flex-1">
+                                    <span>{monarch?.name || monarchId}{reignDates}</span>
+                                  </div>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            selectedMember.monarchDuringLife
+                              .sort((a, b) => {
+                                // Extract start year from format "Name (YYYY–YYYY)" for chronological sorting
+                                const yearMatchA = a.match(/\((\d{4})/);
+                                const yearMatchB = b.match(/\((\d{4})/);
+                                const yearA = yearMatchA ? parseInt(yearMatchA[1]) : 0;
+                                const yearB = yearMatchB ? parseInt(yearMatchB[1]) : 0;
+                                return yearA - yearB;
+                              })
+                              .map((monarch, index) => (
+                              <div key={index} className="flex items-center gap-3 relative">
+                                {/* Royal portrait */}
+                                <div className="relative z-10">
+                                  {getRoyalPortrait(monarch, 'small')}
+                                </div>
+                                
+                                {/* Monarch info */}
+                                <div className="bg-blue-50 px-3 py-2 rounded-lg text-xs text-blue-800 border border-blue-200 flex-1">
+                                  <span>{monarch}</span>
+                                </div>
                               </div>
-                            </div>
-                          ))}
+                            ))
+                          )}
                         </div>
                       </div>
                     </CardContent>
                   </Card>
                 </div>
-              )}
+              ) : null}
             </div>
           </div>
         )}
