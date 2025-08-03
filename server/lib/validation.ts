@@ -10,22 +10,40 @@ import type { Request, Response, NextFunction } from 'express';
 import { sendErrorResponse, HttpStatus, ErrorSeverity, type ValidationError } from './api-response';
 
 /**
- * Base object schema for family member data validation (without refinement)
+ * XSS prevention utility function
+ * Allows historical data patterns while blocking actual security threats
+ */
+function preventXSS(input: string): boolean {
+  const dangerousPatterns = [
+    /<script[^>]*>/i,
+    /javascript:/i,
+    /on\w+\s*=/i,
+    /\x00/,
+    /<iframe[^>]*>/i,
+    /<object[^>]*>/i,
+    /<embed[^>]*>/i,
+    /data:.*base64/i
+  ];
+  return !dangerousPatterns.some(pattern => pattern.test(input));
+}
+
+/**
+ * Base object schema for family member data validation - simplified and security-focused
  */
 const BaseFamilyMemberSchema = z.object({
-  externalId: z.string().min(1, 'External ID is required'),
-  name: z.string().min(1, 'Name is required').max(200, 'Name must be less than 200 characters'),
+  externalId: z.string().min(1, 'External ID is required').max(50, 'External ID must be less than 50 characters').regex(/^[0-9]+(\.[0-9]+)*$/, 'External ID must follow hierarchical format'),
+  name: z.string().min(1, 'Name is required').max(200, 'Name must be less than 200 characters').refine(preventXSS, 'Name contains invalid content'),
   born: z.number().int().min(1000).max(3000).optional().nullable(),
   died: z.number().int().min(1000).max(3000).optional().nullable(),
   biologicalSex: z.enum(['Male', 'Female', 'Unknown']).default('Unknown'),
-  notes: z.string().max(2000, 'Notes must be less than 2000 characters').optional().nullable(),
-  father: z.string().max(200, 'Father name must be less than 200 characters').optional().nullable(),
+  notes: z.string().max(2000, 'Notes must be less than 2000 characters').refine(preventXSS, 'Notes contain invalid content').optional().nullable(),
+  father: z.string().max(200, 'Father field must be less than 200 characters').refine(preventXSS, 'Father field contains invalid content').optional().nullable(),
   ageAtDeath: z.number().int().min(0).max(150).optional().nullable(),
   diedYoung: z.boolean().default(false),
   isSuccessionSon: z.boolean().default(false),
   hasMaleChildren: z.boolean().default(false),
   nobleBranch: z.string().max(100, 'Noble branch must be less than 100 characters').optional().nullable(),
-  monarchDuringLife: z.array(z.string().max(100)).default([]),
+  monarchDuringLife: z.array(z.string().min(1).max(150).refine(preventXSS, 'Monarch name contains invalid content')).default([]),
 });
 
 /**
@@ -235,7 +253,10 @@ export const BusinessRules = {
     const errors: ValidationError[] = [];
     
     if (member.father) {
-      const fatherExists = existingMembers.some(m => m.name === member.father);
+      // Check if father exists by externalId or name (support both formats)
+      const fatherExists = existingMembers.some(m => 
+        m.externalId === member.father || m.name === member.father
+      );
       if (!fatherExists) {
         errors.push({
           field: 'father',
@@ -256,11 +277,11 @@ export const BusinessRules = {
     const errors: ValidationError[] = [];
     
     // External ID should be either "0" (root) or follow pattern like "0.1", "1.2.3", etc.
-    const pattern = /^(\d+(\.\d+)*)$/;
+    const pattern = /^[0-9]+(\.[0-9]+)*$/;
     if (!pattern.test(externalId)) {
       errors.push({
         field: 'externalId',
-        message: 'External ID must follow hierarchical format (e.g., "0", "0.1", "1.2.3")',
+        message: `External ID '${externalId}' is not in the correct format. Must follow hierarchical format like "0", "0.1", or "1.2.3"`,
         code: 'INVALID_EXTERNAL_ID_FORMAT',
         value: externalId
       });

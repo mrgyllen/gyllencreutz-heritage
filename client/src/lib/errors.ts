@@ -48,10 +48,14 @@ export abstract class AppError extends Error {
  */
 export class ValidationError extends AppError {
   readonly code = 'VALIDATION_ERROR';
-  readonly userMessage = 'Please check your input and try again.';
+  readonly userMessage: string;
 
   constructor(message: string, public readonly field?: string, context?: Record<string, unknown>) {
     super(message, context);
+    // Create a user-friendly message based on the validation error
+    this.userMessage = field 
+      ? `Invalid ${field}: ${message}`
+      : message;
   }
 }
 

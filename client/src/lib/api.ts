@@ -314,6 +314,39 @@ export const familyApi = {
       ErrorSeverity.LOW
     );
   },
+
+  /**
+   * Bulk updates family members with monarch IDs (execute mode)
+   */
+  async bulkUpdateMonarchs(): Promise<any> {
+    return withApiErrorHandling(
+      () => apiClient.post('/api/cosmos/members/bulk-update-monarchs'),
+      { component: 'FamilyApi', action: 'bulkUpdateMonarchs' },
+      ErrorSeverity.HIGH
+    );
+  },
+
+  /**
+   * Performs dry run of bulk update family members with monarch IDs
+   */
+  async bulkUpdateMonarchsDryRun(): Promise<any> {
+    return withApiErrorHandling(
+      () => apiClient.post('/api/cosmos/members/bulk-update-monarchs?dryRun=true'),
+      { component: 'FamilyApi', action: 'bulkUpdateMonarchsDryRun' },
+      ErrorSeverity.MEDIUM
+    );
+  },
+
+  /**
+   * Gets monarchs that reigned during a family member's lifetime
+   */
+  async getMonarchsDuringLifetime(memberId: string): Promise<any> {
+    return withApiErrorHandling(
+      () => apiClient.get(`/api/cosmos/members/${memberId}/monarchs`),
+      { component: 'FamilyApi', action: 'getMonarchsDuringLifetime', additionalData: { memberId } },
+      ErrorSeverity.MEDIUM
+    );
+  },
 };
 
 /**

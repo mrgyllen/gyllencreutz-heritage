@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Database, CheckCircle, AlertCircle, RotateCcw, ArrowLeft, AlertTriangle } from 'lucide-react';
+import { Search, Plus, Edit, Trash2, Save, X, Download, Upload, Database, CheckCircle, AlertCircle, RotateCcw, ArrowLeft, AlertTriangle, Crown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,6 +23,7 @@ import {
   safeValidateInput,
   cosmosFamilyMemberSchema,
   createFamilyMemberSchema,
+  updateFamilyMemberSchema,
   ValidationError 
 } from '@/lib/validation';
 import { handleError, ErrorSeverity, createErrorContext } from '@/lib/errors';
@@ -43,6 +44,7 @@ function AdminDbContent() {
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [bulkUpdateResult, setBulkUpdateResult] = useState<any>(null);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -69,9 +71,11 @@ function AdminDbContent() {
   // CRUD mutations with enhanced error handling
   const updateMemberMutation = useMutation({
     mutationFn: async (member: CosmosDbFamilyMember) => {
-      // Validate the data before sending
-      const validationResult = safeValidateInput(cosmosFamilyMemberSchema, member);
+      // Validate the data before sending using update schema (not cosmos schema)
+      const { id, _rid, _self, _etag, _attachments, _ts, importedAt, importSource, ...updateData } = member;
+      const validationResult = safeValidateInput(updateFamilyMemberSchema, updateData);
       if (!validationResult.success) {
+        console.error('Validation failed:', validationResult.error);
         throw validationResult.error;
       }
       
@@ -113,8 +117,10 @@ function AdminDbContent() {
   const addMemberMutation = useMutation({
     mutationFn: async (member: CreateCosmosDbFamilyMember) => {
       // Validate the data before sending
+      console.log('Adding member, data before validation:', member);
       const validationResult = safeValidateInput(createFamilyMemberSchema, member);
       if (!validationResult.success) {
+        console.error('Add member validation failed:', validationResult.error);
         throw validationResult.error;
       }
       
@@ -250,6 +256,40 @@ function AdminDbContent() {
     },
   });
 
+  // Bulk update monarchs mutation
+  const bulkUpdateMutation = useMutation({
+    mutationFn: async (options: { dryRun: boolean }) => {
+      if (options.dryRun) {
+        return await familyApi.bulkUpdateMonarchsDryRun();
+      } else {
+        return await familyApi.bulkUpdateMonarchs();
+      }
+    },
+    onSuccess: (data) => {
+      setBulkUpdateResult(data.data);
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
+      
+      if (data.data.dryRun) {
+        toast({ 
+          title: 'Dry Run Complete', 
+          description: `Preview: ${data.data.updated} of ${data.data.processed} members would be updated` 
+        });
+      } else {
+        toast({ 
+          title: 'Bulk Update Complete', 
+          description: `Updated ${data.data.updated} of ${data.data.processed} members with monarch IDs` 
+        });
+      }
+    },
+    onError: (error: any) => {
+      toast({ 
+        title: 'Bulk Update Failed', 
+        description: error.message || 'Failed to update members with monarch IDs',
+        variant: 'destructive' 
+      });
+    },
+  });
+
   // Enhanced search with validation
   const handleSearchChange = (query: string) => {
     try {
@@ -266,6 +306,22 @@ function AdminDbContent() {
           duration: 3000
         });
       }
+    }
+  };
+
+  // Monarchs bulk update handlers
+  const handleBulkUpdateMonarchsDryRun = () => {
+    bulkUpdateMutation.mutate({ dryRun: true });
+  };
+
+  const handleBulkUpdateMonarchs = () => {
+    const confirmed = confirm(
+      'This will update all family members with proper monarch relationships based on reign dates. ' +
+      'This operation cannot be undone. Are you sure you want to continue?'
+    );
+    
+    if (confirmed) {
+      bulkUpdateMutation.mutate({ dryRun: false });
     }
   };
 
@@ -297,18 +353,26 @@ function AdminDbContent() {
       const memberData = {
         externalId: formData.get('externalId') as string,
         name: formData.get('name') as string,
-        born: bornValue ? parseInt(bornValue) : null,
-        died: diedValue ? parseInt(diedValue) : null,
+        born: bornValue && bornValue.trim() ? parseInt(bornValue) : null,
+        died: diedValue && diedValue.trim() ? parseInt(diedValue) : null,
         biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
-        notes: notesValue || null,
-        father: fatherValue || null,
-        monarchDuringLife: monarchValue ? monarchValue.split(',').map(m => m.trim()) : [],
+        notes: notesValue && notesValue.trim() ? notesValue : null,
+        father: fatherValue && fatherValue.trim() ? fatherValue : null,
+        monarchDuringLife: monarchValue && monarchValue.trim() ? 
+          monarchValue.split(',')
+            .map(m => m.trim())
+            .filter(m => m.length > 0)
+            .map(m => m.replace(/\*$/, '').trim()) // Remove trailing asterisks
+            .filter(m => m.length > 0) : [],
         isSuccessionSon: formData.get('isSuccessionSon') === 'on' || false,
         diedYoung: formData.get('diedYoung') === 'on' || false,
         hasMaleChildren: formData.get('hasMaleChildren') === 'on' || false,
-        nobleBranch: nobleBranchValue || null,
-        ageAtDeath: ageAtDeathValue ? parseInt(ageAtDeathValue) : null,
+        nobleBranch: nobleBranchValue && nobleBranchValue.trim() ? nobleBranchValue : null,
+        ageAtDeath: ageAtDeathValue && ageAtDeathValue.trim() ? parseInt(ageAtDeathValue) : null,
       };
+
+      console.log('Form submission data:', memberData);
+      console.log('Monarch array after processing:', memberData.monarchDuringLife);
 
       if (isNew) {
         await addMemberMutation.mutateAsync({
@@ -316,10 +380,12 @@ function AdminDbContent() {
           id: memberData.externalId, // Use externalId as Cosmos DB id
         });
       } else if (editingMember) {
-        await updateMemberMutation.mutateAsync({
+        const updateData = {
           ...editingMember,
           ...memberData,
-        });
+        };
+        console.log('Update data being sent:', updateData);
+        await updateMemberMutation.mutateAsync(updateData);
       }
     } catch (error) {
       // Error handling is done in the mutation onError callbacks
@@ -516,6 +582,67 @@ function AdminDbContent() {
               {clearDataMutation.isPending ? 'Clearing...' : 'Clear All Data'}
             </Button>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Monarchs Management */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Crown className="w-5 h-5" />
+            Monarchs Management
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Alert className="mb-4">
+            <Crown className="h-4 w-4" />
+            <AlertDescription>
+              Update family members with proper monarch relationships based on reign dates. 
+              Use dry-run to preview changes before applying them.
+            </AlertDescription>
+          </Alert>
+          
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <Button
+              onClick={handleBulkUpdateMonarchsDryRun}
+              disabled={bulkUpdateMutation.isPending}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <AlertCircle className="w-4 h-4" />
+              {bulkUpdateMutation.isPending ? 'Processing...' : 'Dry Run Preview'}
+            </Button>
+            <Button
+              onClick={handleBulkUpdateMonarchs}
+              disabled={bulkUpdateMutation.isPending}
+              className="flex items-center gap-2"
+            >
+              <CheckCircle className="w-4 h-4" />
+              {bulkUpdateMutation.isPending ? 'Updating...' : 'Execute Bulk Update'}
+            </Button>
+          </div>
+          
+          {bulkUpdateResult && (
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <h4 className="font-semibold mb-2">Operation Results:</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                <div>
+                  <span className="font-medium">Total Members:</span> {bulkUpdateResult.total}
+                </div>
+                <div>
+                  <span className="font-medium">Processed:</span> {bulkUpdateResult.processed}
+                </div>
+                <div>
+                  <span className="font-medium">Updated:</span> {bulkUpdateResult.updated}
+                </div>
+              </div>
+              {bulkUpdateResult.dryRun && (
+                <div className="mt-2 text-sm text-muted-foreground">
+                  <span className="font-medium">Dry Run Mode:</span> No changes were made to the database.
+                </div>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
 

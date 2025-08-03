@@ -13,6 +13,7 @@ export interface FamilyMember {
   hasMaleChildren: boolean;
   nobleBranch: string | null;
   monarchDuringLife: string[];
+  monarchIds?: string[]; // New field for proper monarch relationship IDs
   generation?: number;
 }
 
@@ -34,6 +35,19 @@ export interface TreeDimensions {
   };
 }
 
+// Monarch interface for Swedish monarchs
+export interface Monarch {
+  id: string; // Unique identifier (e.g., "gustav-i-vasa")
+  name: string; // Full name (e.g., "Gustav I Vasa")
+  born: string; // ISO date format (e.g., "1496-05-12")
+  died: string; // ISO date format (e.g., "1560-09-29")
+  reignFrom: string; // ISO date format (e.g., "1523-06-06")
+  reignTo: string; // ISO date format (e.g., "1560-09-29")
+  quote?: string; // Famous quote
+  about?: string; // Description/biography
+  portraitFileName?: string; // Image filename for portrait
+}
+
 // Cosmos DB-specific types
 export interface CosmosDbFamilyMember {
   id: string; // Cosmos DB document ID (partition key)
@@ -50,6 +64,7 @@ export interface CosmosDbFamilyMember {
   hasMaleChildren: boolean;
   nobleBranch: string | null;
   monarchDuringLife: string[];
+  monarchIds?: string[]; // New field for proper monarch relationship IDs
   importedAt?: string;
   importSource?: string;
   _rid?: string; // Cosmos DB resource ID
