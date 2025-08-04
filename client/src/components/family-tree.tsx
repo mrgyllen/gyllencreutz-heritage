@@ -59,7 +59,7 @@ export function FamilyTree() {
   });
 
   // Fetch all monarchs for lookup
-  const { data: monarchsData = [] } = useQuery<any[]>({
+  const { data: monarchsData = [], error: monarchsError } = useQuery<any[]>({
     queryKey: ['/api/cosmos/monarchs'],
     queryFn: async () => {
       const response = await fetch('/api/cosmos/monarchs');
@@ -70,7 +70,15 @@ export function FamilyTree() {
       return Array.isArray(result) ? result : result.data || [];
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
+    retry: 1, // Only retry once to avoid long delays
+    refetchOnWindowFocus: false, // Don't refetch on window focus to avoid UI flicker
   });
+
+  // Log monarch fetch issues in development for debugging
+  if (process.env.NODE_ENV === 'development' && monarchsError) {
+    console.warn('⚠️ Failed to fetch monarchs data:', monarchsError.message);
+    console.log('🔄 Using fallback monarch display (transformed IDs)');
+  }
 
   // Memoized data transformations to prevent expensive recalculations
   const rawFamilyMembers = useMemo(() => 
@@ -86,6 +94,22 @@ export function FamilyTree() {
     });
     return lookup;
   }, [monarchsData]);
+
+  // Helper function to transform monarch ID to readable name
+  const transformMonarchId = useCallback((monarchId: string): string => {
+    // Transform "fredrik-i" -> "Fredrik I", "karl-x-gustav" -> "Karl X Gustav"
+    return monarchId
+      .split('-')
+      .map(part => {
+        // Handle Roman numerals (i, ii, iii, iv, v, vi, etc.)
+        if (part.match(/^[ivx]+$/i)) {
+          return part.toUpperCase();
+        }
+        // Capitalize first letter of regular words
+        return part.charAt(0).toUpperCase() + part.slice(1);
+      })
+      .join(' ');
+  }, []);
   
   const familyMembers = useMemo(() => 
     addGenerationData(rawFamilyMembers), 
@@ -688,16 +712,20 @@ export function FamilyTree() {
                               const reignToYear = monarch?.reignTo ? new Date(monarch.reignTo).getFullYear() : '';
                               const reignDates = reignFromYear && reignToYear ? ` (${reignFromYear}-${reignToYear})` : '';
                               
+                              // Fallback: use transformed monarch ID if no monarch data available
+                              const displayName = monarch?.name || transformMonarchId(monarchId);
+                              const fallbackDates = !monarch && !reignDates ? ' (dates unknown)' : reignDates;
+                              
                               return (
                                 <div key={monarchId} className="flex items-center gap-3 relative">
                                   {/* Royal portrait */}
                                   <div className="relative z-10">
-                                    {getRoyalPortrait(monarch?.name || 'Unknown Monarch', 'small')}
+                                    {getRoyalPortrait(displayName, 'small')}
                                   </div>
                                   
                                   {/* Monarch info */}
                                   <div className="bg-blue-50 px-3 py-2 rounded-lg text-xs text-blue-800 border border-blue-200 flex-1">
-                                    <span>{monarch?.name || monarchId}{reignDates}</span>
+                                    <span>{displayName}{fallbackDates}</span>
                                   </div>
                                 </div>
                               );

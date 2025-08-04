@@ -461,7 +461,8 @@ export class MemStorage implements IStorage {
         isSuccessionSon: member.isSuccessionSon ?? false,
         hasMaleChildren: member.hasMaleChildren ?? false,
         nobleBranch: member.nobleBranch ?? null,
-        monarchDuringLife: []
+        monarchDuringLife: [],
+        monarchIds: []
       };
       this.familyMembers.set(member.externalId, familyMember);
     });
@@ -519,7 +520,8 @@ export class MemStorage implements IStorage {
         isSuccessionSon: member.isSuccessionSon,
         hasMaleChildren: member.hasMaleChildren,
         nobleBranch: member.nobleBranch,
-        monarchDuringLife: []
+        monarchDuringLife: [],
+        monarchIds: []
       };
       this.familyMembers.set(member.externalId, familyMember);
     });
@@ -566,7 +568,8 @@ export class MemStorage implements IStorage {
       isSuccessionSon: member.isSuccessionSon ?? null,
       hasMaleChildren: member.hasMaleChildren ?? null,
       nobleBranch: member.nobleBranch ?? null,
-      monarchDuringLife: member.monarchDuringLife ?? null
+      monarchDuringLife: member.monarchDuringLife ?? null,
+      monarchIds: []
     };
     this.familyMembers.set(member.externalId, familyMember);
     
@@ -694,6 +697,7 @@ export class MemStorage implements IStorage {
           hasMaleChildren: memberData.hasMaleChildren ?? existingMember.hasMaleChildren,
           nobleBranch: memberData.nobleBranch ?? existingMember.nobleBranch,
           monarchDuringLife: memberData.monarchDuringLife ?? existingMember.monarchDuringLife,
+          monarchIds: existingMember.monarchIds ?? [],
           id: existingMember.id, // Preserve original ID
         };
         this.familyMembers.set(memberData.externalId, updatedMember);
@@ -715,7 +719,8 @@ export class MemStorage implements IStorage {
           isSuccessionSon: memberData.isSuccessionSon ?? null,
           hasMaleChildren: memberData.hasMaleChildren ?? null,
           nobleBranch: memberData.nobleBranch ?? null,
-          monarchDuringLife: memberData.monarchDuringLife ?? null
+          monarchDuringLife: memberData.monarchDuringLife ?? null,
+          monarchIds: []
         };
         this.familyMembers.set(memberData.externalId, newMember);
         created++;

@@ -32,6 +32,6 @@ export async function getAllMonarchs(request: HttpRequest, context: InvocationCo
 app.http('get-all-monarchs', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'monarchs',
+  route: 'cosmos/monarchs',
   handler: getAllMonarchs,
 });

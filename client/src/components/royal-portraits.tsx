@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Crown } from 'lucide-react';
 
 // Import all authentic royal portraits provided by the user
@@ -59,6 +59,8 @@ interface RoyalPortraitProps {
 }
 
 export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size = 'medium' }) => {
+  const [imageError, setImageError] = useState(false);
+  
   const sizeClasses = {
     small: 'w-6 h-6',
     medium: 'w-8 h-8',
@@ -66,14 +68,16 @@ export const RoyalPortrait: React.FC<RoyalPortraitProps> = ({ monarchName, size 
   };
 
   const portraitAsset = RoyalPortraitAssets[monarchName as keyof typeof RoyalPortraitAssets];
+  const shouldShowImage = portraitAsset && !imageError;
   
   return (
     <div className={`${sizeClasses[size]} rounded-full overflow-hidden border-2 border-blue-400 bg-blue-50 relative`}>
-      {portraitAsset ? (
+      {shouldShowImage ? (
         <img 
           src={portraitAsset} 
           alt={monarchName} 
           className="w-full h-full object-cover"
+          onError={() => setImageError(true)}
         />
       ) : (
         <div className="w-full h-full bg-blue-400 flex items-center justify-center">
