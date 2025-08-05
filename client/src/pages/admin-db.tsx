@@ -92,7 +92,7 @@ function AdminDbContent() {
         </TabsContent>
 
         <TabsContent value="data-operations" className="mt-6">
-          <DataOperationsTab familyMembers={familyMembers} />
+          <DataOperationsTab familyMembers={familyMembers} monarchs={monarchs} />
         </TabsContent>
       </Tabs>
     </div>

@@ -6,21 +6,28 @@
  */
 
 import React, { useState } from 'react';
-import { Download, Upload, Database, CheckCircle, AlertCircle, Trash2, Crown } from 'lucide-react';
+import { Download, Upload, Database, CheckCircle, AlertCircle, Trash2, Crown, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 import { useMonarchs } from '@/hooks/use-monarchs';
-import { type CosmosDbFamilyMember } from '@/types/family';
+import { type CosmosDbFamilyMember, type Monarch } from '@/types/family';
+import { 
+  generateMigrationReport, 
+  migrateAllFamilyMembers, 
+  validateMonarchIds
+} from '@/lib/data-migration-utils';
 
 interface DataOperationsTabProps {
   familyMembers: CosmosDbFamilyMember[];
+  monarchs: Monarch[];
 }
 
-export function DataOperationsTab({ familyMembers }: DataOperationsTabProps) {
+export function DataOperationsTab({ familyMembers, monarchs }: DataOperationsTabProps) {
   const [isRestoreDialogOpen, setIsRestoreDialogOpen] = useState(false);
+  const [migrationReport, setMigrationReport] = useState<any>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const {
@@ -172,6 +179,74 @@ export function DataOperationsTab({ familyMembers }: DataOperationsTabProps) {
     event.target.value = '';
   };
 
+  // Generate migration report
+  const handleGenerateMigrationReport = () => {
+    if (monarchs.length === 0) {
+      toast({
+        title: 'Monarchs Data Required',
+        description: 'Please load monarchs data before running migration analysis',
+        variant: 'destructive'
+      });
+      return;
+    }
+    
+    const report = generateMigrationReport(familyMembers, monarchs);
+    setMigrationReport(report);
+    
+    toast({
+      title: 'Migration Report Generated',
+      description: `Found ${report.membersNeedingMigration} members needing migration`
+    });
+  };
+
+  // Run data migration
+  const runDataMigration = useMutation({
+    mutationFn: async () => {
+      const migratedMembers = migrateAllFamilyMembers(familyMembers, monarchs);
+      
+      // Update each member via API
+      const updatePromises = migratedMembers.map(member => {
+        if (member.monarchIds && member.monarchIds.length > 0) {
+          return fetch(`/api/cosmos/members/${member.id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(member)
+          });
+        }
+        return Promise.resolve();
+      });
+      
+      await Promise.all(updatePromises);
+      return migratedMembers.length;
+    },
+    onSuccess: (count) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/members'] });
+      setMigrationReport(null);
+      toast({
+        title: 'Migration Complete',
+        description: `Successfully migrated ${count} family members to use monarch IDs`
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: 'Migration Failed',
+        description: error.message || 'Failed to migrate data',
+        variant: 'destructive'
+      });
+    }
+  });
+
+  const handleRunMigration = () => {
+    const confirmed = confirm(
+      'This will update all family members to use monarch IDs instead of monarch names. ' +
+      'This action cannot be undone. Are you sure you want to continue?'
+    );
+    
+    if (confirmed) {
+      runDataMigration.mutate();
+    }
+  };
+
   return (
     <>
       {/* Export/Restore Section */}
@@ -293,6 +368,88 @@ export function DataOperationsTab({ familyMembers }: DataOperationsTabProps) {
               {bulkUpdateResult.dryRun && (
                 <div className="mt-2 text-sm text-muted-foreground">
                   <span className="font-medium">Dry Run Mode:</span> No changes were made to the database.
+                </div>
+              )}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Data Migration Section */}
+      <Card className="mb-6">
+        <CardHeader className="pb-3">
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <RefreshCw className="w-5 h-5" />
+            Data Migration: Names to IDs
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <Alert className="mb-4">
+            <RefreshCw className="h-4 w-4" />
+            <AlertDescription>
+              Migrate monarch relationships from name-based storage to ID-based storage for better data integrity.
+              This will convert monarch names like "Gustav Vasa (1523–1560)" to monarch IDs like "gustav-i-vasa".
+            </AlertDescription>
+          </Alert>
+          
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <Button
+              onClick={handleGenerateMigrationReport}
+              disabled={runDataMigration.isPending}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <AlertCircle className="w-4 h-4" />
+              Generate Migration Report
+            </Button>
+            <Button
+              onClick={handleRunMigration}
+              disabled={runDataMigration.isPending || !migrationReport}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className="w-4 h-4" />
+              {runDataMigration.isPending ? 'Migrating...' : 'Run Migration'}
+            </Button>
+          </div>
+          
+          {migrationReport && (
+            <div className="mt-4 p-4 bg-muted rounded-lg">
+              <h4 className="font-semibold mb-2">Migration Analysis:</h4>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm mb-3">
+                <div>
+                  <span className="font-medium">Total Members:</span> {migrationReport.totalMembers}
+                </div>
+                <div>
+                  <span className="font-medium">Need Migration:</span> {migrationReport.membersNeedingMigration}
+                </div>
+                <div>
+                  <span className="font-medium">Already Migrated:</span> {migrationReport.membersAlreadyMigrated}
+                </div>
+              </div>
+              
+              {migrationReport.migrationDetails.length > 0 && (
+                <div className="mt-3">
+                  <h5 className="font-medium text-sm mb-2">Members to be migrated:</h5>
+                  <div className="max-h-48 overflow-y-auto text-xs">
+                    {migrationReport.migrationDetails.slice(0, 10).map((detail: any, index: number) => (
+                      <div key={index} className="mb-2 p-2 bg-background rounded border">
+                        <div className="font-medium">{detail.memberName} ({detail.externalId})</div>
+                        <div className="text-muted-foreground">
+                          {detail.resolvedMonarchIds.length} monarch IDs resolved
+                          {detail.unresolvedNames.length > 0 && (
+                            <span className="text-orange-600 ml-2">
+                              ({detail.unresolvedNames.length} unresolved)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                    {migrationReport.migrationDetails.length > 10 && (
+                      <div className="text-muted-foreground text-center py-2">
+                        ... and {migrationReport.migrationDetails.length - 10} more
+                      </div>
+                    )}
+                  </div>
                 </div>
               )}
             </div>

@@ -10,22 +10,44 @@ import { ValidationError, validateSearchQuery } from '@/lib/validation';
 
 /**
  * Validate monarch relationships for a family member
+ * 
+ * Enhanced validation with better error reporting and data integrity checks
  */
 export function validateMonarchRelationships(memberData: any, monarchs: Monarch[]) {
   const errors: Record<string, string> = {};
+  const warnings: string[] = [];
   
-  // Validate monarch IDs exist
+  // Validate monarchIds array exists and has valid structure
+  if (memberData.monarchIds && !Array.isArray(memberData.monarchIds)) {
+    errors.monarchIds = 'Monarch IDs must be provided as an array';
+    return errors;
+  }
+  
+  // Check for empty monarch arrays when there should be data
+  if (memberData.monarchDuringLife && memberData.monarchDuringLife.length > 0 && 
+      (!memberData.monarchIds || memberData.monarchIds.length === 0)) {
+    warnings.push('Monarch names exist but no monarch IDs found - may need data migration');
+  }
+  
+  // Validate monarch IDs exist in the monarch database
   if (memberData.monarchIds && memberData.monarchIds.length > 0) {
+    const validMonarchIds = new Set(monarchs.map(m => m.id));
     const invalidMonarchIds = memberData.monarchIds.filter((id: string) => 
-      !monarchs.find(m => m.id === id)
+      !validMonarchIds.has(id)
     );
     
     if (invalidMonarchIds.length > 0) {
-      errors.monarchIds = `Invalid monarch IDs: ${invalidMonarchIds.join(', ')}`;
+      errors.monarchIds = `Invalid monarch IDs: ${invalidMonarchIds.join(', ')}. Please check monarch data.`;
+    }
+    
+    // Check for duplicate monarch IDs
+    const uniqueIds = new Set(memberData.monarchIds);
+    if (uniqueIds.size !== memberData.monarchIds.length) {
+      errors.monarchIds = 'Duplicate monarch IDs detected. Each monarch should only be listed once.';
     }
   }
   
-  // Timeline validation warning (not an error, just a warning)
+  // Timeline validation (warnings, not blocking errors)
   if (memberData.born && memberData.monarchIds && memberData.monarchIds.length > 0) {
     const bornDate = new Date(`${memberData.born}-01-01`);
     const diedDate = memberData.died && memberData.died !== 9999 
@@ -49,9 +71,31 @@ export function validateMonarchRelationships(memberData: any, monarchs: Monarch[
         .filter(Boolean)
         .join(', ');
       
-      // This is a warning, not a blocking error
-      console.warn(`Timeline warning: ${mismatchedNames} may not have reigned during member's lifetime`);
+      warnings.push(`Timeline mismatch: ${mismatchedNames} may not have reigned during member's lifetime (${memberData.born}-${memberData.died || 'present'})`);
     }
+    
+    // Check for chronological order
+    const validMonarchs = memberData.monarchIds
+      .map((id: string) => monarchs.find(m => m.id === id))
+      .filter((monarch: Monarch | undefined): monarch is Monarch => Boolean(monarch))
+      .sort((a: Monarch, b: Monarch) => new Date(a.reignFrom).getTime() - new Date(b.reignFrom).getTime());
+    
+    if (validMonarchs.length > 1) {
+      for (let i = 0; i < validMonarchs.length - 1; i++) {
+        const currentEnd = new Date(validMonarchs[i].reignTo);
+        const nextStart = new Date(validMonarchs[i + 1].reignFrom);
+        
+        if (currentEnd > nextStart) {
+          warnings.push('Overlapping monarch reigns detected - please verify chronological accuracy');
+          break;
+        }
+      }
+    }
+  }
+  
+  // Log warnings for debugging
+  if (warnings.length > 0) {
+    console.warn('Monarch relationship warnings:', warnings);
   }
   
   return errors;
@@ -59,21 +103,39 @@ export function validateMonarchRelationships(memberData: any, monarchs: Monarch[
 
 /**
  * Process form data into member data structure
+ * 
+ * Prioritizes monarchIds as the source of truth for monarch relationships.
+ * Generates monarchDuringLife display names from monarchIds for backward compatibility.
  */
 export function processFamilyMemberFormData(
   formData: FormData, 
   isNew: boolean,
   editingMember: any | null,
-  newMemberMonarchIds: string[]
+  newMemberMonarchIds: string[],
+  monarchs: Monarch[]
 ) {
   const bornValue = formData.get('born') as string;
   const diedValue = formData.get('died') as string;
-  const monarchValue = formData.get('monarchDuringLife') as string;
   const ageAtDeathValue = formData.get('ageAtDeath') as string;
   
   const notesValue = formData.get('notes') as string;
   const fatherValue = formData.get('father') as string;
   const nobleBranchValue = formData.get('nobleBranch') as string;
+  
+  // Use monarchIds as the primary source of truth
+  const monarchIds = isNew ? newMemberMonarchIds : (editingMember?.monarchIds || []);
+  
+  // Generate monarchDuringLife display names from monarchIds for backward compatibility
+  const monarchDuringLife = monarchIds.map((id: string) => {
+    const monarch = monarchs.find(m => m.id === id);
+    if (monarch) {
+      // Format as "Name (reignFrom–reignTo)" for consistency with existing data
+      const fromYear = new Date(monarch.reignFrom).getFullYear();
+      const toYear = new Date(monarch.reignTo).getFullYear();
+      return `${monarch.name} (${fromYear}–${toYear})`;
+    }
+    return id; // Fallback to ID if monarch not found
+  });
   
   return {
     externalId: formData.get('externalId') as string,
@@ -83,14 +145,10 @@ export function processFamilyMemberFormData(
     biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
     notes: notesValue && notesValue.trim() ? notesValue : null,
     father: fatherValue && fatherValue.trim() ? fatherValue : null,
-    // Keep backward compatibility with monarchDuringLife while using monarchIds
-    monarchDuringLife: monarchValue && monarchValue.trim() ? 
-      monarchValue.split(',')
-        .map(m => m.trim())
-        .filter(m => m.length > 0)
-        .map(m => m.replace(/\*$/, '').trim()) // Remove trailing asterisks
-        .filter(m => m.length > 0) : [],
-    monarchIds: isNew ? newMemberMonarchIds : (editingMember?.monarchIds || []), // Use the appropriate monarchIds state
+    // monarchIds is now the primary field for monarch relationships
+    monarchIds: monarchIds,
+    // monarchDuringLife is derived from monarchIds for backward compatibility
+    monarchDuringLife: monarchDuringLife,
     isSuccessionSon: formData.get('isSuccessionSon') === 'on' || false,
     diedYoung: formData.get('diedYoung') === 'on' || false,
     hasMaleChildren: formData.get('hasMaleChildren') === 'on' || false,
