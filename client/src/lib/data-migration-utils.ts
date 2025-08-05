@@ -123,7 +123,8 @@ export function migrateFamilyMember(
   return {
     ...member,
     monarchIds,
-    monarchDuringLife
+    // Keep monarchDuringLife for now during migration phase
+    monarchDuringLife: member.monarchDuringLife
   };
 }
 

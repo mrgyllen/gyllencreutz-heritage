@@ -130,12 +130,8 @@ describe('Monarch ID-Based Data Flow Integration', () => {
       // Verify monarch IDs are primary
       expect(result.monarchIds).toEqual(mockMonarchIds);
       
-      // Verify display names are generated from IDs
-      expect(result.monarchDuringLife).toEqual([
-        'Gustav I Vasa (1523–1560)',
-        'Erik XIV (1560–1568)',
-        'Johan III (1568–1592)'
-      ]);
+      // No longer generates monarchDuringLife - simplified data model uses only monarchIds
+      expect(result.monarchDuringLife).toBeUndefined();
       
       // Verify basic member data
       expect(result.name).toBe('Test Member');
@@ -164,10 +160,8 @@ describe('Monarch ID-Based Data Flow Integration', () => {
       );
 
       expect(result.monarchIds).toEqual(['gustav-i-vasa', 'erik-xiv']);
-      expect(result.monarchDuringLife).toEqual([
-        'Gustav I Vasa (1523–1560)',
-        'Erik XIV (1560–1568)'
-      ]);
+      // No longer generates monarchDuringLife - simplified data model uses only monarchIds
+      expect(result.monarchDuringLife).toBeUndefined();
     });
   });
 
@@ -305,7 +299,7 @@ describe('Monarch ID-Based Data Flow Integration', () => {
       expect(consoleSpy).toHaveBeenCalledWith(
         'Monarch relationship warnings:',
         expect.arrayContaining([
-          expect.stringContaining('may need data migration')
+          expect.stringContaining('Legacy data detected')
         ])
       );
 
@@ -382,12 +376,11 @@ describe('Monarch ID-Based Data Flow Integration', () => {
 
       // Step 4: Verify final data structure
       expect(processedData.monarchIds).toEqual(calculatedIds);
-      expect(processedData.monarchDuringLife).toHaveLength(6);
-      expect(processedData.monarchDuringLife[0]).toBe('Gustav I Vasa (1523–1560)');
-      expect(processedData.monarchDuringLife[5]).toBe('Gustav II Adolf (1611–1632)');
+      // No longer generates monarchDuringLife - simplified data model uses only monarchIds
+      expect(processedData.monarchDuringLife).toBeUndefined();
       
-      // Verify data integrity
-      expect(processedData.monarchIds?.length).toBe(processedData.monarchDuringLife?.length);
+      // Verify data integrity - only monarchIds should be present
+      expect(processedData.monarchIds?.length).toBe(6);
     });
 
     it('handles migration workflow: analyze → migrate → validate', () => {

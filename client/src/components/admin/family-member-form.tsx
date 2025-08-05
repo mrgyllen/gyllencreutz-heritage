@@ -21,6 +21,7 @@ import {
   validateMonarchRelationships,
   calculateMonarchsForLifetime 
 } from '@/lib/admin-validation-utils';
+import { convertMonarchNamesToIds } from '@/lib/data-migration-utils';
 
 interface FamilyMemberFormProps {
   editingMember: CosmosDbFamilyMember | null;
@@ -39,6 +40,27 @@ interface FamilyMemberFormProps {
   setEditingMember: (member: CosmosDbFamilyMember | null) => void;
   onSubmit: (memberData: any, isNew: boolean) => Promise<void>;
   onCancel: () => void;
+}
+
+/**
+ * Get effective monarch IDs for display, handling legacy data migration
+ */
+function getEffectiveMonarchIds(editingMember: CosmosDbFamilyMember | null, monarchs: Monarch[]): string[] {
+  if (!editingMember) return [];
+  
+  // If member has monarchIds, use them directly
+  if (editingMember.monarchIds && editingMember.monarchIds.length > 0) {
+    return editingMember.monarchIds;
+  }
+  
+  // Legacy fallback: if member has monarchDuringLife but no monarchIds, convert on-the-fly for display
+  if (editingMember.monarchDuringLife && editingMember.monarchDuringLife.length > 0) {
+    const convertedIds = convertMonarchNamesToIds(editingMember.monarchDuringLife, monarchs);
+    console.log(`Legacy display conversion for ${editingMember.name}: ${editingMember.monarchDuringLife} → ${convertedIds}`);
+    return convertedIds;
+  }
+  
+  return [];
 }
 
 export function FamilyMemberForm({
@@ -74,13 +96,12 @@ export function FamilyMemberForm({
         formData, 
         isAddingNew, 
         editingMember, 
-        newMemberMonarchIds,
+        newMemberMonarchIds || [],
         monarchs
       );
 
       console.log('Form submission data:', memberData);
       console.log('Monarch IDs:', memberData.monarchIds);
-      console.log('Generated monarch display names:', memberData.monarchDuringLife);
 
       // Validate monarch relationships
       const monarchValidationErrors = validateMonarchRelationships(memberData, monarchs);
@@ -271,12 +292,17 @@ export function FamilyMemberForm({
           <Label htmlFor="monarchDuringLife">Monarchs During Life</Label>
           <MonarchSelector
             monarchs={monarchs}
-            selectedMonarchIds={isAddingNew ? newMemberMonarchIds : (editingMember?.monarchIds || [])}
+            selectedMonarchIds={isAddingNew ? newMemberMonarchIds : getEffectiveMonarchIds(editingMember, monarchs)}
             onSelectionChange={(monarchIds) => {
-              if (isAddingNew) {
-                setNewMemberMonarchIds(monarchIds);
-              } else if (editingMember) {
-                setEditingMember({ ...editingMember, monarchIds });
+              try {
+                if (isAddingNew) {
+                  setNewMemberMonarchIds(monarchIds);
+                } else if (editingMember) {
+                  setEditingMember({ ...editingMember, monarchIds });
+                }
+              } catch (error) {
+                console.error('Error updating monarch selection:', error);
+                // Don't let this error close the form
               }
             }}
             memberBornYear={isAddingNew ? newMemberBornYear : editingMember?.born}

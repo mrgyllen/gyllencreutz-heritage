@@ -61,6 +61,7 @@ export function MonarchSelector({
 }: MonarchSelectorProps) {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
+  const [isAutoCalculating, setIsAutoCalculating] = useState(false);
 
   // Get selected monarchs objects
   const selectedMonarchs = useMemo(() => {
@@ -120,15 +121,36 @@ export function MonarchSelector({
   };
 
   const handleRemoveSelected = (monarchId: string) => {
-    onSelectionChange(selectedMonarchIds.filter(id => id !== monarchId));
+    try {
+      const updatedIds = selectedMonarchIds.filter(id => id !== monarchId);
+      onSelectionChange(updatedIds);
+    } catch (error) {
+      console.error('Error removing monarch:', error);
+      // Don't let the error propagate and potentially close the form
+    }
   };
 
   const handleAutoCalculate = () => {
     if (onAutoCalculate) {
+      setIsAutoCalculating(true);
       onAutoCalculate();
-      setOpen(false);
+      // Don't close the dropdown - let user see the results and choose to save manually
+      // setOpen(false); // Removed to improve UX
+      
+      // Keep dropdown open after auto-calculate
+      setTimeout(() => {
+        setIsAutoCalculating(false);
+      }, 100);
     }
   };
+
+  // Prevent dropdown from closing when selectedMonarchIds change due to auto-calculate
+  useEffect(() => {
+    if (isAutoCalculating) {
+      // Ensure dropdown stays open during auto-calculate
+      setOpen(true);
+    }
+  }, [selectedMonarchIds, isAutoCalculating]);
 
   const getTimelineStatusMessage = () => {
     if (!memberBornYear) {

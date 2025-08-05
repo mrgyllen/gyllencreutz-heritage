@@ -731,7 +731,7 @@ export function FamilyTree() {
                               );
                             })
                           ) : (
-                            selectedMember.monarchDuringLife
+                            (selectedMember.monarchDuringLife || [])
                               .sort((a, b) => {
                                 // Extract start year from format "Name (YYYY–YYYY)" for chronological sorting
                                 const yearMatchA = a.match(/\((\d{4})/);

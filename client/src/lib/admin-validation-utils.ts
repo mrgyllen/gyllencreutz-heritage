@@ -7,6 +7,7 @@
 
 import { type Monarch } from '@/types/family';
 import { ValidationError, validateSearchQuery } from '@/lib/validation';
+import { convertMonarchNamesToIds } from '@/lib/data-migration-utils';
 
 /**
  * Validate monarch relationships for a family member
@@ -23,10 +24,12 @@ export function validateMonarchRelationships(memberData: any, monarchs: Monarch[
     return errors;
   }
   
-  // Check for empty monarch arrays when there should be data
-  if (memberData.monarchDuringLife && memberData.monarchDuringLife.length > 0 && 
-      (!memberData.monarchIds || memberData.monarchIds.length === 0)) {
-    warnings.push('Monarch names exist but no monarch IDs found - may need data migration');
+  // Legacy data migration check - if no monarchIds but has old data, warn about migration need
+  if ((!memberData.monarchIds || memberData.monarchIds.length === 0)) {
+    // Check if this might be a legacy record that needs migration
+    if (memberData.monarchDuringLife && memberData.monarchDuringLife.length > 0) {
+      warnings.push('Legacy data detected - monarchs will be migrated from names to IDs on save');
+    }
   }
   
   // Validate monarch IDs exist in the monarch database
@@ -104,8 +107,8 @@ export function validateMonarchRelationships(memberData: any, monarchs: Monarch[
 /**
  * Process form data into member data structure
  * 
- * Prioritizes monarchIds as the source of truth for monarch relationships.
- * Generates monarchDuringLife display names from monarchIds for backward compatibility.
+ * Uses monarchIds as the sole source of truth for monarch relationships.
+ * No longer generates monarchDuringLife - data model simplified to use only IDs.
  */
 export function processFamilyMemberFormData(
   formData: FormData, 
@@ -122,22 +125,31 @@ export function processFamilyMemberFormData(
   const fatherValue = formData.get('father') as string;
   const nobleBranchValue = formData.get('nobleBranch') as string;
   
-  // Use monarchIds as the primary source of truth
-  const monarchIds = isNew ? newMemberMonarchIds : (editingMember?.monarchIds || []);
+  // Use monarchIds as the only source of truth - no more dual fields
+  let monarchIds: string[] = [];
   
-  // Generate monarchDuringLife display names from monarchIds for backward compatibility
-  const monarchDuringLife = monarchIds.map((id: string) => {
-    const monarch = monarchs.find(m => m.id === id);
-    if (monarch) {
-      // Format as "Name (reignFrom–reignTo)" for consistency with existing data
-      const fromYear = new Date(monarch.reignFrom).getFullYear();
-      const toYear = new Date(monarch.reignTo).getFullYear();
-      return `${monarch.name} (${fromYear}–${toYear})`;
+  if (isNew) {
+    // For new members, use the provided monarch IDs
+    monarchIds = newMemberMonarchIds || [];
+  } else {
+    // For existing members, prioritize monarchIds, but fall back to migration if needed
+    if (editingMember?.monarchIds && editingMember.monarchIds.length > 0) {
+      monarchIds = editingMember.monarchIds;
+    } else if (editingMember?.monarchDuringLife && editingMember.monarchDuringLife.length > 0) {
+      // Legacy migration fallback - convert names to IDs on-the-fly
+      try {
+        monarchIds = convertMonarchNamesToIds(editingMember.monarchDuringLife, monarchs);
+        console.log(`Migrating monarch data for ${editingMember.name}: ${editingMember.monarchDuringLife} → ${monarchIds}`);
+      } catch (error) {
+        console.error('Failed to migrate monarch data:', error);
+        monarchIds = [];
+      }
+    } else {
+      monarchIds = [];
     }
-    return id; // Fallback to ID if monarch not found
-  });
+  }
   
-  return {
+  const processedData = {
     externalId: formData.get('externalId') as string,
     name: formData.get('name') as string,
     born: bornValue && bornValue.trim() ? parseInt(bornValue) : null,
@@ -145,16 +157,17 @@ export function processFamilyMemberFormData(
     biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
     notes: notesValue && notesValue.trim() ? notesValue : null,
     father: fatherValue && fatherValue.trim() ? fatherValue : null,
-    // monarchIds is now the primary field for monarch relationships
+    // monarchIds is the only field for monarch relationships
     monarchIds: monarchIds,
-    // monarchDuringLife is derived from monarchIds for backward compatibility
-    monarchDuringLife: monarchDuringLife,
+    // monarchDuringLife field removed - no longer stored or generated
     isSuccessionSon: formData.get('isSuccessionSon') === 'on' || false,
     diedYoung: formData.get('diedYoung') === 'on' || false,
     hasMaleChildren: formData.get('hasMaleChildren') === 'on' || false,
     nobleBranch: nobleBranchValue && nobleBranchValue.trim() ? nobleBranchValue : null,
     ageAtDeath: ageAtDeathValue && ageAtDeathValue.trim() ? parseInt(ageAtDeathValue) : null,
   };
+
+  return processedData;
 }
 
 /**

@@ -12,8 +12,8 @@ export interface FamilyMember {
   isSuccessionSon: boolean;
   hasMaleChildren: boolean;
   nobleBranch: string | null;
-  monarchDuringLife: string[];
-  monarchIds?: string[]; // New field for proper monarch relationship IDs
+  monarchDuringLife?: string[]; // Legacy field - being phased out in favor of monarchIds
+  monarchIds?: string[]; // Monarch relationship IDs (e.g., ["gustav-i-vasa", "erik-xiv"]) - allow optional for migration
   generation?: number;
 }
 
@@ -63,8 +63,8 @@ export interface CosmosDbFamilyMember {
   isSuccessionSon: boolean;
   hasMaleChildren: boolean;
   nobleBranch: string | null;
-  monarchDuringLife: string[];
-  monarchIds?: string[]; // New field for proper monarch relationship IDs
+  monarchDuringLife?: string[]; // Legacy field - being phased out in favor of monarchIds
+  monarchIds?: string[]; // Monarch relationship IDs (e.g., ["gustav-i-vasa", "erik-xiv"]) - allow optional for migration
   importedAt?: string;
   importSource?: string;
   _rid?: string; // Cosmos DB resource ID
@@ -74,7 +74,7 @@ export interface CosmosDbFamilyMember {
   _ts?: number; // Cosmos DB timestamp
 }
 
-export interface CreateCosmosDbFamilyMember extends Omit<CosmosDbFamilyMember, 'id' | '_rid' | '_self' | '_etag' | '_attachments' | '_ts' | 'importedAt' | 'importSource' | 'notes' | 'father' | 'nobleBranch' | 'ageAtDeath' | 'diedYoung' | 'isSuccessionSon' | 'hasMaleChildren' | 'monarchDuringLife'> {
+export interface CreateCosmosDbFamilyMember extends Omit<CosmosDbFamilyMember, 'id' | '_rid' | '_self' | '_etag' | '_attachments' | '_ts' | 'importedAt' | 'importSource' | 'notes' | 'father' | 'nobleBranch' | 'ageAtDeath' | 'diedYoung' | 'isSuccessionSon' | 'hasMaleChildren'> {
   id?: string; // Optional for creation, will be generated if not provided
   notes?: string | null; // Allow undefined for form handling
   father?: string | null; // Allow undefined for form handling
@@ -83,7 +83,7 @@ export interface CreateCosmosDbFamilyMember extends Omit<CosmosDbFamilyMember, '
   diedYoung?: boolean; // Allow undefined for form handling
   isSuccessionSon?: boolean; // Allow undefined for form handling
   hasMaleChildren?: boolean; // Allow undefined for form handling
-  monarchDuringLife?: string[]; // Allow undefined for form handling
+  monarchDuringLife?: string[]; // Legacy field - allow undefined for form handling
 }
 
 export interface ImportStatus {
