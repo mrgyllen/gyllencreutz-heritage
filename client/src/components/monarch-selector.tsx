@@ -67,10 +67,10 @@ export function MonarchSelector({
     return monarchs.filter(monarch => selectedMonarchIds.includes(monarch.id));
   }, [monarchs, selectedMonarchIds]);
 
-  // Filter monarchs based on timeline validation
-  const filteredMonarchs = useMemo(() => {
-    if (!showOnlyTimelineValid || !memberBornYear) {
-      return monarchs;
+  // Calculate timeline-valid monarchs (for status message)
+  const timelineValidMonarchs = useMemo(() => {
+    if (!memberBornYear) {
+      return [];
     }
 
     return monarchs.filter(monarch => {
@@ -85,7 +85,16 @@ export function MonarchSelector({
       // Check if reign overlaps with lifetime
       return reignFromDate <= diedDate && reignToDate >= bornDate;
     });
-  }, [monarchs, memberBornYear, memberDiedYear, showOnlyTimelineValid]);
+  }, [monarchs, memberBornYear, memberDiedYear]);
+
+  // Filter monarchs based on timeline validation (for display)
+  const filteredMonarchs = useMemo(() => {
+    if (!showOnlyTimelineValid || !memberBornYear) {
+      return monarchs;
+    }
+
+    return timelineValidMonarchs;
+  }, [monarchs, timelineValidMonarchs, showOnlyTimelineValid, memberBornYear]);
 
   // Filter monarchs based on search
   const searchFilteredMonarchs = useMemo(() => {
@@ -126,7 +135,7 @@ export function MonarchSelector({
       return "Birth year required for timeline validation";
     }
 
-    const timelineValidCount = filteredMonarchs.length;
+    const timelineValidCount = timelineValidMonarchs.length;
     const totalCount = monarchs.length;
 
     if (showOnlyTimelineValid) {
@@ -208,7 +217,7 @@ export function MonarchSelector({
                 <ScrollArea className="h-[300px]">
                   {searchFilteredMonarchs.map((monarch) => {
                     const isSelected = selectedMonarchIds.includes(monarch.id);
-                    const isTimelineValid = filteredMonarchs.includes(monarch);
+                    const isTimelineValid = timelineValidMonarchs.includes(monarch);
                     
                     return (
                       <CommandItem

@@ -110,16 +110,22 @@ export function FamilyMemberForm({
         const calculatedMonarchIds = calculateMonarchsForLifetime(bornYear, diedYear || null, monarchs);
         
         if (isAddingNew) {
+          // For new members, just update the state
           setNewMemberMonarchIds(calculatedMonarchIds);
+          
+          toast({ 
+            title: 'Auto-calculated', 
+            description: `Found ${calculatedMonarchIds.length} monarchs during lifetime`,
+            duration: 3000 
+          });
         } else if (editingMember) {
-          setEditingMember({ ...editingMember, monarchIds: calculatedMonarchIds });
+          // For existing members, update the state and save immediately
+          const updatedMember = { ...editingMember, monarchIds: calculatedMonarchIds };
+          setEditingMember(updatedMember);
+          
+          // Trigger immediate save with the calculated monarch IDs
+          await handleAutoSave(updatedMember, calculatedMonarchIds);
         }
-        
-        toast({ 
-          title: 'Auto-calculated', 
-          description: `Found ${calculatedMonarchIds.length} monarchs during lifetime`,
-          duration: 3000 
-        });
       } catch (error) {
         toast({ 
           title: 'Auto-calculate failed', 
@@ -134,6 +140,59 @@ export function FamilyMemberForm({
         description: 'Please enter a birth year to auto-calculate monarchs',
         variant: 'destructive',
         duration: 3000 
+      });
+    }
+  };
+
+  const handleAutoSave = async (updatedMember: CosmosDbFamilyMember, calculatedMonarchIds: string[]) => {
+    if (isSubmitting) return;
+    
+    setIsSubmitting(true);
+    setValidationErrors({});
+
+    try {
+      // Create member data with the calculated monarch IDs
+      const memberData = {
+        ...updatedMember,
+        monarchIds: calculatedMonarchIds,
+        // Maintain backward compatibility
+        monarchDuringLife: calculatedMonarchIds.map(id => {
+          const monarch = monarchs.find(m => m.id === id);
+          return monarch ? monarch.name : id;
+        })
+      };
+
+      console.log('Auto-save submission data:', memberData);
+
+      // Validate monarch relationships
+      const monarchValidationErrors = validateMonarchRelationships(memberData, monarchs);
+      if (Object.keys(monarchValidationErrors).length > 0) {
+        setValidationErrors({ ...validationErrors, ...monarchValidationErrors });
+        setIsSubmitting(false);
+        toast({ 
+          title: 'Validation Error', 
+          description: 'Please fix the monarch relationship errors',
+          variant: 'destructive',
+          duration: 5000
+        });
+        return;
+      }
+
+      await onSubmit(memberData, false);
+      
+      toast({ 
+        title: 'Auto-calculated and Saved', 
+        description: `Found and saved ${calculatedMonarchIds.length} monarchs during lifetime`,
+        duration: 3000 
+      });
+    } catch (error) {
+      console.error('Auto-save error:', error);
+      setIsSubmitting(false);
+      toast({ 
+        title: 'Auto-save failed', 
+        description: 'Monarchs calculated but could not be saved automatically',
+        variant: 'destructive',
+        duration: 5000 
       });
     }
   };
