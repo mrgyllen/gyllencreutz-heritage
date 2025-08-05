@@ -11,11 +11,14 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useToast } from '@/hooks/use-toast';
 import { useLocation } from 'wouter';
-import { type CosmosDbFamilyMember, type CreateCosmosDbFamilyMember, type ImportStatus } from '@/types/family';
+import { type CosmosDbFamilyMember, type CreateCosmosDbFamilyMember, type ImportStatus, type Monarch } from '@/types/family';
 import { AdminErrorBoundary, useErrorHandler } from '@/components/error-boundary';
-import { familyApi } from '@/lib/api';
+import { familyApi, monarchsApi } from '@/lib/api';
+import { MonarchCard } from '@/components/monarch-card';
+import { MonarchSelector } from '@/components/monarch-selector';
 import { 
   validateFamilyMember, 
   validateFamilyMemberUpdate, 
@@ -45,6 +48,19 @@ function AdminDbContent() {
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [bulkUpdateResult, setBulkUpdateResult] = useState<any>(null);
+  
+  // Monarchs management state
+  const [monarchSearchQuery, setMonarchSearchQuery] = useState('');
+  const [editingMonarch, setEditingMonarch] = useState<Monarch | null>(null);
+  const [isAddingNewMonarch, setIsAddingNewMonarch] = useState(false);
+  const [monarchValidationErrors, setMonarchValidationErrors] = useState<Record<string, string>>({});
+  const [isSubmittingMonarch, setIsSubmittingMonarch] = useState(false);
+  
+  // New member form state for monarchs
+  const [newMemberMonarchIds, setNewMemberMonarchIds] = useState<string[]>([]);
+  const [newMemberBornYear, setNewMemberBornYear] = useState<number | null>(null);
+  const [newMemberDiedYear, setNewMemberDiedYear] = useState<number | null>(null);
+  
   const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -66,6 +82,16 @@ function AdminDbContent() {
     queryKey: ['/api/cosmos/import/status'],
     queryFn: familyApi.getImportStatus,
     refetchInterval: 30000, // Refresh every 30 seconds
+  });
+
+  // Monarchs data query
+  const { data: monarchs = [], isLoading: monarchsLoading, error: monarchsError } = useQuery<Monarch[]>({
+    queryKey: ['/api/cosmos/monarchs'],
+    queryFn: monarchsApi.getAll,
+    retry: (failureCount, error: any) => {
+      if (error instanceof ValidationError) return false;
+      return failureCount < 3;
+    },
   });
 
   // CRUD mutations with enhanced error handling
@@ -256,6 +282,96 @@ function AdminDbContent() {
     },
   });
 
+  // Monarch CRUD mutations
+  const createMonarchMutation = useMutation({
+    mutationFn: async (monarchData: Monarch) => {
+      return await monarchsApi.createMonarch(monarchData);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/monarchs'] });
+      toast({ 
+        title: 'Success', 
+        description: 'Monarch created successfully',
+        duration: 3000 
+      });
+      setIsAddingNewMonarch(false);
+      setMonarchValidationErrors({});
+      setIsSubmittingMonarch(false);
+    },
+    onError: (error) => {
+      setIsSubmittingMonarch(false);
+      if (error instanceof ValidationError) {
+        const fieldErrors: Record<string, string> = {};
+        if (error.field) {
+          fieldErrors[error.field] = error.userMessage;
+        }
+        setMonarchValidationErrors(fieldErrors);
+        toast({ 
+          title: 'Validation Error', 
+          description: error.userMessage, 
+          variant: 'destructive',
+          duration: 5000
+        });
+      } else {
+        reportError(error, 'createMonarch');
+        setMonarchValidationErrors({});
+      }
+    },
+  });
+
+  const updateMonarchMutation = useMutation({
+    mutationFn: async (monarch: Monarch) => {
+      return await monarchsApi.updateMonarch(monarch.id, monarch);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/monarchs'] });
+      toast({ 
+        title: 'Success', 
+        description: 'Monarch updated successfully',
+        duration: 3000 
+      });
+      setEditingMonarch(null);
+      setMonarchValidationErrors({});
+      setIsSubmittingMonarch(false);
+    },
+    onError: (error) => {
+      setIsSubmittingMonarch(false);
+      if (error instanceof ValidationError) {
+        const fieldErrors: Record<string, string> = {};
+        if (error.field) {
+          fieldErrors[error.field] = error.userMessage;
+        }
+        setMonarchValidationErrors(fieldErrors);
+        toast({ 
+          title: 'Validation Error', 
+          description: error.userMessage, 
+          variant: 'destructive',
+          duration: 5000
+        });
+      } else {
+        reportError(error, 'updateMonarch');
+        setMonarchValidationErrors({});
+      }
+    },
+  });
+
+  const deleteMonarchMutation = useMutation({
+    mutationFn: async (id: string) => {
+      return await monarchsApi.deleteMonarch(id);
+    },
+    onSuccess: (_, deletedId) => {
+      queryClient.invalidateQueries({ queryKey: ['/api/cosmos/monarchs'] });
+      toast({ 
+        title: 'Success', 
+        description: 'Monarch deleted successfully',
+        duration: 3000 
+      });
+    },
+    onError: (error) => {
+      reportError(error, 'deleteMonarch');
+    },
+  });
+
   // Bulk update monarchs mutation
   const bulkUpdateMutation = useMutation({
     mutationFn: async (options: { dryRun: boolean }) => {
@@ -331,6 +447,61 @@ function AdminDbContent() {
     member.notes?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const filteredMonarchs = monarchs.filter(monarch =>
+    monarch.name.toLowerCase().includes(monarchSearchQuery.toLowerCase()) ||
+    monarch.id.toLowerCase().includes(monarchSearchQuery.toLowerCase()) ||
+    monarch.about?.toLowerCase().includes(monarchSearchQuery.toLowerCase())
+  );
+
+  /**
+   * Validate monarch relationships for a family member
+   */
+  const validateMonarchRelationships = (memberData: any) => {
+    const errors: Record<string, string> = {};
+    
+    // Validate monarch IDs exist
+    if (memberData.monarchIds && memberData.monarchIds.length > 0) {
+      const invalidMonarchIds = memberData.monarchIds.filter((id: string) => 
+        !monarchs.find(m => m.id === id)
+      );
+      
+      if (invalidMonarchIds.length > 0) {
+        errors.monarchIds = `Invalid monarch IDs: ${invalidMonarchIds.join(', ')}`;
+      }
+    }
+    
+    // Timeline validation warning (not an error, just a warning)
+    if (memberData.born && memberData.monarchIds && memberData.monarchIds.length > 0) {
+      const bornDate = new Date(`${memberData.born}-01-01`);
+      const diedDate = memberData.died && memberData.died !== 9999 
+        ? new Date(`${memberData.died}-12-31`) 
+        : new Date(); // If still alive, use current date
+
+      const timelineMismatches = memberData.monarchIds.filter((id: string) => {
+        const monarch = monarchs.find(m => m.id === id);
+        if (!monarch) return false;
+        
+        const reignFromDate = new Date(monarch.reignFrom);
+        const reignToDate = new Date(monarch.reignTo);
+        
+        // Check if reign does NOT overlap with lifetime
+        return !(reignFromDate <= diedDate && reignToDate >= bornDate);
+      });
+      
+      if (timelineMismatches.length > 0) {
+        const mismatchedNames = timelineMismatches
+          .map((id: string) => monarchs.find(m => m.id === id)?.name)
+          .filter(Boolean)
+          .join(', ');
+        
+        // This is a warning, not a blocking error
+        console.warn(`Timeline warning: ${mismatchedNames} may not have reigned during member's lifetime`);
+      }
+    }
+    
+    return errors;
+  };
+
   /**
    * Enhanced form submission with comprehensive validation
    */
@@ -358,12 +529,14 @@ function AdminDbContent() {
         biologicalSex: formData.get('biologicalSex') as string || 'Unknown',
         notes: notesValue && notesValue.trim() ? notesValue : null,
         father: fatherValue && fatherValue.trim() ? fatherValue : null,
+        // Keep backward compatibility with monarchDuringLife while using monarchIds
         monarchDuringLife: monarchValue && monarchValue.trim() ? 
           monarchValue.split(',')
             .map(m => m.trim())
             .filter(m => m.length > 0)
             .map(m => m.replace(/\*$/, '').trim()) // Remove trailing asterisks
             .filter(m => m.length > 0) : [],
+        monarchIds: isNew ? newMemberMonarchIds : (editingMember?.monarchIds || []), // Use the appropriate monarchIds state
         isSuccessionSon: formData.get('isSuccessionSon') === 'on' || false,
         diedYoung: formData.get('diedYoung') === 'on' || false,
         hasMaleChildren: formData.get('hasMaleChildren') === 'on' || false,
@@ -373,6 +546,20 @@ function AdminDbContent() {
 
       console.log('Form submission data:', memberData);
       console.log('Monarch array after processing:', memberData.monarchDuringLife);
+
+      // Validate monarch relationships
+      const monarchValidationErrors = validateMonarchRelationships(memberData);
+      if (Object.keys(monarchValidationErrors).length > 0) {
+        setValidationErrors(prev => ({ ...prev, ...monarchValidationErrors }));
+        setIsSubmitting(false);
+        toast({ 
+          title: 'Validation Error', 
+          description: 'Please fix the monarch relationship errors',
+          variant: 'destructive',
+          duration: 5000
+        });
+        return;
+      }
 
       if (isNew) {
         await addMemberMutation.mutateAsync({
@@ -390,6 +577,120 @@ function AdminDbContent() {
     } catch (error) {
       // Error handling is done in the mutation onError callbacks
       console.error('Form submission error:', error);
+    }
+  };
+
+  /**
+   * Validate monarch data
+   */
+  const validateMonarchData = (monarchData: Monarch) => {
+    const errors: Record<string, string> = {};
+    
+    // Validate required fields
+    if (!monarchData.id || !monarchData.id.trim()) {
+      errors.id = 'Monarch ID is required';
+    } else if (monarchs.find(m => m.id === monarchData.id && m.id !== editingMonarch?.id)) {
+      errors.id = 'Monarch ID must be unique';
+    }
+    
+    if (!monarchData.name || !monarchData.name.trim()) {
+      errors.name = 'Monarch name is required';
+    }
+    
+    if (!monarchData.reignFrom) {
+      errors.reignFrom = 'Reign start date is required';
+    }
+    
+    if (!monarchData.reignTo) {
+      errors.reignTo = 'Reign end date is required';
+    }
+    
+    // Validate date logic
+    if (monarchData.reignFrom && monarchData.reignTo) {
+      const reignFromDate = new Date(monarchData.reignFrom);
+      const reignToDate = new Date(monarchData.reignTo);
+      
+      if (reignFromDate >= reignToDate) {
+        errors.reignTo = 'Reign end date must be after reign start date';
+      }
+    }
+    
+    if (monarchData.born && monarchData.died) {
+      const bornDate = new Date(monarchData.born);
+      const diedDate = new Date(monarchData.died);
+      
+      if (bornDate >= diedDate) {
+        errors.died = 'Death date must be after birth date';
+      }
+    }
+    
+    // Validate reign vs life dates
+    if (monarchData.born && monarchData.reignFrom) {
+      const bornDate = new Date(monarchData.born);
+      const reignFromDate = new Date(monarchData.reignFrom);
+      
+      if (reignFromDate < bornDate) {
+        errors.reignFrom = 'Reign cannot start before birth';
+      }
+    }
+    
+    if (monarchData.died && monarchData.reignTo) {
+      const diedDate = new Date(monarchData.died);
+      const reignToDate = new Date(monarchData.reignTo);
+      
+      if (reignToDate > diedDate) {
+        errors.reignTo = 'Reign cannot end after death';
+      }
+    }
+    
+    return errors;
+  };
+
+  /**
+   * Monarch form submission with validation
+   */
+  const handleMonarchSubmit = async (formData: FormData, isNew: boolean = false) => {
+    if (isSubmittingMonarch) return;
+
+    setIsSubmittingMonarch(true);
+    setMonarchValidationErrors({});
+
+    try {
+      const monarchData: Monarch = {
+        id: formData.get('id') as string,
+        name: formData.get('name') as string,
+        born: formData.get('born') as string,
+        died: formData.get('died') as string,
+        reignFrom: formData.get('reignFrom') as string,
+        reignTo: formData.get('reignTo') as string,
+        quote: (formData.get('quote') as string) || undefined,
+        about: (formData.get('about') as string) || undefined,
+        portraitFileName: (formData.get('portraitFileName') as string) || undefined,
+      };
+
+      console.log('Monarch form submission data:', monarchData);
+
+      // Validate monarch data
+      const validationErrors = validateMonarchData(monarchData);
+      if (Object.keys(validationErrors).length > 0) {
+        setMonarchValidationErrors(validationErrors);
+        setIsSubmittingMonarch(false);
+        toast({ 
+          title: 'Validation Error', 
+          description: 'Please fix the form errors',
+          variant: 'destructive',
+          duration: 5000
+        });
+        return;
+      }
+
+      if (isNew) {
+        await createMonarchMutation.mutateAsync(monarchData);
+      } else if (editingMonarch) {
+        await updateMonarchMutation.mutateAsync(monarchData);
+      }
+    } catch (error) {
+      console.error('Monarch form submission error:', error);
     }
   };
 
@@ -506,9 +807,9 @@ function AdminDbContent() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <Database className="w-8 h-8 text-blue-600" />
-            <h1 className="text-3xl font-bold text-primary">Cosmos DB Family Administration</h1>
+            <h1 className="text-3xl font-bold text-primary">Heritage Administration</h1>
           </div>
-          <p className="text-muted-foreground">Manage family member information stored in Azure Cosmos DB</p>
+          <p className="text-muted-foreground">Manage family members, monarchs, and data operations</p>
         </div>
         <Button
           onClick={() => setLocation('/')}
@@ -520,131 +821,23 @@ function AdminDbContent() {
         </Button>
       </div>
 
-      {/* Export/Restore Section */}
-      <Card className="mb-6">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Database className="w-5 h-5" />
-            Data Management
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-            <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">{familyMembers.length}</div>
-              <div className="text-sm text-muted-foreground">Current Records</div>
-            </div>
-            <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">Azure Cosmos DB</div>
-              <div className="text-sm text-muted-foreground">Storage Backend</div>
-            </div>
-          </div>
-          
-          <Alert className="mb-4">
-            <CheckCircle className="h-4 w-4" />
-            <AlertDescription>
-              Export your data to create local JSON backups, or restore from a previous backup file.
-            </AlertDescription>
-          </Alert>
+      <Tabs defaultValue="family-members" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="family-members" className="flex items-center gap-2">
+            <Database className="w-4 h-4" />
+            Family Members
+          </TabsTrigger>
+          <TabsTrigger value="monarchs" className="flex items-center gap-2">
+            <Crown className="w-4 h-4" />
+            Monarchs
+          </TabsTrigger>
+          <TabsTrigger value="data-operations" className="flex items-center gap-2">
+            <Upload className="w-4 h-4" />
+            Data Operations
+          </TabsTrigger>
+        </TabsList>
 
-          <div className="flex gap-2">
-            <Button
-              onClick={exportData}
-              className="flex items-center gap-2"
-            >
-              <Download className="w-4 h-4" />
-              Export to JSON
-            </Button>
-            <div className="relative">
-              <input
-                type="file"
-                accept=".json"
-                onChange={handleFileRestore}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                disabled={restoreDataMutation.isPending}
-              />
-              <Button
-                disabled={restoreDataMutation.isPending}
-                variant="outline"
-                className="flex items-center gap-2"
-              >
-                <Upload className="w-4 h-4" />
-                {restoreDataMutation.isPending ? 'Restoring...' : 'Restore from JSON'}
-              </Button>
-            </div>
-            <Button
-              onClick={() => clearDataMutation.mutate()}
-              disabled={clearDataMutation.isPending}
-              variant="destructive"
-              className="flex items-center gap-2"
-            >
-              <Trash2 className="w-4 h-4" />
-              {clearDataMutation.isPending ? 'Clearing...' : 'Clear All Data'}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Monarchs Management */}
-      <Card className="mb-6">
-        <CardHeader className="pb-3">
-          <CardTitle className="flex items-center gap-2 text-lg">
-            <Crown className="w-5 h-5" />
-            Monarchs Management
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Alert className="mb-4">
-            <Crown className="h-4 w-4" />
-            <AlertDescription>
-              Update family members with proper monarch relationships based on reign dates. 
-              Use dry-run to preview changes before applying them.
-            </AlertDescription>
-          </Alert>
-          
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
-            <Button
-              onClick={handleBulkUpdateMonarchsDryRun}
-              disabled={bulkUpdateMutation.isPending}
-              variant="outline"
-              className="flex items-center gap-2"
-            >
-              <AlertCircle className="w-4 h-4" />
-              {bulkUpdateMutation.isPending ? 'Processing...' : 'Dry Run Preview'}
-            </Button>
-            <Button
-              onClick={handleBulkUpdateMonarchs}
-              disabled={bulkUpdateMutation.isPending}
-              className="flex items-center gap-2"
-            >
-              <CheckCircle className="w-4 h-4" />
-              {bulkUpdateMutation.isPending ? 'Updating...' : 'Execute Bulk Update'}
-            </Button>
-          </div>
-          
-          {bulkUpdateResult && (
-            <div className="mt-4 p-4 bg-muted rounded-lg">
-              <h4 className="font-semibold mb-2">Operation Results:</h4>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
-                <div>
-                  <span className="font-medium">Total Members:</span> {bulkUpdateResult.total}
-                </div>
-                <div>
-                  <span className="font-medium">Processed:</span> {bulkUpdateResult.processed}
-                </div>
-                <div>
-                  <span className="font-medium">Updated:</span> {bulkUpdateResult.updated}
-                </div>
-              </div>
-              {bulkUpdateResult.dryRun && (
-                <div className="mt-2 text-sm text-muted-foreground">
-                  <span className="font-medium">Dry Run Mode:</span> No changes were made to the database.
-                </div>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+        <TabsContent value="family-members" className="mt-6">
 
       {/* Search and Actions */}
       <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
@@ -767,6 +960,11 @@ function AdminDbContent() {
         if (!open) {
           setEditingMember(null);
           setIsAddingNew(false);
+          setValidationErrors({});
+          // Clear new member state
+          setNewMemberMonarchIds([]);
+          setNewMemberBornYear(null);
+          setNewMemberDiedYear(null);
         }
       }}>
         <DialogContent className="max-w-2xl">
@@ -829,6 +1027,12 @@ function AdminDbContent() {
                   className={validationErrors.born ? 'border-red-500' : ''}
                   placeholder="e.g., 1515"
                   aria-describedby={validationErrors.born ? 'born-error' : undefined}
+                  onChange={(e) => {
+                    const year = e.target.value ? parseInt(e.target.value) : null;
+                    if (isAddingNew) {
+                      setNewMemberBornYear(year);
+                    }
+                  }}
                 />
                 {validationErrors.born && (
                   <p id="born-error" className="text-sm text-red-600" role="alert">
@@ -846,6 +1050,12 @@ function AdminDbContent() {
                   className={validationErrors.died ? 'border-red-500' : ''}
                   placeholder="e.g., 1560"
                   aria-describedby={validationErrors.died ? 'died-error' : undefined}
+                  onChange={(e) => {
+                    const year = e.target.value ? parseInt(e.target.value) : null;
+                    if (isAddingNew) {
+                      setNewMemberDiedYear(year);
+                    }
+                  }}
                 />
                 {validationErrors.died && (
                   <p id="died-error" className="text-sm text-red-600" role="alert">
@@ -891,18 +1101,77 @@ function AdminDbContent() {
                 )}
               </div>
               <div className="space-y-2">
-                <Label htmlFor="monarchDuringLife">Monarch During Life</Label>
-                <Input
-                  id="monarchDuringLife"
-                  name="monarchDuringLife"
-                  defaultValue={editingMember?.monarchDuringLife?.join(', ') || ''}
-                  className={validationErrors.monarchDuringLife ? 'border-red-500' : ''}
-                  placeholder="e.g., Gustav Vasa, Erik XIV"
-                  aria-describedby={validationErrors.monarchDuringLife ? 'monarchDuringLife-error' : undefined}
+                <Label htmlFor="monarchDuringLife">Monarchs During Life</Label>
+                <MonarchSelector
+                  monarchs={monarchs}
+                  selectedMonarchIds={isAddingNew ? newMemberMonarchIds : (editingMember?.monarchIds || [])}
+                  onSelectionChange={(monarchIds) => {
+                    if (isAddingNew) {
+                      setNewMemberMonarchIds(monarchIds);
+                    } else if (editingMember) {
+                      setEditingMember({ ...editingMember, monarchIds });
+                    }
+                  }}
+                  memberBornYear={isAddingNew ? newMemberBornYear : editingMember?.born}
+                  memberDiedYear={isAddingNew ? newMemberDiedYear : editingMember?.died}
+                  showOnlyTimelineValid={false}
+                  showAutoCalculate={true}
+                  onAutoCalculate={async () => {
+                    const bornYear = isAddingNew ? newMemberBornYear : editingMember?.born;
+                    const diedYear = isAddingNew ? newMemberDiedYear : editingMember?.died;
+                    
+                    if (bornYear) {
+                      try {
+                        // Calculate monarchs based on lifetime using cosmosClient logic
+                        const bornDate = new Date(`${bornYear}-01-01`);
+                        const diedDate = diedYear && diedYear !== 9999 
+                          ? new Date(`${diedYear}-12-31`) 
+                          : new Date(); // If still alive, use current date
+
+                        const overlappingMonarchs = monarchs.filter(monarch => {
+                          const reignFromDate = new Date(monarch.reignFrom);
+                          const reignToDate = new Date(monarch.reignTo);
+                          
+                          // Check if reign overlaps with lifetime
+                          return reignFromDate <= diedDate && reignToDate >= bornDate;
+                        });
+
+                        const calculatedMonarchIds = overlappingMonarchs.map(m => m.id);
+                        
+                        if (isAddingNew) {
+                          setNewMemberMonarchIds(calculatedMonarchIds);
+                        } else if (editingMember) {
+                          setEditingMember({ ...editingMember, monarchIds: calculatedMonarchIds });
+                        }
+                        
+                        toast({ 
+                          title: 'Auto-calculated', 
+                          description: `Found ${calculatedMonarchIds.length} monarchs during lifetime`,
+                          duration: 3000 
+                        });
+                      } catch (error) {
+                        toast({ 
+                          title: 'Auto-calculate failed', 
+                          description: 'Could not calculate monarchs for this member',
+                          variant: 'destructive',
+                          duration: 3000 
+                        });
+                      }
+                    } else {
+                      toast({ 
+                        title: 'Birth year required', 
+                        description: 'Please enter a birth year to auto-calculate monarchs',
+                        variant: 'destructive',
+                        duration: 3000 
+                      });
+                    }
+                  }}
+                  className={validationErrors.monarchIds ? 'border-red-500' : ''}
+                  placeholder="Search and select monarchs..."
                 />
-                {validationErrors.monarchDuringLife && (
-                  <p id="monarchDuringLife-error" className="text-sm text-red-600" role="alert">
-                    {validationErrors.monarchDuringLife}
+                {validationErrors.monarchIds && (
+                  <p className="text-sm text-red-600" role="alert">
+                    {validationErrors.monarchIds}
                   </p>
                 )}
               </div>
@@ -943,6 +1212,10 @@ function AdminDbContent() {
                   setEditingMember(null);
                   setIsAddingNew(false);
                   setValidationErrors({});
+                  // Clear new member state
+                  setNewMemberMonarchIds([]);
+                  setNewMemberBornYear(null);
+                  setNewMemberDiedYear(null);
                 }}
                 disabled={isSubmitting}
               >
@@ -970,6 +1243,490 @@ function AdminDbContent() {
           </form>
         </DialogContent>
       </Dialog>
+        </TabsContent>
+
+        <TabsContent value="monarchs" className="mt-6">
+          {monarchsLoading ? (
+            <div className="flex items-center justify-center h-64">
+              <div className="text-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+                <p className="text-muted-foreground">Loading monarchs...</p>
+              </div>
+            </div>
+          ) : monarchsError ? (
+            <Card className="max-w-lg mx-auto">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-red-600">
+                  <AlertTriangle className="h-5 w-5" />
+                  Error Loading Monarchs
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Alert>
+                  <AlertDescription>
+                    Failed to load monarchs data. Please check your connection and try again.
+                  </AlertDescription>
+                </Alert>
+                <div className="flex gap-2 mt-4">
+                  <Button onClick={() => queryClient.invalidateQueries({ queryKey: ['/api/cosmos/monarchs'] })}>
+                    <RotateCcw className="h-4 w-4 mr-2" />
+                    Retry
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : (
+            <>
+              {/* Search and Actions */}
+              <div className="mb-6 flex flex-col sm:flex-row gap-4 items-center justify-between">
+                <div className="relative flex-1 max-w-md">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 w-5 h-5" />
+                  <Input
+                    placeholder="Search monarchs by name, ID, or description..."
+                    value={monarchSearchQuery}
+                    onChange={(e) => setMonarchSearchQuery(e.target.value)}
+                    className="pl-11 h-10 border-gray-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 bg-white shadow-sm"
+                    aria-label="Search monarchs"
+                  />
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setIsAddingNewMonarch(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="w-4 h-4" />
+                    Add Monarch
+                  </Button>
+                </div>
+              </div>
+
+              {/* Statistics */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold">{monarchs.length}</div>
+                    <div className="text-sm text-muted-foreground">Total Monarchs</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold">{filteredMonarchs.length}</div>
+                    <div className="text-sm text-muted-foreground">Search Results</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold">{monarchs.filter(m => m.portraitFileName).length}</div>
+                    <div className="text-sm text-muted-foreground">With Portraits</div>
+                  </CardContent>
+                </Card>
+                <Card>
+                  <CardContent className="p-4 text-center">
+                    <div className="text-2xl font-bold">Swedish</div>
+                    <div className="text-sm text-muted-foreground">Monarchs</div>
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Monarchs Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredMonarchs.map((monarch) => (
+                  <div key={monarch.id} className="relative">
+                    <MonarchCard 
+                      monarch={monarch}
+                      className="h-full"
+                    />
+                    <div className="absolute top-2 right-2 flex gap-1">
+                      <Button
+                        onClick={() => setEditingMonarch(monarch)}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white"
+                      >
+                        <Edit className="h-3 w-3" />
+                      </Button>
+                      <Button
+                        onClick={() => {
+                          if (confirm(`Are you sure you want to delete ${monarch.name}?`)) {
+                            deleteMonarchMutation.mutate(monarch.id);
+                          }
+                        }}
+                        size="sm"
+                        variant="outline"
+                        className="h-8 w-8 p-0 bg-white/90 hover:bg-white text-red-600 hover:text-red-700"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {filteredMonarchs.length === 0 && (
+                <div className="text-center py-12">
+                  <Crown className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No Monarchs Found</h3>
+                  <p className="text-muted-foreground mb-4">
+                    {monarchSearchQuery ? 'Try adjusting your search terms' : 'Start by adding your first monarch'}
+                  </p>
+                  {!monarchSearchQuery && (
+                    <Button onClick={() => setIsAddingNewMonarch(true)}>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add First Monarch
+                    </Button>
+                  )}
+                </div>
+              )}
+
+              {/* Monarch Edit/Add Dialog */}
+              <Dialog open={editingMonarch !== null || isAddingNewMonarch} onOpenChange={(open) => {
+                if (!open) {
+                  setEditingMonarch(null);
+                  setIsAddingNewMonarch(false);
+                  setMonarchValidationErrors({});
+                }
+              }}>
+                <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                  <DialogHeader>
+                    <DialogTitle>
+                      {isAddingNewMonarch ? 'Add New Monarch' : 'Edit Monarch'}
+                    </DialogTitle>
+                  </DialogHeader>
+                  
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    handleMonarchSubmit(formData, isAddingNewMonarch);
+                  }} className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="monarchId">Monarch ID *</Label>
+                        <Input
+                          id="monarchId"
+                          name="id"
+                          defaultValue={editingMonarch?.id || ''}
+                          required
+                          className={monarchValidationErrors.id ? 'border-red-500' : ''}
+                          placeholder="e.g., gustav-i-vasa"
+                          aria-describedby={monarchValidationErrors.id ? 'monarchId-error' : undefined}
+                        />
+                        {monarchValidationErrors.id && (
+                          <p id="monarchId-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.id}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="monarchName">Name *</Label>
+                        <Input
+                          id="monarchName"
+                          name="name"
+                          defaultValue={editingMonarch?.name || ''}
+                          required
+                          className={monarchValidationErrors.name ? 'border-red-500' : ''}
+                          placeholder="e.g., Gustav I Vasa"
+                          aria-describedby={monarchValidationErrors.name ? 'monarchName-error' : undefined}
+                        />
+                        {monarchValidationErrors.name && (
+                          <p id="monarchName-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.name}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="monarchBorn">Born (ISO Date)</Label>
+                        <Input
+                          id="monarchBorn"
+                          name="born"
+                          type="date"
+                          defaultValue={editingMonarch?.born || ''}
+                          className={monarchValidationErrors.born ? 'border-red-500' : ''}
+                          aria-describedby={monarchValidationErrors.born ? 'monarchBorn-error' : undefined}
+                        />
+                        {monarchValidationErrors.born && (
+                          <p id="monarchBorn-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.born}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="monarchDied">Died (ISO Date)</Label>
+                        <Input
+                          id="monarchDied"
+                          name="died"
+                          type="date"
+                          defaultValue={editingMonarch?.died || ''}
+                          className={monarchValidationErrors.died ? 'border-red-500' : ''}
+                          aria-describedby={monarchValidationErrors.died ? 'monarchDied-error' : undefined}
+                        />
+                        {monarchValidationErrors.died && (
+                          <p id="monarchDied-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.died}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="reignFrom">Reign From (ISO Date) *</Label>
+                        <Input
+                          id="reignFrom"
+                          name="reignFrom"
+                          type="date"
+                          defaultValue={editingMonarch?.reignFrom || ''}
+                          required
+                          className={monarchValidationErrors.reignFrom ? 'border-red-500' : ''}
+                          aria-describedby={monarchValidationErrors.reignFrom ? 'reignFrom-error' : undefined}
+                        />
+                        {monarchValidationErrors.reignFrom && (
+                          <p id="reignFrom-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.reignFrom}
+                          </p>
+                        )}
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="reignTo">Reign To (ISO Date) *</Label>
+                        <Input
+                          id="reignTo"
+                          name="reignTo"
+                          type="date"
+                          defaultValue={editingMonarch?.reignTo || ''}
+                          required
+                          className={monarchValidationErrors.reignTo ? 'border-red-500' : ''}
+                          aria-describedby={monarchValidationErrors.reignTo ? 'reignTo-error' : undefined}
+                        />
+                        {monarchValidationErrors.reignTo && (
+                          <p id="reignTo-error" className="text-sm text-red-600" role="alert">
+                            {monarchValidationErrors.reignTo}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="portraitFileName">Portrait File Name</Label>
+                      <Input
+                        id="portraitFileName"
+                        name="portraitFileName"
+                        defaultValue={editingMonarch?.portraitFileName || ''}
+                        className={monarchValidationErrors.portraitFileName ? 'border-red-500' : ''}
+                        placeholder="e.g., gustav-vasa-portrait.jpg"
+                        aria-describedby={monarchValidationErrors.portraitFileName ? 'portraitFileName-error' : undefined}
+                      />
+                      {monarchValidationErrors.portraitFileName && (
+                        <p id="portraitFileName-error" className="text-sm text-red-600" role="alert">
+                          {monarchValidationErrors.portraitFileName}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="monarchQuote">Famous Quote</Label>
+                      <Textarea
+                        id="monarchQuote"
+                        name="quote"
+                        defaultValue={editingMonarch?.quote || ''}
+                        rows={2}
+                        className={monarchValidationErrors.quote ? 'border-red-500' : ''}
+                        placeholder="A famous quote or saying by the monarch..."
+                        aria-describedby={monarchValidationErrors.quote ? 'monarchQuote-error' : undefined}
+                      />
+                      {monarchValidationErrors.quote && (
+                        <p id="monarchQuote-error" className="text-sm text-red-600" role="alert">
+                          {monarchValidationErrors.quote}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="monarchAbout">About / Biography</Label>
+                      <Textarea
+                        id="monarchAbout"
+                        name="about"
+                        defaultValue={editingMonarch?.about || ''}
+                        rows={4}
+                        className={monarchValidationErrors.about ? 'border-red-500' : ''}
+                        placeholder="Historical information, achievements, important events during reign..."
+                        aria-describedby={monarchValidationErrors.about ? 'monarchAbout-error' : undefined}
+                      />
+                      {monarchValidationErrors.about && (
+                        <p id="monarchAbout-error" className="text-sm text-red-600" role="alert">
+                          {monarchValidationErrors.about}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex justify-end space-x-2 pt-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => {
+                          setEditingMonarch(null);
+                          setIsAddingNewMonarch(false);
+                          setMonarchValidationErrors({});
+                        }}
+                        disabled={isSubmittingMonarch}
+                      >
+                        <X className="w-4 h-4 mr-2" />
+                        Cancel
+                      </Button>
+                      <Button 
+                        type="submit" 
+                        disabled={isSubmittingMonarch}
+                        className="min-w-[140px]"
+                      >
+                        {isSubmittingMonarch ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            {isAddingNewMonarch ? 'Adding...' : 'Saving...'}
+                          </>
+                        ) : (
+                          <>
+                            <Save className="w-4 h-4 mr-2" />
+                            {isAddingNewMonarch ? 'Add Monarch' : 'Save Changes'}
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </>
+          )}
+        </TabsContent>
+
+        <TabsContent value="data-operations" className="mt-6">
+          {/* Export/Restore Section */}
+          <Card className="mb-6">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Database className="w-5 h-5" />
+                Data Management
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">{familyMembers.length}</div>
+                  <div className="text-sm text-muted-foreground">Current Records</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">Azure Cosmos DB</div>
+                  <div className="text-sm text-muted-foreground">Storage Backend</div>
+                </div>
+              </div>
+              
+              <Alert className="mb-4">
+                <CheckCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Export your data to create local JSON backups, or restore from a previous backup file.
+                </AlertDescription>
+              </Alert>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={exportData}
+                  className="flex items-center gap-2"
+                >
+                  <Download className="w-4 h-4" />
+                  Export to JSON
+                </Button>
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept=".json"
+                    onChange={handleFileRestore}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    disabled={restoreDataMutation.isPending}
+                  />
+                  <Button
+                    disabled={restoreDataMutation.isPending}
+                    variant="outline"
+                    className="flex items-center gap-2"
+                  >
+                    <Upload className="w-4 h-4" />
+                    {restoreDataMutation.isPending ? 'Restoring...' : 'Restore from JSON'}
+                  </Button>
+                </div>
+                <Button
+                  onClick={() => clearDataMutation.mutate()}
+                  disabled={clearDataMutation.isPending}
+                  variant="destructive"
+                  className="flex items-center gap-2"
+                >
+                  <Trash2 className="w-4 h-4" />
+                  {clearDataMutation.isPending ? 'Clearing...' : 'Clear All Data'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Monarchs Bulk Operations */}
+          <Card className="mb-6">
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <Crown className="w-5 h-5" />
+                Monarchs Bulk Operations
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Alert className="mb-4">
+                <Crown className="h-4 w-4" />
+                <AlertDescription>
+                  Update family members with proper monarch relationships based on reign dates. 
+                  Use dry-run to preview changes before applying them.
+                </AlertDescription>
+              </Alert>
+              
+              <div className="flex flex-col sm:flex-row gap-3 mb-4">
+                <Button
+                  onClick={handleBulkUpdateMonarchsDryRun}
+                  disabled={bulkUpdateMutation.isPending}
+                  variant="outline"
+                  className="flex items-center gap-2"
+                >
+                  <AlertCircle className="w-4 h-4" />
+                  {bulkUpdateMutation.isPending ? 'Processing...' : 'Dry Run Preview'}
+                </Button>
+                <Button
+                  onClick={handleBulkUpdateMonarchs}
+                  disabled={bulkUpdateMutation.isPending}
+                  className="flex items-center gap-2"
+                >
+                  <CheckCircle className="w-4 h-4" />
+                  {bulkUpdateMutation.isPending ? 'Updating...' : 'Execute Bulk Update'}
+                </Button>
+              </div>
+              
+              {bulkUpdateResult && (
+                <div className="mt-4 p-4 bg-muted rounded-lg">
+                  <h4 className="font-semibold mb-2">Operation Results:</h4>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-sm">
+                    <div>
+                      <span className="font-medium">Total Members:</span> {bulkUpdateResult.total}
+                    </div>
+                    <div>
+                      <span className="font-medium">Processed:</span> {bulkUpdateResult.processed}
+                    </div>
+                    <div>
+                      <span className="font-medium">Updated:</span> {bulkUpdateResult.updated}
+                    </div>
+                  </div>
+                  {bulkUpdateResult.dryRun && (
+                    <div className="mt-2 text-sm text-muted-foreground">
+                      <span className="font-medium">Dry Run Mode:</span> No changes were made to the database.
+                    </div>
+                  )}
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

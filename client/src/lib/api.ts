@@ -14,7 +14,7 @@ import {
   ErrorSeverity,
   type ErrorContext 
 } from '@/lib/errors';
-import type { CosmosDbFamilyMember, CreateCosmosDbFamilyMember, ImportStatus } from '@/types/family';
+import type { CosmosDbFamilyMember, CreateCosmosDbFamilyMember, ImportStatus, Monarch } from '@/types/family';
 
 /**
  * Configuration options for API requests
@@ -345,6 +345,77 @@ export const familyApi = {
       () => apiClient.get(`/api/cosmos/members/${memberId}/monarchs`),
       { component: 'FamilyApi', action: 'getMonarchsDuringLifetime', additionalData: { memberId } },
       ErrorSeverity.MEDIUM
+    );
+  },
+};
+
+/**
+ * Monarchs API methods with error handling
+ */
+export const monarchsApi = {
+  /**
+   * Retrieves all monarchs from Cosmos DB
+   */
+  async getAll(): Promise<Monarch[]> {
+    return withApiErrorHandling(
+      () => apiClient.get<Monarch[]>('/api/cosmos/monarchs'),
+      { component: 'MonarchsApi', action: 'getAll' },
+      ErrorSeverity.MEDIUM
+    );
+  },
+
+  /**
+   * Retrieves a specific monarch by ID
+   */
+  async getMonarch(id: string): Promise<Monarch> {
+    return withApiErrorHandling(
+      () => apiClient.get<Monarch>(`/api/cosmos/monarchs/${id}`),
+      { component: 'MonarchsApi', action: 'getMonarch', additionalData: { id } },
+      ErrorSeverity.MEDIUM
+    );
+  },
+
+  /**
+   * Creates a new monarch
+   */
+  async createMonarch(monarchData: Monarch): Promise<Monarch> {
+    return withApiErrorHandling(
+      () => apiClient.post<Monarch>('/api/cosmos/monarchs', monarchData),
+      { component: 'MonarchsApi', action: 'createMonarch' },
+      ErrorSeverity.HIGH
+    );
+  },
+
+  /**
+   * Updates an existing monarch
+   */
+  async updateMonarch(id: string, monarchData: Partial<Monarch>): Promise<Monarch> {
+    return withApiErrorHandling(
+      () => apiClient.put<Monarch>(`/api/cosmos/monarchs/${id}`, monarchData),
+      { component: 'MonarchsApi', action: 'updateMonarch', additionalData: { id } },
+      ErrorSeverity.HIGH
+    );
+  },
+
+  /**
+   * Deletes a monarch
+   */
+  async deleteMonarch(id: string): Promise<{ success: boolean; message: string }> {
+    return withApiErrorHandling(
+      () => apiClient.delete<{ success: boolean; message: string }>(`/api/cosmos/monarchs/${id}`),
+      { component: 'MonarchsApi', action: 'deleteMonarch', additionalData: { id } },
+      ErrorSeverity.HIGH
+    );
+  },
+
+  /**
+   * Imports monarchs from JSON data
+   */
+  async importMonarchs(monarchsData: Monarch[]): Promise<any> {
+    return withApiErrorHandling(
+      () => apiClient.post('/api/cosmos/monarchs/import', monarchsData),
+      { component: 'MonarchsApi', action: 'importMonarchs' },
+      ErrorSeverity.HIGH
     );
   },
 };
