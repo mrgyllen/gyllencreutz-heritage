@@ -44,6 +44,7 @@ const BaseFamilyMemberSchema = z.object({
   hasMaleChildren: z.boolean().default(false),
   nobleBranch: z.string().max(100, 'Noble branch must be less than 100 characters').optional().nullable(),
   monarchDuringLife: z.array(z.string().min(1).max(150).refine(preventXSS, 'Monarch name contains invalid content')).default([]),
+  monarchIds: z.array(z.string().min(1).max(100).refine(preventXSS, 'Monarch ID contains invalid content')).optional().default([]),
 });
 
 /**

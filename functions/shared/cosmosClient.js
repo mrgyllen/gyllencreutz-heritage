@@ -62,6 +62,9 @@ class CosmosDbService {
                 .fetchAll();
             
             console.log(`📄 Retrieved ${items.length} members from Cosmos DB`);
+            // Log monarchIds for debugging the first few members
+            items.slice(0, 3).forEach((item, index) => {
+            });
             return items;
         } catch (error) {
             console.error('❌ Error retrieving all members:', error);
@@ -120,7 +123,6 @@ class CosmosDbService {
             memberData.id = id;
             
             const { resource: updatedItem } = await this.container.item(id, id).replace(memberData);
-            
             console.log(`✅ Updated member ${id} in Cosmos DB`);
             return updatedItem;
         } catch (error) {
@@ -164,7 +166,6 @@ class CosmosDbService {
                 .query(sqlQuery)
                 .fetchAll();
             
-            console.log(`🔍 Search for '${query}' returned ${items.length} members from Cosmos DB`);
             return items;
         } catch (error) {
             console.error(`❌ Error searching members with query '${query}':`, error);

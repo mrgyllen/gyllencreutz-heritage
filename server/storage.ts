@@ -6,7 +6,6 @@ let gitHubSync: GitHubSync | null = null;
 
 // Function to initialize GitHub sync (called after env vars are loaded)
 function initializeGitHubSync() {
-  console.log('🔍 Checking environment variables:');
   console.log('  GITHUB_TOKEN:', process.env.GITHUB_TOKEN ? 'SET' : 'MISSING');
   console.log('  GITHUB_REPO_OWNER:', process.env.GITHUB_REPO_OWNER || 'MISSING');
   console.log('  GITHUB_REPO_NAME:', process.env.GITHUB_REPO_NAME || 'MISSING');

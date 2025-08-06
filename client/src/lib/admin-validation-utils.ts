@@ -128,6 +128,7 @@ export function processFamilyMemberFormData(
   // Use monarchIds as the only source of truth - no more dual fields
   let monarchIds: string[] = [];
   
+  
   if (isNew) {
     // For new members, use the provided monarch IDs
     monarchIds = newMemberMonarchIds || [];
@@ -139,7 +140,6 @@ export function processFamilyMemberFormData(
       // Legacy migration fallback - convert names to IDs on-the-fly
       try {
         monarchIds = convertMonarchNamesToIds(editingMember.monarchDuringLife, monarchs);
-        console.log(`Migrating monarch data for ${editingMember.name}: ${editingMember.monarchDuringLife} → ${monarchIds}`);
       } catch (error) {
         console.error('Failed to migrate monarch data:', error);
         monarchIds = [];
@@ -166,6 +166,7 @@ export function processFamilyMemberFormData(
     nobleBranch: nobleBranchValue && nobleBranchValue.trim() ? nobleBranchValue : null,
     ageAtDeath: ageAtDeathValue && ageAtDeathValue.trim() ? parseInt(ageAtDeathValue) : null,
   };
+
 
   return processedData;
 }

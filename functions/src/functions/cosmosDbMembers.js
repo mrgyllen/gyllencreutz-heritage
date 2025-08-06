@@ -45,6 +45,7 @@ app.http('cosmosGetMemberById', {
             const id = request.params.id;
             const member = await cosmosDbService.getMemberById(id);
             
+            
             if (!member) {
                 return {
                     status: 404,

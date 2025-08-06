@@ -74,7 +74,6 @@ export function FamilyMembersTab({ monarchs }: FamilyMembersTabProps) {
           ...editingMember,
           ...memberData,
         };
-        console.log('Update data being sent:', updateData);
         await updateMemberMutation.mutateAsync(updateData);
       }
     } catch (error) {

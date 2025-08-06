@@ -100,8 +100,6 @@ export function FamilyMemberForm({
         monarchs
       );
 
-      console.log('Form submission data:', memberData);
-      console.log('Monarch IDs:', memberData.monarchIds);
 
       // Validate monarch relationships
       const monarchValidationErrors = validateMonarchRelationships(memberData, monarchs);

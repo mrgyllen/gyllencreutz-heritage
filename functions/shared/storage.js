@@ -104,7 +104,6 @@ class FunctionStorage {
 
     loadData() {
         try {
-            console.log('🔍 Azure Functions: Starting data load...');
             console.log('📁 Current working directory:', process.cwd());
             console.log('📁 __dirname:', __dirname);
             
@@ -117,13 +116,11 @@ class FunctionStorage {
                 '/home/site/wwwroot/data/family-members.json'
             ];
             
-            console.log('🔍 Searching for data file in paths:', possiblePaths);
             
             let dataPath = null;
             let rawData = null;
             
             for (const testPath of possiblePaths) {
-                console.log(`🔍 Checking path: ${testPath}`);
                 if (fs.existsSync(testPath)) {
                     console.log(`✅ Found data file at: ${testPath}`);
                     dataPath = testPath;

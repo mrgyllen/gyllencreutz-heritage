@@ -59,11 +59,14 @@ export function useFamilyMembers() {
     mutationFn: async (member: CosmosDbFamilyMember) => {
       // Validate the data before sending using update schema (not cosmos schema)
       const { id, _rid, _self, _etag, _attachments, _ts, importedAt, importSource, ...updateData } = member;
+      
+      
       const validationResult = safeValidateInput(updateFamilyMemberSchema, updateData);
       if (!validationResult.success) {
         console.error('Validation failed:', validationResult.error);
         throw validationResult.error;
       }
+      
       
       return await familyApi.updateMember(member.id, validationResult.data);
     },
@@ -104,7 +107,6 @@ export function useFamilyMembers() {
   const addMemberMutation = useMutation({
     mutationFn: async (member: CreateCosmosDbFamilyMember) => {
       // Validate the data before sending
-      console.log('Adding member, data before validation:', member);
       const validationResult = safeValidateInput(createFamilyMemberSchema, member);
       if (!validationResult.success) {
         console.error('Add member validation failed:', validationResult.error);

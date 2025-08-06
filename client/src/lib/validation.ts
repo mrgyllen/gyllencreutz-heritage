@@ -102,6 +102,17 @@ export const monarchSchema = z
 export const monarchArraySchema = z.array(monarchSchema).optional();
 
 /**
+ * Schema for validating monarch ID arrays (new ID-based system)
+ */
+export const monarchIdSchema = z
+  .string()
+  .min(1, 'Monarch ID is required')
+  .max(100, 'Monarch ID must be 100 characters or less')
+  .refine(preventXSS, 'Monarch ID contains invalid or potentially unsafe content');
+
+export const monarchIdsArraySchema = z.array(monarchIdSchema).optional().default([]);
+
+/**
  * Base schema for family member data without refinements
  */
 const baseFamilyMemberSchema = z.object({
@@ -117,7 +128,8 @@ const baseFamilyMemberSchema = z.object({
   isSuccessionSon: z.boolean().optional().default(false),
   hasMaleChildren: z.boolean().optional().default(false),
   nobleBranch: nobleBranchSchema,
-  monarchDuringLife: monarchArraySchema.default([]),
+  monarchDuringLife: monarchArraySchema.default([]), // Legacy field - being phased out
+  monarchIds: monarchIdsArraySchema, // New field for monarch relationships
 });
 
 /**

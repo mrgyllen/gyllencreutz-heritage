@@ -79,6 +79,7 @@ class CosmosDbClient {
       };
       
       const { resource } = await this.container.item(id, id).replace(updatedMember);
+      
       return resource;
     } catch (error) {
       if (error.code === 404) {

@@ -312,7 +312,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Main family-members endpoints (matching Azure Functions API)
     app.get("/api/family-members", async (req, res) => {
       try {
-        console.log("🔍 Fetching all family members from JSON fallback...");
         const members = loadFamilyData();
         console.log(`✅ Retrieved ${members.length} family members from JSON`);
         res.json(members);
@@ -325,7 +324,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/family-members/search/:query", validateSearchQuery, asyncHandler(async (req, res) => {
       const { query } = req.params;
       const lowerQuery = query.toLowerCase();
-      console.log(`🔍 Searching family members for: "${query}"`);
       const members = loadFamilyData();
       
       const filteredMembers = members.filter((member: any) => 
@@ -340,7 +338,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Fallback endpoints that serve JSON data with standardized responses
     app.get("/api/cosmos/members", asyncHandler(async (req, res) => {
-      console.log("🔍 Fetching family members from JSON fallback...");
       const members = loadFamilyData();
       console.log(`✅ Retrieved ${members.length} family members from JSON`);
       sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members`);
@@ -368,7 +365,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   if (cosmosClient) {
     // Main family-members endpoints using Cosmos DB
     app.get("/api/family-members", asyncHandler(async (req, res) => {
-      console.log("🔍 Fetching family members from Cosmos DB...");
       const members = await cosmosClient.getAllMembers();
       console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
       sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members from Cosmos DB`);
@@ -377,7 +373,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     app.get("/api/family-members/search/:query", validateSearchQuery, asyncHandler(async (req, res) => {
       const { query } = req.params;
       const lowerQuery = query.toLowerCase();
-      console.log(`🔍 Searching family members in Cosmos DB for: "${query}"`);
       const members = await cosmosClient.getAllMembers();
       
       const filteredMembers = members.filter((member: any) => 
@@ -392,7 +387,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Get all Cosmos DB members
     app.get("/api/cosmos/members", asyncHandler(async (req, res) => {
-      console.log("🔍 Fetching family members from Cosmos DB...");
       const members = await cosmosClient.getAllMembers();
       console.log(`✅ Retrieved ${members.length} family members from Cosmos DB`);
       sendSuccessResponse(res, members, HttpStatus.OK, `Retrieved ${members.length} family members from Cosmos DB`);
@@ -442,6 +436,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { id } = req.params;
       const memberData = req.body;
       
+      
       // Apply business rules validation for updates
       const existingMembers = await cosmosClient.getAllMembers();
       
@@ -475,6 +470,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       const updatedMember = await cosmosClient.updateMember(id, memberData);
+      
       if (!updatedMember) {
         return sendErrorResponse(res, ResponseMessages.NOT_FOUND, HttpStatus.NOT_FOUND, undefined, ErrorSeverity.LOW);
       }
@@ -594,7 +590,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
     // Monarch endpoints
     app.get("/api/cosmos/monarchs", asyncHandler(async (req, res) => {
-      console.log("🔍 Fetching all monarchs from Cosmos DB...");
       const monarchs = await cosmosClient.getAllMonarchs();
       console.log(`✅ Retrieved ${monarchs.length} monarchs from Cosmos DB`);
       sendSuccessResponse(res, monarchs, HttpStatus.OK, `Retrieved ${monarchs.length} monarchs from Cosmos DB`);
