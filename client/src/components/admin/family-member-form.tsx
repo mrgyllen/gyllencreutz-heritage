@@ -5,7 +5,7 @@
  * Handles the creation and editing of family members with validation.
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Save, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -82,6 +82,31 @@ export function FamilyMemberForm({
   onCancel,
 }: FamilyMemberFormProps) {
   const { toast } = useToast();
+  
+  // Local state to track monarch IDs for the form (both new and editing)
+  const [localMonarchIds, setLocalMonarchIds] = useState<string[]>([]);
+  
+  // Initialize local monarch IDs when component mounts or editingMember changes
+  useEffect(() => {
+    if (isAddingNew) {
+      setLocalMonarchIds(newMemberMonarchIds);
+    } else if (editingMember) {
+      setLocalMonarchIds(getEffectiveMonarchIds(editingMember, monarchs));
+    } else {
+      setLocalMonarchIds([]);
+    }
+  }, [editingMember, isAddingNew, newMemberMonarchIds, monarchs]);
+  
+  // Handle monarch selection changes
+  const handleMonarchSelectionChange = (monarchIds: string[]) => {
+    setLocalMonarchIds(monarchIds);
+    
+    if (isAddingNew) {
+      setNewMemberMonarchIds(monarchIds);
+    } else if (editingMember) {
+      setEditingMember({ ...editingMember, monarchIds });
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -96,7 +121,7 @@ export function FamilyMemberForm({
         formData, 
         isAddingNew, 
         editingMember, 
-        newMemberMonarchIds || [],
+        isAddingNew ? newMemberMonarchIds || [] : localMonarchIds,
         monarchs
       );
 
@@ -130,18 +155,12 @@ export function FamilyMemberForm({
       try {
         const calculatedMonarchIds = calculateMonarchsForLifetime(bornYear, diedYear || null, monarchs);
         
-        if (isAddingNew) {
-          // For new members, update the state
-          setNewMemberMonarchIds(calculatedMonarchIds);
-        } else if (editingMember) {
-          // For existing members, update the state but DON'T save automatically
-          const updatedMember = { ...editingMember, monarchIds: calculatedMonarchIds };
-          setEditingMember(updatedMember);
-        }
+        // Update monarch selection (this will trigger handleMonarchSelectionChange)
+        handleMonarchSelectionChange(calculatedMonarchIds);
         
         toast({ 
           title: 'Auto-calculated', 
-          description: `Found ${calculatedMonarchIds.length} monarchs during lifetime. ${!isAddingNew ? 'Click Save to persist changes.' : ''}`,
+          description: `Found ${calculatedMonarchIds.length} monarchs during lifetime. Click Save to persist changes.`,
           duration: 4000 
         });
       } catch (error) {
@@ -290,19 +309,8 @@ export function FamilyMemberForm({
           <Label htmlFor="monarchDuringLife">Monarchs During Life</Label>
           <MonarchSelector
             monarchs={monarchs}
-            selectedMonarchIds={isAddingNew ? newMemberMonarchIds : getEffectiveMonarchIds(editingMember, monarchs)}
-            onSelectionChange={(monarchIds) => {
-              try {
-                if (isAddingNew) {
-                  setNewMemberMonarchIds(monarchIds);
-                } else if (editingMember) {
-                  setEditingMember({ ...editingMember, monarchIds });
-                }
-              } catch (error) {
-                console.error('Error updating monarch selection:', error);
-                // Don't let this error close the form
-              }
-            }}
+            selectedMonarchIds={localMonarchIds}
+            onSelectionChange={handleMonarchSelectionChange}
             memberBornYear={isAddingNew ? newMemberBornYear : editingMember?.born}
             memberDiedYear={isAddingNew ? newMemberDiedYear : editingMember?.died}
             showOnlyTimelineValid={false}

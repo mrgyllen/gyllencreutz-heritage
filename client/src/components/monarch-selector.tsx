@@ -298,6 +298,7 @@ export function MonarchSelector({
         {/* Auto-calculate button */}
         {showAutoCalculate && onAutoCalculate && memberBornYear && (
           <Button
+            type="button"
             variant="outline"
             onClick={handleAutoCalculate}
             disabled={disabled}
