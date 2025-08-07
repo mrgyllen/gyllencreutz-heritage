@@ -50,6 +50,7 @@ This project uses a **dual backend architecture**:
   - `client/src/pages/admin-db.tsx` - Admin interface for data management
   - `client/src/components/family-tree.tsx` - D3.js family tree visualization
   - `client/src/types/family.ts` - Type definitions for family data
+  - `client/src/hooks/use-monarch-timeline.ts` - Backend-driven monarch timeline validation
 
 ### Backend (Dual Environment)
 - **Development**: Express.js server (`server/index.ts`)
