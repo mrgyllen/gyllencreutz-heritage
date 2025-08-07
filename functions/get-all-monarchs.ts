@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function getAllMonarchs(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   if (request.method !== 'GET') {
@@ -7,7 +7,7 @@ export async function getAllMonarchs(request: HttpRequest, context: InvocationCo
   }
 
   try {
-    const monarchs = await cosmosClient.getAllMonarchs();
+    const monarchs = await cosmosDbService.getAllMonarchs();
     
     return { 
       jsonBody: { 

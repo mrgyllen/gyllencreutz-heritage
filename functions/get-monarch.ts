@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function getMonarch(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const id = request.params.id;
@@ -13,7 +13,7 @@ export async function getMonarch(request: HttpRequest, context: InvocationContex
   }
 
   try {
-    const monarch = await cosmosClient.getMonarch(id);
+    const monarch = await cosmosDbService.getMonarch(id);
     
     if (!monarch) {
       return { 
@@ -47,6 +47,6 @@ export async function getMonarch(request: HttpRequest, context: InvocationContex
 app.http('get-monarch', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'monarchs/{id}',
+  route: 'cosmos/monarchs/{id}',
   handler: getMonarch,
 });

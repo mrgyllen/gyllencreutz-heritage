@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function importMonarchsFromJson(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   if (request.method !== 'POST') {
@@ -19,7 +19,7 @@ export async function importMonarchsFromJson(request: HttpRequest, context: Invo
       };
     }
 
-    const result = await cosmosClient.importMonarchsFromJson(monarchs);
+    const result = await cosmosDbService.importMonarchsFromJson(monarchs);
     
     return { 
       jsonBody: { 
@@ -44,6 +44,6 @@ export async function importMonarchsFromJson(request: HttpRequest, context: Invo
 app.http('import-monarchs-from-json', {
   methods: ['POST'],
   authLevel: 'anonymous',
-  route: 'monarchs/import',
+  route: 'cosmos/monarchs/import',
   handler: importMonarchsFromJson,
 });

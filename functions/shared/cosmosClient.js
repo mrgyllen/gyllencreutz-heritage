@@ -214,6 +214,269 @@ class CosmosDbService {
             throw error;
         }
     }
+
+    // Monarchs operations
+    async getAllMonarchs() {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            // For now, use JSON file as data source
+            const fs = require('fs');
+            const path = require('path');
+            const monarchsPath = path.join(__dirname, '../../swedish_monarchs.json');
+            
+            if (fs.existsSync(monarchsPath)) {
+                const monarchsData = JSON.parse(fs.readFileSync(monarchsPath, 'utf8'));
+                console.log(`📄 Retrieved ${monarchsData.length} monarchs from JSON file`);
+                return monarchsData;
+            } else {
+                console.log('❌ swedish_monarchs.json file not found');
+                return [];
+            }
+        } catch (error) {
+            console.error('❌ Error retrieving all monarchs:', error);
+            throw error;
+        }
+    }
+
+    async getMonarch(id) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const monarchs = await this.getAllMonarchs();
+            const monarch = monarchs.find(m => m.id === id);
+            
+            if (monarch) {
+                console.log(`📄 Retrieved monarch ${id}`);
+                return monarch;
+            } else {
+                console.log(`❌ Monarch ${id} not found`);
+                return null;
+            }
+        } catch (error) {
+            console.error(`❌ Error retrieving monarch ${id}:`, error);
+            throw error;
+        }
+    }
+
+    async createMonarch(monarchData) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const monarchsPath = path.join(__dirname, '../../swedish_monarchs.json');
+            
+            let monarchs = [];
+            if (fs.existsSync(monarchsPath)) {
+                monarchs = JSON.parse(fs.readFileSync(monarchsPath, 'utf8'));
+            }
+            
+            // Check if monarch already exists
+            const existingMonarch = monarchs.find(m => m.id === monarchData.id);
+            if (existingMonarch) {
+                throw new Error(`Monarch with ID ${monarchData.id} already exists`);
+            }
+            
+            // Add new monarch
+            monarchs.push(monarchData);
+            
+            // Save back to file
+            fs.writeFileSync(monarchsPath, JSON.stringify(monarchs, null, 2));
+            
+            console.log(`✅ Created monarch ${monarchData.id}`);
+            return monarchData;
+        } catch (error) {
+            console.error('❌ Error creating monarch:', error);
+            throw error;
+        }
+    }
+
+    async updateMonarch(id, monarchData) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const monarchsPath = path.join(__dirname, '../../swedish_monarchs.json');
+            
+            let monarchs = [];
+            if (fs.existsSync(monarchsPath)) {
+                monarchs = JSON.parse(fs.readFileSync(monarchsPath, 'utf8'));
+            }
+            
+            const monarchIndex = monarchs.findIndex(m => m.id === id);
+            if (monarchIndex === -1) {
+                console.log(`❌ Monarch ${id} not found for update`);
+                return null;
+            }
+            
+            // Update monarch
+            monarchs[monarchIndex] = { ...monarchs[monarchIndex], ...monarchData, id };
+            
+            // Save back to file
+            fs.writeFileSync(monarchsPath, JSON.stringify(monarchs, null, 2));
+            
+            console.log(`✅ Updated monarch ${id}`);
+            return monarchs[monarchIndex];
+        } catch (error) {
+            console.error(`❌ Error updating monarch ${id}:`, error);
+            throw error;
+        }
+    }
+
+    async deleteMonarch(id) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const monarchsPath = path.join(__dirname, '../../swedish_monarchs.json');
+            
+            let monarchs = [];
+            if (fs.existsSync(monarchsPath)) {
+                monarchs = JSON.parse(fs.readFileSync(monarchsPath, 'utf8'));
+            }
+            
+            const monarchIndex = monarchs.findIndex(m => m.id === id);
+            if (monarchIndex === -1) {
+                console.log(`❌ Monarch ${id} not found for deletion`);
+                return false;
+            }
+            
+            // Remove monarch
+            monarchs.splice(monarchIndex, 1);
+            
+            // Save back to file
+            fs.writeFileSync(monarchsPath, JSON.stringify(monarchs, null, 2));
+            
+            console.log(`✅ Deleted monarch ${id}`);
+            return true;
+        } catch (error) {
+            console.error(`❌ Error deleting monarch ${id}:`, error);
+            throw error;
+        }
+    }
+
+    async importMonarchsFromJson(monarchsData) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const fs = require('fs');
+            const path = require('path');
+            const monarchsPath = path.join(__dirname, '../../swedish_monarchs.json');
+            
+            // Save monarchs data to file
+            fs.writeFileSync(monarchsPath, JSON.stringify(monarchsData, null, 2));
+            
+            console.log(`✅ Imported ${monarchsData.length} monarchs from JSON`);
+            return {
+                successful: monarchsData.length,
+                failed: 0,
+                errors: [],
+                message: `Successfully imported ${monarchsData.length} monarchs`
+            };
+        } catch (error) {
+            console.error('❌ Error importing monarchs from JSON:', error);
+            throw error;
+        }
+    }
+
+    async getMonarchsDuringLifetime(born, died) {
+        // Monarchs use JSON file, no Cosmos DB initialization needed
+        
+        try {
+            const monarchs = await this.getAllMonarchs();
+            
+            // Filter monarchs whose reign overlaps with the person's lifetime
+            const relevantMonarchs = monarchs.filter(monarch => {
+                const reignStart = new Date(monarch.reignFrom).getFullYear();
+                const reignEnd = new Date(monarch.reignTo).getFullYear();
+                
+                // Check if there's any overlap between the person's life and monarch's reign
+                const lifeStart = born;
+                const lifeEnd = died || new Date().getFullYear(); // If still alive, use current year
+                
+                return (reignStart <= lifeEnd && reignEnd >= lifeStart);
+            });
+            
+            console.log(`📄 Found ${relevantMonarchs.length} monarchs during lifetime ${born}-${died}`);
+            return relevantMonarchs;
+        } catch (error) {
+            console.error('❌ Error getting monarchs during lifetime:', error);
+            throw error;
+        }
+    }
+
+    async bulkUpdateMembersWithMonarchIds(options = {}) {
+        this.initialize();
+        
+        try {
+            const { dryRun = false } = options;
+            const members = await this.getAllMembers();
+            const monarchs = await this.getAllMonarchs();
+            
+            let updated = 0;
+            let processed = 0;
+            const detailedReport = [];
+            
+            for (const member of members) {
+                processed++;
+                
+                if (member.born) {
+                    const relevantMonarchs = await this.getMonarchsDuringLifetime(member.born, member.died);
+                    const monarchIds = relevantMonarchs.map(m => m.id);
+                    
+                    if (monarchIds.length > 0) {
+                        if (!dryRun) {
+                            await this.updateMember(member.id, { monarchIds });
+                        }
+                        updated++;
+                        
+                        detailedReport.push({
+                            memberId: member.id,
+                            memberName: member.name,
+                            status: dryRun ? 'would_update' : 'updated',
+                            monarchCount: monarchIds.length,
+                            monarchIds
+                        });
+                    } else {
+                        detailedReport.push({
+                            memberId: member.id,
+                            memberName: member.name,
+                            status: 'no_monarchs_found',
+                            reason: 'No monarchs found during lifetime'
+                        });
+                    }
+                } else {
+                    detailedReport.push({
+                        memberId: member.id,
+                        memberName: member.name,
+                        status: 'skipped',
+                        reason: 'No birth year available'
+                    });
+                }
+            }
+            
+            const message = dryRun 
+                ? `Dry run complete: ${updated} of ${processed} members would be updated with monarch IDs`
+                : `Bulk update complete: ${updated} of ${processed} members updated with monarch IDs`;
+            
+            console.log(`✅ ${message}`);
+            
+            return {
+                updated,
+                processed,
+                total: members.length,
+                dryRun,
+                detailedReport,
+                message
+            };
+        } catch (error) {
+            console.error('❌ Error bulk updating members with monarch IDs:', error);
+            throw error;
+        }
+    }
 }
 
 // Export singleton instance

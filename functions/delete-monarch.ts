@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function deleteMonarch(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const id = request.params.id;
@@ -13,7 +13,7 @@ export async function deleteMonarch(request: HttpRequest, context: InvocationCon
   }
 
   try {
-    const deleted = await cosmosClient.deleteMonarch(id);
+    const deleted = await cosmosDbService.deleteMonarch(id);
     
     if (!deleted) {
       return { 
@@ -47,6 +47,6 @@ export async function deleteMonarch(request: HttpRequest, context: InvocationCon
 app.http('delete-monarch', {
   methods: ['DELETE'],
   authLevel: 'anonymous',
-  route: 'monarchs/{id}',
+  route: 'cosmos/monarchs/{id}',
   handler: deleteMonarch,
 });

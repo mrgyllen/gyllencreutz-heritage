@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function getMonarchsDuringLifetime(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const memberId = request.params.memberId;
@@ -14,7 +14,7 @@ export async function getMonarchsDuringLifetime(request: HttpRequest, context: I
 
   try {
     // First get the family member
-    const member = await cosmosClient.getMember(memberId);
+    const member = await cosmosDbService.getMemberById(memberId);
     
     if (!member) {
       return { 
@@ -38,7 +38,7 @@ export async function getMonarchsDuringLifetime(request: HttpRequest, context: I
     }
 
     // Get monarchs during the member's lifetime
-    const monarchs = await cosmosClient.getMonarchsDuringLifetime(member.born, member.died || 9999);
+    const monarchs = await cosmosDbService.getMonarchsDuringLifetime(member.born, member.died || 9999);
     
     return { 
       jsonBody: { 
@@ -64,6 +64,6 @@ export async function getMonarchsDuringLifetime(request: HttpRequest, context: I
 app.http('get-monarchs-during-lifetime', {
   methods: ['GET'],
   authLevel: 'anonymous',
-  route: 'members/{memberId}/monarchs',
+  route: 'cosmos/members/{memberId}/monarchs',
   handler: getMonarchsDuringLifetime,
 });

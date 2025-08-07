@@ -1,6 +1,17 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
-import { CosmosDbMonarch } from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
+
+interface CosmosDbMonarch {
+  id: string;
+  name: string;
+  born: string;
+  died: string;
+  reignFrom: string;
+  reignTo: string;
+  quote?: string;
+  about?: string;
+  portraitFileName?: string;
+}
 
 export async function createMonarch(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   if (request.method !== 'POST') {
@@ -31,7 +42,7 @@ export async function createMonarch(request: HttpRequest, context: InvocationCon
       };
     }
 
-    const newMonarch = await cosmosClient.createMonarch(monarchData);
+    const newMonarch = await cosmosDbService.createMonarch(monarchData);
     
     return { 
       status: 201,
@@ -57,6 +68,6 @@ export async function createMonarch(request: HttpRequest, context: InvocationCon
 app.http('create-monarch', {
   methods: ['POST'],
   authLevel: 'anonymous',
-  route: 'monarchs',
+  route: 'cosmos/monarchs',
   handler: createMonarch,
 });

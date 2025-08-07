@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
 
 export async function bulkUpdateMembersWithMonarchIds(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   if (request.method !== 'POST') {
@@ -10,7 +10,7 @@ export async function bulkUpdateMembersWithMonarchIds(request: HttpRequest, cont
     // Parse query parameters for options
     const dryRun = request.query.get('dryRun') === 'true';
     
-    const result = await cosmosClient.bulkUpdateMembersWithMonarchIds({ dryRun });
+    const result = await cosmosDbService.bulkUpdateMembersWithMonarchIds({ dryRun });
     
     return { 
       jsonBody: { 
@@ -35,6 +35,6 @@ export async function bulkUpdateMembersWithMonarchIds(request: HttpRequest, cont
 app.http('bulk-update-members-with-monarch-ids', {
   methods: ['POST'],
   authLevel: 'anonymous',
-  route: 'members/bulk-update-monarchs',
+  route: 'cosmos/members/bulk-update-monarchs',
   handler: bulkUpdateMembersWithMonarchIds,
 });

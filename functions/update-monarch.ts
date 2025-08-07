@@ -1,6 +1,17 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from '@azure/functions';
-import cosmosClient from '../server/cosmosClient';
-import { CosmosDbMonarch } from '../server/cosmosClient';
+import { cosmosDbService } from './shared/cosmosClient.js';
+
+interface CosmosDbMonarch {
+  id: string;
+  name: string;
+  born: string;
+  died: string;
+  reignFrom: string;
+  reignTo: string;
+  quote?: string;
+  about?: string;
+  portraitFileName?: string;
+}
 
 export async function updateMonarch(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
   const id = request.params.id;
@@ -16,7 +27,7 @@ export async function updateMonarch(request: HttpRequest, context: InvocationCon
   try {
     const monarchData = await request.json() as Partial<CosmosDbMonarch>;
     
-    const updatedMonarch = await cosmosClient.updateMonarch(id, monarchData);
+    const updatedMonarch = await cosmosDbService.updateMonarch(id, monarchData);
     
     if (!updatedMonarch) {
       return { 
@@ -51,6 +62,6 @@ export async function updateMonarch(request: HttpRequest, context: InvocationCon
 app.http('update-monarch', {
   methods: ['PUT'],
   authLevel: 'anonymous',
-  route: 'monarchs/{id}',
+  route: 'cosmos/monarchs/{id}',
   handler: updateMonarch,
 });
