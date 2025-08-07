@@ -63,6 +63,7 @@ export function MonarchSelector({
   const [searchValue, setSearchValue] = useState("");
   const [isAutoCalculating, setIsAutoCalculating] = useState(false);
   const [showAllMonarchs, setShowAllMonarchs] = useState(true); // New state for filter toggle
+  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
   // Get selected monarchs objects
   const selectedMonarchs = useMemo(() => {
@@ -134,6 +135,7 @@ export function MonarchSelector({
       setOpen(true);
     }
   }, [selectedMonarchIds, isAutoCalculating]);
+
 
   const getTimelineStatusMessage = () => {
     if (!memberBornYear) {
@@ -221,7 +223,17 @@ export function MonarchSelector({
           </div>
           
           <div className="border-t">
-            <div className="h-[400px] overflow-y-auto">
+            <div 
+              ref={scrollContainerRef}
+              className="h-[400px] overflow-y-auto scroll-smooth"
+              tabIndex={0}
+              onWheel={(e) => {
+                e.preventDefault();
+                if (scrollContainerRef.current) {
+                  scrollContainerRef.current.scrollTop += e.deltaY;
+                }
+              }}
+            >
               {(() => {
                 console.log(`🔍 UI Debug: Rendering ${searchFilteredMonarchs.length} monarchs out of ${allMonarchs.length} total`);
                 console.log(`🔍 Filtered monarchs:`, searchFilteredMonarchs.map(m => m.name));
