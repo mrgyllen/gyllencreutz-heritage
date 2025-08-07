@@ -137,20 +137,6 @@ export function MonarchSelector({
   }, [selectedMonarchIds, isAutoCalculating]);
 
 
-  const getTimelineStatusMessage = () => {
-    if (!memberBornYear) {
-      return "Birth year required for timeline validation";
-    }
-
-    const totalCount = allMonarchs.length;
-    const timelineValidCount = timelineValidMonarchIds.length;
-
-    if (showAllMonarchs) {
-      return `Showing all ${totalCount} monarchs • ${timelineValidCount} reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
-    } else {
-      return `Showing ${timelineValidCount} monarchs that reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
-    }
-  };
 
   return (
     <div className={cn("w-full", className)}>
@@ -181,15 +167,6 @@ export function MonarchSelector({
         </div>
       )}
 
-      {/* Timeline status message */}
-      {memberBornYear && (
-        <Alert className="mb-3">
-          <Crown className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            {getTimelineStatusMessage()}
-          </AlertDescription>
-        </Alert>
-      )}
 
       {/* Main selector */}
       <Popover open={open} onOpenChange={setOpen}>
