@@ -58,16 +58,12 @@ export function FamilyTree() {
     },
   });
 
-  // Fetch all monarchs for lookup
+  // Fetch all monarchs for lookup using centralized API
   const { data: monarchsData = [], error: monarchsError } = useQuery<any[]>({
     queryKey: ['/api/cosmos/monarchs'],
     queryFn: async () => {
-      const response = await fetch('/api/cosmos/monarchs');
-      if (!response.ok) {
-        throw new Error('Failed to fetch monarchs');
-      }
-      const result = await response.json();
-      return Array.isArray(result) ? result : result.data || [];
+      const { monarchsApi } = await import('@/lib/api');
+      return await monarchsApi.getAll();
     },
     staleTime: 1000 * 60 * 5, // Cache for 5 minutes
     retry: 1, // Only retry once to avoid long delays

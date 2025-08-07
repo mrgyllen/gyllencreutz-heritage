@@ -3,26 +3,26 @@ import { Check, ChevronsUpDown, Crown, Calculator, X, Search } from 'lucide-reac
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from '@/components/ui/command';
+// Command components removed - using simple div-based layout for better rendering control
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { ScrollArea } from '@/components/ui/scroll-area';
+// ScrollArea removed - using simple div with overflow-y-auto for better control
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MonarchCardCompact } from '@/components/monarch-card';
 import { type Monarch } from '@/types/family';
 
 interface MonarchSelectorProps {
-  /** Available monarchs to select from */
-  monarchs: Monarch[];
+  /** All available monarchs to select from */
+  allMonarchs: Monarch[];
+  /** Timeline-valid monarch IDs for this family member */
+  timelineValidMonarchIds: string[];
   /** Currently selected monarch IDs */
   selectedMonarchIds: string[];
   /** Callback when selection changes */
   onSelectionChange: (monarchIds: string[]) => void;
-  /** Family member's birth year for timeline validation */
+  /** Family member's birth year for display */
   memberBornYear?: number | null;
-  /** Family member's death year for timeline validation */
+  /** Family member's death year for display */
   memberDiedYear?: number | null;
-  /** Whether to show only timeline-valid monarchs */
-  showOnlyTimelineValid?: boolean;
   /** Whether to show the auto-calculate button */
   showAutoCalculate?: boolean;
   /** Callback for auto-calculate action */
@@ -47,12 +47,12 @@ interface MonarchSelectorProps {
  * - Keyboard navigation support
  */
 export function MonarchSelector({
-  monarchs,
+  allMonarchs,
+  timelineValidMonarchIds,
   selectedMonarchIds,
   onSelectionChange,
   memberBornYear,
   memberDiedYear,
-  showOnlyTimelineValid = false,
   showAutoCalculate = true,
   onAutoCalculate,
   disabled = false,
@@ -62,40 +62,23 @@ export function MonarchSelector({
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [isAutoCalculating, setIsAutoCalculating] = useState(false);
+  const [showAllMonarchs, setShowAllMonarchs] = useState(true); // New state for filter toggle
 
   // Get selected monarchs objects
   const selectedMonarchs = useMemo(() => {
-    return monarchs.filter(monarch => selectedMonarchIds.includes(monarch.id));
-  }, [monarchs, selectedMonarchIds]);
+    return allMonarchs.filter(monarch => selectedMonarchIds.includes(monarch.id));
+  }, [allMonarchs, selectedMonarchIds]);
 
-  // Calculate timeline-valid monarchs (for status message)
-  const timelineValidMonarchs = useMemo(() => {
-    if (!memberBornYear) {
-      return [];
-    }
-
-    return monarchs.filter(monarch => {
-      const bornDate = new Date(`${memberBornYear}-01-01`);
-      const diedDate = memberDiedYear && memberDiedYear !== 9999 
-        ? new Date(`${memberDiedYear}-12-31`) 
-        : new Date(); // If still alive, use current date
-
-      const reignFromDate = new Date(monarch.reignFrom);
-      const reignToDate = new Date(monarch.reignTo);
-
-      // Check if reign overlaps with lifetime
-      return reignFromDate <= diedDate && reignToDate >= bornDate;
-    });
-  }, [monarchs, memberBornYear, memberDiedYear]);
-
-  // Filter monarchs based on timeline validation (for display)
+  // Simple filtering logic: show all vs timeline-valid only
   const filteredMonarchs = useMemo(() => {
-    if (!showOnlyTimelineValid || !memberBornYear) {
-      return monarchs;
+    if (!showAllMonarchs && memberBornYear) {
+      // Show only timeline-valid monarchs
+      return allMonarchs.filter(monarch => timelineValidMonarchIds.includes(monarch.id));
     }
-
-    return timelineValidMonarchs;
-  }, [monarchs, timelineValidMonarchs, showOnlyTimelineValid, memberBornYear]);
+    
+    // Show all monarchs
+    return allMonarchs;
+  }, [allMonarchs, timelineValidMonarchIds, showAllMonarchs, memberBornYear]);
 
   // Filter monarchs based on search
   const searchFilteredMonarchs = useMemo(() => {
@@ -157,13 +140,13 @@ export function MonarchSelector({
       return "Birth year required for timeline validation";
     }
 
-    const timelineValidCount = timelineValidMonarchs.length;
-    const totalCount = monarchs.length;
+    const totalCount = allMonarchs.length;
+    const timelineValidCount = timelineValidMonarchIds.length;
 
-    if (showOnlyTimelineValid) {
-      return `Showing ${timelineValidCount} monarchs that reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
+    if (showAllMonarchs) {
+      return `Showing all ${totalCount} monarchs • ${timelineValidCount} reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
     } else {
-      return `${timelineValidCount} of ${totalCount} monarchs reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
+      return `Showing ${timelineValidCount} monarchs that reigned during lifetime (${memberBornYear} - ${memberDiedYear || 'present'})`;
     }
   };
 
@@ -206,109 +189,121 @@ export function MonarchSelector({
         </Alert>
       )}
 
-      <div className="flex gap-2">
-        {/* Main selector */}
-        <Popover open={open} onOpenChange={setOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              role="combobox"
-              aria-expanded={open}
-              className="flex-1 justify-between"
-              disabled={disabled}
-            >
-              <div className="flex items-center gap-2">
-                <Crown className="w-4 h-4" />
-                {selectedMonarchs.length > 0 
-                  ? `${selectedMonarchs.length} monarch${selectedMonarchs.length > 1 ? 's' : ''} selected`
-                  : placeholder
-                }
-              </div>
-              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[400px] p-0" align="start">
-            <Command>
-              <CommandInput 
-                placeholder="Search monarchs..." 
-                value={searchValue}
-                onValueChange={setSearchValue}
-              />
-              <CommandEmpty>No monarchs found.</CommandEmpty>
-              <CommandGroup>
-                <ScrollArea className="h-[300px]">
-                  {searchFilteredMonarchs.map((monarch) => {
-                    const isSelected = selectedMonarchIds.includes(monarch.id);
-                    const isTimelineValid = timelineValidMonarchs.includes(monarch);
-                    
-                    return (
-                      <CommandItem
-                        key={monarch.id}
-                        value={monarch.id}
-                        onSelect={() => handleSelect(monarch)}
-                        className="p-0"
-                      >
-                        <MonarchCardCompact
-                          monarch={monarch}
-                          isSelected={isSelected}
-                          onSelect={handleSelect}
-                          className={cn(
-                            "w-full",
-                            !isTimelineValid && memberBornYear && "opacity-60"
-                          )}
-                        />
-                        {!isTimelineValid && memberBornYear && (
-                          <div className="text-xs text-muted-foreground ml-2">
-                            Outside lifetime
-                          </div>
-                        )}
-                      </CommandItem>
-                    );
-                  })}
-                </ScrollArea>
-              </CommandGroup>
-
-              {/* Footer with controls */}
-              <div className="border-t p-2 flex justify-between items-center">
-                <div className="text-xs text-muted-foreground">
-                  {selectedMonarchs.length} selected
-                </div>
-                
-                <div className="flex gap-2">
-                  {memberBornYear && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        // Toggle timeline filter
-                        // This could be handled by parent component
-                      }}
-                      className="text-xs"
-                    >
-                      <Search className="w-3 h-3 mr-1" />
-                      {showOnlyTimelineValid ? 'Show All' : 'Filter by Timeline'}
-                    </Button>
-                  )}
-                </div>
-              </div>
-            </Command>
-          </PopoverContent>
-        </Popover>
-
-        {/* Auto-calculate button */}
-        {showAutoCalculate && onAutoCalculate && memberBornYear && (
+      {/* Main selector */}
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
           <Button
-            type="button"
             variant="outline"
-            onClick={handleAutoCalculate}
+            role="combobox"
+            aria-expanded={open}
+            className="w-full justify-between"
             disabled={disabled}
-            className="flex items-center gap-2"
           >
-            <Calculator className="w-4 h-4" />
-            Auto-calculate
+            <div className="flex items-center gap-2">
+              <Crown className="w-4 h-4" />
+              {selectedMonarchs.length > 0 
+                ? `${selectedMonarchs.length} monarch${selectedMonarchs.length > 1 ? 's' : ''} selected`
+                : placeholder
+              }
+            </div>
+            <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
-        )}
-      </div>
+        </PopoverTrigger>
+        <PopoverContent className="w-[400px] p-0 max-h-[500px]" align="start">
+          <div className="p-2">
+            <input 
+              type="text"
+              placeholder="Search monarchs..." 
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-200 rounded-md text-sm"
+            />
+          </div>
+          
+          <div className="border-t">
+            <div className="h-[400px] overflow-y-auto">
+              {(() => {
+                console.log(`🔍 UI Debug: Rendering ${searchFilteredMonarchs.length} monarchs out of ${allMonarchs.length} total`);
+                console.log(`🔍 Filtered monarchs:`, searchFilteredMonarchs.map(m => m.name));
+                return null;
+              })()}
+              
+              {searchFilteredMonarchs.length === 0 ? (
+                <div className="p-4 text-center text-gray-500">No monarchs found.</div>
+              ) : (
+                searchFilteredMonarchs.map((monarch) => {
+                  const isSelected = selectedMonarchIds.includes(monarch.id);
+                  const isTimelineValid = timelineValidMonarchIds.includes(monarch.id);
+                  
+                  return (
+                    <div
+                      key={monarch.id}
+                      onClick={() => handleSelect(monarch)}
+                      className="flex items-center justify-between p-2 hover:bg-gray-50 cursor-pointer border-b border-gray-100"
+                    >
+                      <MonarchCardCompact
+                        monarch={monarch}
+                        isSelected={isSelected}
+                        onSelect={handleSelect}
+                        className={cn(
+                          "w-full",
+                          !isTimelineValid && memberBornYear && "opacity-60"
+                        )}
+                      />
+                      {memberBornYear && (
+                        <div className={cn(
+                          "text-xs ml-2 font-medium",
+                          isTimelineValid 
+                            ? "text-green-600 bg-green-50 px-2 py-1 rounded" 
+                            : "text-gray-500"
+                        )}>
+                          {isTimelineValid ? "✅ Reigned during lifetime" : "⭕ Outside lifetime"}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })
+              )}
+            </div>
+          </div>
+
+            {/* Footer with controls */}
+            <div className="border-t p-2 flex justify-between items-center">
+              <div className="text-xs text-muted-foreground">
+                {selectedMonarchs.length} selected
+              </div>
+              
+              <div className="flex gap-2">
+                {/* Auto-calculate button integrated into the footer */}
+                {showAutoCalculate && onAutoCalculate && memberBornYear && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={handleAutoCalculate}
+                    disabled={disabled}
+                    className="flex items-center gap-1 text-xs"
+                  >
+                    <Calculator className="w-3 h-3" />
+                    Auto-calculate
+                  </Button>
+                )}
+                
+                {memberBornYear && (
+                  <Button
+                    variant={showAllMonarchs ? "outline" : "default"}
+                    size="sm"
+                    onClick={() => setShowAllMonarchs(!showAllMonarchs)}
+                    className="text-xs"
+                  >
+                    <Search className="w-3 h-3 mr-1" />
+                    {showAllMonarchs ? 'Filter by Timeline' : 'Show All'}
+                  </Button>
+                )}
+              </div>
+            </div>
+        </PopoverContent>
+      </Popover>
     </div>
   );
 }
@@ -317,19 +312,19 @@ export function MonarchSelector({
  * Simple monarch selector for basic use cases without timeline validation
  */
 export function SimpleMonarchSelector({
-  monarchs,
+  allMonarchs,
   selectedMonarchIds,
   onSelectionChange,
   disabled = false,
   placeholder = "Select monarchs...",
   className = ""
-}: Pick<MonarchSelectorProps, 'monarchs' | 'selectedMonarchIds' | 'onSelectionChange' | 'disabled' | 'placeholder' | 'className'>) {
+}: Pick<MonarchSelectorProps, 'allMonarchs' | 'selectedMonarchIds' | 'onSelectionChange' | 'disabled' | 'placeholder' | 'className'>) {
   return (
     <MonarchSelector
-      monarchs={monarchs}
+      allMonarchs={allMonarchs}
+      timelineValidMonarchIds={[]} // No timeline validation for simple selector
       selectedMonarchIds={selectedMonarchIds}
       onSelectionChange={onSelectionChange}
-      showOnlyTimelineValid={false}
       showAutoCalculate={false}
       disabled={disabled}
       placeholder={placeholder}

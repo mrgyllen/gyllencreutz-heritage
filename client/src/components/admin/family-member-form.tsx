@@ -14,6 +14,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { MonarchSelector } from '@/components/monarch-selector';
+import { useMonarchTimeline } from '@/hooks/use-monarch-timeline';
 import { type CosmosDbFamilyMember, type Monarch } from '@/types/family';
 import { useToast } from '@/hooks/use-toast';
 import { 
@@ -86,6 +87,16 @@ export function FamilyMemberForm({
   // Local state to track monarch IDs for the form (both new and editing)
   const [localMonarchIds, setLocalMonarchIds] = useState<string[]>([]);
   
+  // Get timeline validation data for monarch selection
+  const memberBornYear = isAddingNew ? newMemberBornYear : editingMember?.born;
+  const memberDiedYear = isAddingNew ? newMemberDiedYear : editingMember?.died;
+  const { timelineValidMonarchs } = useMonarchTimeline({
+    memberId: editingMember?.externalId,
+    memberBornYear,
+    memberDiedYear
+  });
+  const timelineValidMonarchIds = timelineValidMonarchs.map(m => m.id);
+  
   // Initialize local monarch IDs when component mounts or editingMember changes
   useEffect(() => {
     if (isAddingNew) {
@@ -148,22 +159,18 @@ export function FamilyMemberForm({
   };
 
   const handleAutoCalculateMonarchs = async () => {
-    const bornYear = isAddingNew ? newMemberBornYear : editingMember?.born;
-    const diedYear = isAddingNew ? newMemberDiedYear : editingMember?.died;
-    
-    if (bornYear) {
+    if (memberBornYear) {
       try {
-        const calculatedMonarchIds = calculateMonarchsForLifetime(bornYear, diedYear || null, monarchs);
-        
-        // Update monarch selection (this will trigger handleMonarchSelectionChange)
-        handleMonarchSelectionChange(calculatedMonarchIds);
+        // Use the timeline-valid monarch IDs from the hook (backend-calculated)
+        handleMonarchSelectionChange(timelineValidMonarchIds);
         
         toast({ 
           title: 'Auto-calculated', 
-          description: `Found ${calculatedMonarchIds.length} monarchs during lifetime. Click Save to persist changes.`,
+          description: `Selected ${timelineValidMonarchIds.length} monarchs that reigned during lifetime. Click Save to persist changes.`,
           duration: 4000 
         });
       } catch (error) {
+        console.error('Auto-calculate failed:', error);
         toast({ 
           title: 'Auto-calculate failed', 
           description: 'Could not calculate monarchs for this member',
@@ -308,12 +315,12 @@ export function FamilyMemberForm({
         <div className="space-y-2">
           <Label htmlFor="monarchDuringLife">Monarchs During Life</Label>
           <MonarchSelector
-            monarchs={monarchs}
+            allMonarchs={monarchs}
+            timelineValidMonarchIds={timelineValidMonarchIds}
             selectedMonarchIds={localMonarchIds}
             onSelectionChange={handleMonarchSelectionChange}
-            memberBornYear={isAddingNew ? newMemberBornYear : editingMember?.born}
-            memberDiedYear={isAddingNew ? newMemberDiedYear : editingMember?.died}
-            showOnlyTimelineValid={false}
+            memberBornYear={memberBornYear}
+            memberDiedYear={memberDiedYear}
             showAutoCalculate={true}
             onAutoCalculate={handleAutoCalculateMonarchs}
             className={validationErrors.monarchIds ? 'border-red-500' : ''}
