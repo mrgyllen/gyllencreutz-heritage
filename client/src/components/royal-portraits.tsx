@@ -29,6 +29,7 @@ import carlXVIGustavPortrait from '@assets/carl-gustaf-16-300x300_1752701586397.
 // Royal portrait mappings with all authentic portraits
 export const RoyalPortraitAssets = {
   'Gustav Vasa': gustavVasaPortrait,
+  'Gustav I Vasa': gustavVasaPortrait,
   'Erik XIV': erikXIVPortrait,
   'Johan III': johanIIIPortrait,
   'Sigismund': sigismundPortrait,
@@ -49,7 +50,9 @@ export const RoyalPortraitAssets = {
   'Karl XV': karlXVPortrait,
   'Oscar II': oscarIIPortrait,
   'Gustav V': gustavVPortrait,
+  'Gustaf V': gustavVPortrait,
   'Gustav VI Adolf': gustavVIAdolfPortrait,
+  'Gustaf VI Adolf': gustavVIAdolfPortrait,
   'Carl XVI Gustaf': carlXVIGustavPortrait
 };
 

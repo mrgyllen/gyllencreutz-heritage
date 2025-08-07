@@ -64,5 +64,27 @@
     "quote": "I will make Sweden a great power.",
     "about": "The Lion of the North, king during the Thirty Years War",
     "portraitFileName": "gustav-ii-adolf.jpg"
+  },
+  {
+    "id": "gustaf-v",
+    "name": "Gustaf V",
+    "born": "1858-06-16",
+    "died": "1950-10-29",
+    "reignFrom": "1907-12-08",
+    "reignTo": "1950-10-29",
+    "quote": "Med folket för fosterlandet",
+    "about": "King during both World Wars, maintained Swedish neutrality",
+    "portraitFileName": "gustaf-v.jpg"
+  },
+  {
+    "id": "gustaf-vi-adolf",
+    "name": "Gustaf VI Adolf",
+    "born": "1882-11-11",
+    "died": "1973-09-15",
+    "reignFrom": "1950-10-29",
+    "reignTo": "1973-09-15",
+    "quote": "Plikten framför allt",
+    "about": "Scholar king, last king with real political influence",
+    "portraitFileName": "gustaf-vi-adolf.jpg"
   }
 ]

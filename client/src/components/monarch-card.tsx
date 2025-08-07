@@ -3,6 +3,7 @@ import { Crown, Calendar, User } from 'lucide-react';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { type Monarch } from '@/types/family';
+import { getRoyalPortrait } from '@/components/royal-portraits';
 
 interface MonarchCardProps {
   monarch: Monarch;
@@ -94,14 +95,10 @@ export function MonarchCard({
             <span>Lived {getLifePeriod()}</span>
           </div>
 
-          {/* Portrait placeholder or actual image */}
+          {/* Portrait or fallback */}
           {monarch.portraitFileName ? (
-            <div className="w-16 h-20 bg-muted rounded-md border-2 border-muted-foreground/20 flex items-center justify-center">
-              <div className="text-xs text-muted-foreground text-center">
-                Portrait
-                <br />
-                Available
-              </div>
+            <div className="w-16 h-20 flex items-center justify-center">
+              {getRoyalPortrait(monarch.name, 'large')}
             </div>
           ) : (
             <div className="w-16 h-20 bg-muted rounded-md border-2 border-dashed border-muted-foreground/30 flex items-center justify-center">
