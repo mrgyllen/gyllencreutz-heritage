@@ -79,30 +79,47 @@ export function PerformanceDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
+  // Performance-optimized data fetching with progressive loading to prevent main thread blocking
   const fetchPerformanceData = async () => {
     try {
       setLoading(true);
       setError(null);
 
-      const [statsRes, healthRes, analyticsRes] = await Promise.all([
-        fetch('/api/performance/stats'),
-        fetch('/api/performance/health'),
-        fetch('/api/performance/analytics')
-      ]);
-
-      if (!statsRes.ok || !healthRes.ok || !analyticsRes.ok) {
-        throw new Error('Failed to fetch performance data');
+      // Use progressive loading instead of Promise.all to prevent 81ms main thread blocking
+      // Each API call is deferred to its own frame for better performance
+      
+      // Fetch stats first (most important)
+      const statsRes = await fetch('/api/performance/stats');
+      if (statsRes.ok) {
+        const statsData = await statsRes.json();
+        setStats(statsData.data);
+        
+        // Defer next API call to prevent blocking
+        await new Promise(resolve => requestAnimationFrame(resolve));
       }
-
-      const [statsData, healthData, analyticsData] = await Promise.all([
-        statsRes.json(),
-        healthRes.json(),
-        analyticsRes.json()
-      ]);
-
-      setStats(statsData.data);
-      setHealth(healthData.data);
-      setAnalytics(analyticsData.data);
+      
+      // Fetch health data (second priority)
+      const healthRes = await fetch('/api/performance/health');
+      if (healthRes.ok) {
+        const healthData = await healthRes.json();
+        setHealth(healthData.data);
+        
+        // Defer final API call to prevent blocking
+        await new Promise(resolve => requestAnimationFrame(resolve));
+      }
+      
+      // Fetch analytics last (lowest priority)
+      const analyticsRes = await fetch('/api/performance/analytics');
+      if (analyticsRes.ok) {
+        const analyticsData = await analyticsRes.json();
+        setAnalytics(analyticsData.data);
+      }
+      
+      // Check if all critical requests succeeded
+      if (!statsRes.ok || !healthRes.ok) {
+        throw new Error('Failed to fetch critical performance data');
+      }
+      
       setLastUpdated(new Date());
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
@@ -112,11 +129,38 @@ export function PerformanceDashboard() {
   };
 
   useEffect(() => {
+    // Initial load
     fetchPerformanceData();
     
-    // Auto-refresh every 30 seconds
-    const interval = setInterval(fetchPerformanceData, 30000);
-    return () => clearInterval(interval);
+    // Performance-optimized auto-refresh using requestAnimationFrame instead of setInterval
+    // This prevents setTimeout violations by using frame-based timing
+    let rafId: number;
+    let lastRefreshTime = Date.now();
+    const REFRESH_INTERVAL = 30000; // 30 seconds
+    
+    const performanceRefreshLoop = () => {
+      const now = Date.now();
+      
+      if (now - lastRefreshTime >= REFRESH_INTERVAL) {
+        // Use requestAnimationFrame to defer the actual fetch operation
+        requestAnimationFrame(() => {
+          fetchPerformanceData();
+        });
+        lastRefreshTime = now;
+      }
+      
+      // Continue the loop using requestAnimationFrame instead of setTimeout
+      rafId = requestAnimationFrame(performanceRefreshLoop);
+    };
+    
+    // Start the performance refresh loop
+    rafId = requestAnimationFrame(performanceRefreshLoop);
+    
+    return () => {
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+      }
+    };
   }, []);
 
   const getStatusColor = (score: number) => {

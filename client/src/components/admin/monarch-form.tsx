@@ -78,7 +78,7 @@ export function MonarchForm({
             required
             className={monarchValidationErrors.id ? 'border-red-500' : ''}
             placeholder="e.g., gustav-i-vasa"
-            aria-describedby={monarchValidationErrors.id ? 'monarchId-error' : undefined}
+            {...(monarchValidationErrors.id && { 'aria-describedby': 'monarchId-error' })}
           />
           {monarchValidationErrors.id && (
             <p id="monarchId-error" className="text-sm text-red-600" role="alert">
@@ -95,7 +95,7 @@ export function MonarchForm({
             required
             className={monarchValidationErrors.name ? 'border-red-500' : ''}
             placeholder="e.g., Gustav I Vasa"
-            aria-describedby={monarchValidationErrors.name ? 'monarchName-error' : undefined}
+            {...(monarchValidationErrors.name && { 'aria-describedby': 'monarchName-error' })}
           />
           {monarchValidationErrors.name && (
             <p id="monarchName-error" className="text-sm text-red-600" role="alert">
@@ -114,7 +114,7 @@ export function MonarchForm({
             type="date"
             defaultValue={editingMonarch?.born || ''}
             className={monarchValidationErrors.born ? 'border-red-500' : ''}
-            aria-describedby={monarchValidationErrors.born ? 'monarchBorn-error' : undefined}
+            {...(monarchValidationErrors.born && { 'aria-describedby': 'monarchBorn-error' })}
           />
           {monarchValidationErrors.born && (
             <p id="monarchBorn-error" className="text-sm text-red-600" role="alert">
@@ -130,7 +130,7 @@ export function MonarchForm({
             type="date"
             defaultValue={editingMonarch?.died || ''}
             className={monarchValidationErrors.died ? 'border-red-500' : ''}
-            aria-describedby={monarchValidationErrors.died ? 'monarchDied-error' : undefined}
+            {...(monarchValidationErrors.died && { 'aria-describedby': 'monarchDied-error' })}
           />
           {monarchValidationErrors.died && (
             <p id="monarchDied-error" className="text-sm text-red-600" role="alert">
@@ -150,7 +150,7 @@ export function MonarchForm({
             defaultValue={editingMonarch?.reignFrom || ''}
             required
             className={monarchValidationErrors.reignFrom ? 'border-red-500' : ''}
-            aria-describedby={monarchValidationErrors.reignFrom ? 'reignFrom-error' : undefined}
+            {...(monarchValidationErrors.reignFrom && { 'aria-describedby': 'reignFrom-error' })}
           />
           {monarchValidationErrors.reignFrom && (
             <p id="reignFrom-error" className="text-sm text-red-600" role="alert">
@@ -167,7 +167,7 @@ export function MonarchForm({
             defaultValue={editingMonarch?.reignTo || ''}
             required
             className={monarchValidationErrors.reignTo ? 'border-red-500' : ''}
-            aria-describedby={monarchValidationErrors.reignTo ? 'reignTo-error' : undefined}
+            {...(monarchValidationErrors.reignTo && { 'aria-describedby': 'reignTo-error' })}
           />
           {monarchValidationErrors.reignTo && (
             <p id="reignTo-error" className="text-sm text-red-600" role="alert">
@@ -185,7 +185,7 @@ export function MonarchForm({
           defaultValue={editingMonarch?.portraitFileName || ''}
           className={monarchValidationErrors.portraitFileName ? 'border-red-500' : ''}
           placeholder="e.g., gustav-vasa-portrait.jpg"
-          aria-describedby={monarchValidationErrors.portraitFileName ? 'portraitFileName-error' : undefined}
+          {...(monarchValidationErrors.portraitFileName && { 'aria-describedby': 'portraitFileName-error' })}
         />
         {monarchValidationErrors.portraitFileName && (
           <p id="portraitFileName-error" className="text-sm text-red-600" role="alert">
@@ -203,7 +203,7 @@ export function MonarchForm({
           rows={2}
           className={monarchValidationErrors.quote ? 'border-red-500' : ''}
           placeholder="A famous quote or saying by the monarch..."
-          aria-describedby={monarchValidationErrors.quote ? 'monarchQuote-error' : undefined}
+          {...(monarchValidationErrors.quote && { 'aria-describedby': 'monarchQuote-error' })}
         />
         {monarchValidationErrors.quote && (
           <p id="monarchQuote-error" className="text-sm text-red-600" role="alert">
@@ -221,7 +221,7 @@ export function MonarchForm({
           rows={4}
           className={monarchValidationErrors.about ? 'border-red-500' : ''}
           placeholder="Historical information, achievements, important events during reign..."
-          aria-describedby={monarchValidationErrors.about ? 'monarchAbout-error' : undefined}
+          {...(monarchValidationErrors.about && { 'aria-describedby': 'monarchAbout-error' })}
         />
         {monarchValidationErrors.about && (
           <p id="monarchAbout-error" className="text-sm text-red-600" role="alert">

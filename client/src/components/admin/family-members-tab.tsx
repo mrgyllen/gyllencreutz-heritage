@@ -11,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { type CosmosDbFamilyMember, type Monarch } from '@/types/family';
 import { FamilyMemberForm } from '@/components/admin/family-member-form';
@@ -249,6 +249,12 @@ export function FamilyMembersTab({ monarchs }: FamilyMembersTabProps) {
             <DialogTitle>
               {isAddingNew ? 'Add New Family Member' : 'Edit Family Member'}
             </DialogTitle>
+            <DialogDescription>
+              {isAddingNew 
+                ? 'Add a new member to the Gyllencreutz family tree with biographical information and relationships.'
+                : 'Modify the selected family member\'s biographical information and relationships.'
+              }
+            </DialogDescription>
           </DialogHeader>
           
           <FamilyMemberForm

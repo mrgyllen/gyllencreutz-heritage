@@ -10,7 +10,7 @@ import { Search, Plus, Edit, Trash2, RotateCcw, Crown, AlertTriangle } from 'luc
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { MonarchCard } from '@/components/monarch-card';
 import { MonarchForm } from '@/components/admin/monarch-form';
@@ -221,6 +221,12 @@ export function MonarchsTab() {
             <DialogTitle>
               {isAddingNewMonarch ? 'Add New Monarch' : 'Edit Monarch'}
             </DialogTitle>
+            <DialogDescription>
+              {isAddingNewMonarch 
+                ? 'Create a new Swedish monarch with reign dates and biographical information.'
+                : 'Modify the selected monarch\'s information including reign dates and biography.'
+              }
+            </DialogDescription>
           </DialogHeader>
           
           <MonarchForm

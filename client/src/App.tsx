@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import AdminDb from "@/pages/admin-db";
 import NotFound from "@/pages/not-found";
 import { LanguageProvider } from "@/contexts/language-context";
+import { performanceMonitor } from "@/lib/performance-monitor";
 
 function Router() {
   return (
@@ -19,6 +20,11 @@ function Router() {
 }
 
 function App() {
+  // Initialize performance monitoring in development
+  if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined') {
+    performanceMonitor.startMonitoring();
+  }
+
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>

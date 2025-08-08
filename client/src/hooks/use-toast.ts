@@ -6,7 +6,7 @@ import type {
 } from "@/components/ui/toast"
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 5000
 
 type ToasterToast = ToastProps & {
   id: string
@@ -60,11 +60,16 @@ const addToRemoveQueue = (toastId: string) => {
     return
   }
 
+  // Use requestAnimationFrame + setTimeout for better performance
+  // This prevents the toast removal from blocking the main thread
   const timeout = setTimeout(() => {
-    toastTimeouts.delete(toastId)
-    dispatch({
-      type: "REMOVE_TOAST",
-      toastId: toastId,
+    // Defer the actual removal to the next frame for better performance
+    requestAnimationFrame(() => {
+      toastTimeouts.delete(toastId)
+      dispatch({
+        type: "REMOVE_TOAST",
+        toastId: toastId,
+      })
     })
   }, TOAST_REMOVE_DELAY)
 

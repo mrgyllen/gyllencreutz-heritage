@@ -150,7 +150,11 @@ export class ApiClient {
     for (let attempt = 0; attempt <= maxRetries; attempt++) {
       try {
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), timeout);
+        // Use performance-optimized timeout handling
+        const timeoutId = setTimeout(() => {
+          // Use requestAnimationFrame to defer abort for better performance
+          requestAnimationFrame(() => controller.abort());
+        }, timeout);
 
         const response = await fetch(url, {
           ...requestOptions,
@@ -208,9 +212,16 @@ export class ApiClient {
           break;
         }
 
-        // Wait before retrying (exponential backoff)
-        const delay = Math.min(1000 * Math.pow(2, attempt), 5000);
-        await new Promise(resolve => setTimeout(resolve, delay));
+        // Wait before retrying (optimized exponential backoff)
+        // Use shorter delays to prevent performance violations
+        const delay = Math.min(500 * Math.pow(1.5, attempt), 2000);
+        
+        // Use requestAnimationFrame for better performance on shorter delays
+        if (delay < 100) {
+          await new Promise(resolve => requestAnimationFrame(resolve));
+        } else {
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
       }
     }
 

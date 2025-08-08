@@ -201,7 +201,7 @@ export function FamilyMemberForm({
             required
             className={validationErrors.externalId ? 'border-red-500' : ''}
             placeholder="e.g., 0, 0.1, 1.2.3"
-            aria-describedby={validationErrors.externalId ? 'externalId-error' : undefined}
+            {...(validationErrors.externalId && { 'aria-describedby': 'externalId-error' })}
           />
           {validationErrors.externalId && (
             <p id="externalId-error" className="text-sm text-red-600" role="alert">
@@ -218,7 +218,7 @@ export function FamilyMemberForm({
             required
             className={validationErrors.name ? 'border-red-500' : ''}
             placeholder="e.g., Lars Tygesson"
-            aria-describedby={validationErrors.name ? 'name-error' : undefined}
+            {...(validationErrors.name && { 'aria-describedby': 'name-error' })}
           />
           {validationErrors.name && (
             <p id="name-error" className="text-sm text-red-600" role="alert">
@@ -238,7 +238,7 @@ export function FamilyMemberForm({
             defaultValue={editingMember?.born || ''}
             className={validationErrors.born ? 'border-red-500' : ''}
             placeholder="e.g., 1515"
-            aria-describedby={validationErrors.born ? 'born-error' : undefined}
+            {...(validationErrors.born && { 'aria-describedby': 'born-error' })}
             onChange={(e) => {
               const year = e.target.value ? parseInt(e.target.value) : null;
               if (isAddingNew) {
@@ -261,7 +261,7 @@ export function FamilyMemberForm({
             defaultValue={editingMember?.died || ''}
             className={validationErrors.died ? 'border-red-500' : ''}
             placeholder="e.g., 1560"
-            aria-describedby={validationErrors.died ? 'died-error' : undefined}
+            {...(validationErrors.died && { 'aria-describedby': 'died-error' })}
             onChange={(e) => {
               const year = e.target.value ? parseInt(e.target.value) : null;
               if (isAddingNew) {
@@ -304,7 +304,7 @@ export function FamilyMemberForm({
             defaultValue={editingMember?.father || ''}
             className={validationErrors.father ? 'border-red-500' : ''}
             placeholder="e.g., Lars Tygesson"
-            aria-describedby={validationErrors.father ? 'father-error' : undefined}
+            {...(validationErrors.father && { 'aria-describedby': 'father-error' })}
           />
           {validationErrors.father && (
             <p id="father-error" className="text-sm text-red-600" role="alert">
@@ -343,7 +343,7 @@ export function FamilyMemberForm({
           rows={3}
           className={validationErrors.notes ? 'border-red-500' : ''}
           placeholder="Biographical information, achievements, historical context..."
-          aria-describedby={validationErrors.notes ? 'notes-error' : undefined}
+          {...(validationErrors.notes && { 'aria-describedby': 'notes-error' })}
         />
         {validationErrors.notes && (
           <p id="notes-error" className="text-sm text-red-600" role="alert">

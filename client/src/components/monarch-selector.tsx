@@ -121,20 +121,19 @@ export function MonarchSelector({
       // Don't close the dropdown - let user see the results and choose to save manually
       // setOpen(false); // Removed to improve UX
       
-      // Keep dropdown open after auto-calculate
-      setTimeout(() => {
-        setIsAutoCalculating(false);
-      }, 100);
+      // Use immediate state update instead of setTimeout to avoid performance violations
+      // React will batch this update naturally, eliminating the need for artificial delay
+      setIsAutoCalculating(false);
     }
   };
 
-  // Prevent dropdown from closing when selectedMonarchIds change due to auto-calculate
+  // Prevent dropdown from closing when auto-calculating
   useEffect(() => {
     if (isAutoCalculating) {
       // Ensure dropdown stays open during auto-calculate
       setOpen(true);
     }
-  }, [selectedMonarchIds, isAutoCalculating]);
+  }, [isAutoCalculating]); // Removed selectedMonarchIds dependency to prevent excessive re-renders
 
 
 
@@ -205,17 +204,18 @@ export function MonarchSelector({
               className="h-[400px] overflow-y-auto scroll-smooth"
               tabIndex={0}
               onWheel={(e) => {
-                e.preventDefault();
-                if (scrollContainerRef.current) {
-                  scrollContainerRef.current.scrollTop += e.deltaY;
+                // Performance-optimized wheel handler that respects passive event listeners
+                // NO preventDefault() call - this avoids passive event listener warnings
+                const container = scrollContainerRef.current;
+                if (container) {
+                  // Use requestAnimationFrame for smooth, performance-optimized scrolling
+                  // This avoids forced reflow violations while maintaining functionality
+                  requestAnimationFrame(() => {
+                    container.scrollTop += e.deltaY;
+                  });
                 }
               }}
             >
-              {(() => {
-                console.log(`🔍 UI Debug: Rendering ${searchFilteredMonarchs.length} monarchs out of ${allMonarchs.length} total`);
-                console.log(`🔍 Filtered monarchs:`, searchFilteredMonarchs.map(m => m.name));
-                return null;
-              })()}
               
               {searchFilteredMonarchs.length === 0 ? (
                 <div className="p-4 text-center text-gray-500">No monarchs found.</div>

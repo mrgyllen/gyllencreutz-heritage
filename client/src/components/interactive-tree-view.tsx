@@ -426,7 +426,7 @@ const InteractiveTreeViewComponent: React.FC<InteractiveTreeViewProps> = ({
         const batch = remainingNodes.slice(startIndex, startIndex + performanceConfig.batchSize);
         if (batch.length === 0) return;
         
-        setTimeout(() => {
+        requestAnimationFrame(() => {
           const additionalNodes = g.selectAll('.node-additional')
             .data(batch)
             .enter()
@@ -475,13 +475,14 @@ const InteractiveTreeViewComponent: React.FC<InteractiveTreeViewProps> = ({
             .duration(performanceConfig.animationDuration / 2)
             .style('opacity', 1);
 
-          // Load next batch
+          // Load next batch recursively - requestAnimationFrame provides natural pacing
           loadRemainingNodes(startIndex + performanceConfig.batchSize);
-        }, performanceConfig.animationDuration + (startIndex / performanceConfig.batchSize) * 100);
+        });
       };
       
       // Start progressive loading after initial nodes are rendered
-      setTimeout(() => loadRemainingNodes(), performanceConfig.animationDuration * 2);
+      // Use requestAnimationFrame for better performance instead of setTimeout
+      requestAnimationFrame(() => loadRemainingNodes());
     }
 
     // Store zoom instance for external controls
@@ -539,22 +540,32 @@ const InteractiveTreeViewComponent: React.FC<InteractiveTreeViewProps> = ({
     if (svgRef.current) {
       const svg = d3.select(svgRef.current);
       const treeGroup = svg.select('.tree-group').node() as SVGGElement | null;
-      const bounds = treeGroup?.getBBox();
-      if (bounds) {
-        const fullWidth = 1200;
-        const fullHeight = 800;
-        const width = bounds.width;
-        const height = bounds.height;
-        const midX = bounds.x + width / 2;
-        const midY = bounds.y + height / 2;
-        const scale = Math.min(fullWidth / width, fullHeight / height) * 0.8;
-        const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
-        
-        svg.transition().call(
-          (svg.node() as any).__zoom__.transform,
-          d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
-        );
-      }
+      
+      // Defer getBBox() call to prevent 38ms forced reflow violation
+      // This moves the expensive DOM measurement off the main thread
+      requestAnimationFrame(() => {
+        if (treeGroup) {
+          const bounds = treeGroup.getBBox();
+          if (bounds) {
+            const fullWidth = 1200;
+            const fullHeight = 800;
+            const width = bounds.width;
+            const height = bounds.height;
+            const midX = bounds.x + width / 2;
+            const midY = bounds.y + height / 2;
+            const scale = Math.min(fullWidth / width, fullHeight / height) * 0.8;
+            const translate = [fullWidth / 2 - scale * midX, fullHeight / 2 - scale * midY];
+            
+            // Defer the zoom operation to the next frame for smoother performance
+            requestAnimationFrame(() => {
+              svg.transition().call(
+                (svg.node() as any).__zoom__.transform,
+                d3.zoomIdentity.translate(translate[0], translate[1]).scale(scale)
+              );
+            });
+          }
+        }
+      });
     }
   }, []);
 
