@@ -5,7 +5,7 @@
  * Handles the family members management interface including search, list, and form.
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Search, Plus, Edit, Trash2, RotateCcw, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useLocation } from 'wouter';
 import { handleSearchChange } from '@/lib/admin-validation-utils';
 import { useToast } from '@/hooks/use-toast';
+import { FixedSizeList as List, areEqual } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 
 interface FamilyMembersTabProps {
   monarchs: Monarch[];
@@ -124,6 +126,56 @@ export function FamilyMembersTab({ monarchs }: FamilyMembersTabProps) {
     );
   }
 
+  // Memoize row data to avoid re-creating objects on each render
+  const rows = useMemo(() => filteredMembers, [filteredMembers]);
+
+  type RowProps = { index: number; style: React.CSSProperties };
+  const Row = React.memo(({ index, style }: RowProps) => {
+    const member = rows[index];
+    return (
+      <div style={style}>
+        <Card key={member.id} className="hover:shadow-md transition-shadow">
+          <CardContent className="p-6">
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-2">
+                  <h3 className="font-semibold text-lg">{member.name}</h3>
+                  <Badge variant="outline">{member.externalId}</Badge>
+                  {member.isSuccessionSon && (
+                    <Badge className="bg-amber-100 text-amber-800">Succession Son</Badge>
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-muted-foreground mb-2">
+                  <div>Born: {member.born || '?'}</div>
+                  <div>Died: {member.died || 'Living'}</div>
+                  {member.biologicalSex && <div>Sex: {member.biologicalSex}</div>}
+                  {member.father && <div>Father: {member.father}</div>}
+                  {member.monarchDuringLife && member.monarchDuringLife.length > 0 && (
+                    <div>Monarch: {Array.isArray(member.monarchDuringLife) ? member.monarchDuringLife.join(', ') : member.monarchDuringLife}</div>
+                  )}
+                </div>
+                {member.notes && (
+                  <p className="mt-2 text-sm text-muted-foreground line-clamp-2">{member.notes}</p>
+                )}
+                {member.importedAt && (
+                  <div className="mt-2 text-xs text-muted-foreground">Imported: {new Date(member.importedAt).toLocaleString()}</div>
+                )}
+              </div>
+              <div className="flex gap-2 ml-4">
+                <Button onClick={() => startEditing(member)} size="sm" variant="outline">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button onClick={() => deleteMember(member)} size="sm" variant="outline" className="text-red-600 hover:text-red-700">
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }, areEqual);
+
   return (
     <>
       {/* Search and Actions */}
@@ -177,65 +229,21 @@ export function FamilyMembersTab({ monarchs }: FamilyMembersTabProps) {
         </Card>
       </div>
 
-      {/* Members List */}
-      <div className="space-y-4">
-        {filteredMembers.map((member) => (
-          <Card key={member.id} className="hover:shadow-md transition-shadow">
-            <CardContent className="p-6">
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-2">
-                    <h3 className="font-semibold text-lg">{member.name}</h3>
-                    <Badge variant="outline">{member.externalId}</Badge>
-                    {member.isSuccessionSon && (
-                      <Badge className="bg-amber-100 text-amber-800">Succession Son</Badge>
-                    )}
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 text-sm text-muted-foreground mb-2">
-                    <div>Born: {member.born || '?'}</div>
-                    <div>Died: {member.died || 'Living'}</div>
-                    {member.biologicalSex && <div>Sex: {member.biologicalSex}</div>}
-                    {member.father && <div>Father: {member.father}</div>}
-                    {member.monarchDuringLife && member.monarchDuringLife.length > 0 && (
-                      <div>Monarch: {Array.isArray(member.monarchDuringLife) ? member.monarchDuringLife.join(', ') : member.monarchDuringLife}</div>
-                    )}
-                  </div>
-                  
-                  {member.notes && (
-                    <p className="mt-2 text-sm text-muted-foreground line-clamp-2">
-                      {member.notes}
-                    </p>
-                  )}
-                  
-                  {member.importedAt && (
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      Imported: {new Date(member.importedAt).toLocaleString()}
-                    </div>
-                  )}
-                </div>
-                
-                <div className="flex gap-2 ml-4">
-                  <Button
-                    onClick={() => startEditing(member)}
-                    size="sm"
-                    variant="outline"
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    onClick={() => deleteMember(member)}
-                    size="sm"
-                    variant="outline"
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+      {/* Members List - virtualized */}
+      <div className="h-[70vh]" style={{ contentVisibility: 'auto', containIntrinsicSize: '1000px' }}>
+        <AutoSizer disableWidth={false}>
+          {({ height, width }: { height: number; width: number }) => (
+            <List
+              height={height}
+              itemCount={rows.length}
+              itemSize={152}
+              width={width}
+              overscanCount={6}
+            >
+              {({ index, style }) => <Row index={index} style={style} />}
+            </List>
+          )}
+        </AutoSizer>
       </div>
 
       {/* Edit/Add Dialog */}

@@ -63,8 +63,16 @@ const addToRemoveQueue = (toastId: string) => {
   // Use requestAnimationFrame + setTimeout for better performance
   // This prevents the toast removal from blocking the main thread
   const timeout = setTimeout(() => {
-    // Defer the actual removal to the next frame for better performance
-    requestAnimationFrame(() => {
+    const idle = (cb: () => void) => {
+      // Prefer idle callback when available to avoid competing with layout/paint
+      const ric = (window as any).requestIdleCallback as ((cb: () => void) => number) | undefined
+      if (typeof ric === 'function') {
+        ric(cb)
+      } else {
+        requestAnimationFrame(cb)
+      }
+    }
+    idle(() => {
       toastTimeouts.delete(toastId)
       dispatch({
         type: "REMOVE_TOAST",

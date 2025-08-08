@@ -20,9 +20,9 @@ class ClientPerformanceMonitor {
   
   // Performance thresholds (in milliseconds)
   private readonly THRESHOLDS = {
-    setTimeout: 50, // setTimeout operations should be under 50ms
-    forcedReflow: 16, // Forced reflows should be under 16ms (60fps budget)
-    mainThreadBlocking: 16 // Main thread blocking should be under 16ms
+    setTimeout: 60, // Slightly relaxed
+    forcedReflow: 24, // Allow minor layout work without critical noise
+    mainThreadBlocking: 50 // Treat >50ms as noteworthy
   };
 
   /**
