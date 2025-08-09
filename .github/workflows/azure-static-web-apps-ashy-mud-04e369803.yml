@@ -62,6 +62,13 @@ jobs:
                const coredemo = require('@actions/core')
                return await coredemo.getIDToken()
            result-encoding: string
+      - name: Build Functions (compile TS to JS)
+        if: steps.check_commit.outputs.skip == 'false'
+        run: |
+          npm ci --prefix functions
+          npx esbuild functions/*.ts --platform=node --target=node18 --format=cjs --sourcemap --outdir=functions/build
+          mkdir -p functions/build/shared
+          cp -R functions/shared functions/build/
       - name: Build And Deploy
         if: steps.check_commit.outputs.skip == 'false'
         id: builddeploy

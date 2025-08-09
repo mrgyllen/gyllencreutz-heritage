@@ -12,12 +12,21 @@ require('./src/functions/cosmosDbMembers');
 require('./src/functions/cosmosDataImport');
 
 // Monarch API functions
-require('./get-all-monarchs');
-require('./get-monarch');
-require('./create-monarch');
-require('./update-monarch');
-require('./delete-monarch');
-require('./import-monarchs-from-json');
-require('./get-monarchs-during-lifetime');
-require('./bulk-update-members-with-monarch-ids');
-require('./bulk-update-members-with-monarch-ids-dry-run');
+const tryRequire = (path) => {
+  try {
+    require(path);
+  } catch (err) {
+    console.warn(`[functions] Failed to load handler ${path}:`, err && err.message ? err.message : err);
+  }
+};
+
+// Prefer compiled JS under build/ when present
+tryRequire('./build/get-all-monarchs.js');
+tryRequire('./build/get-monarch.js');
+tryRequire('./build/create-monarch.js');
+tryRequire('./build/update-monarch.js');
+tryRequire('./build/delete-monarch.js');
+tryRequire('./build/import-monarchs-from-json.js');
+tryRequire('./build/get-monarchs-during-lifetime.js');
+tryRequire('./build/bulk-update-members-with-monarch-ids.js');
+tryRequire('./build/bulk-update-members-with-monarch-ids-dry-run.js');
