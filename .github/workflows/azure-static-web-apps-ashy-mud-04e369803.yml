@@ -65,10 +65,12 @@ jobs:
       - name: Build Functions (compile TS to JS)
         if: steps.check_commit.outputs.skip == 'false'
         run: |
-          npm ci --prefix functions
+          npm install --prefix functions --no-audit --no-fund
           npx esbuild functions/*.ts --platform=node --target=node18 --format=cjs --sourcemap --outdir=functions/build
           mkdir -p functions/build/shared
-          cp -R functions/shared functions/build/
+          cp -R functions/shared functions/build/ || true
+          echo "Built functions:"
+          ls -la functions/build || true
       - name: Build And Deploy
         if: steps.check_commit.outputs.skip == 'false'
         id: builddeploy
