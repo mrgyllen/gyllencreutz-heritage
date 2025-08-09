@@ -85,7 +85,7 @@ jobs:
           output_location: "" # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
           skip_app_build: true # We're building manually above
-          skip_api_build: true # We prebuild functions and install deps ourselves
+          # Let Oryx detect Node functions and package correctly
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
