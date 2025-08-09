@@ -66,7 +66,7 @@ jobs:
         if: steps.check_commit.outputs.skip == 'false'
         run: |
           npm install --prefix functions --no-audit --no-fund
-          npx esbuild functions/*.ts --platform=node --target=node18 --format=cjs --sourcemap --outdir=functions/build
+          npx esbuild functions/*.ts --platform=node --target=node20 --format=cjs --sourcemap --outdir=functions/build
           mkdir -p functions/build/shared
           cp -R functions/shared functions/build/ || true
           echo "Built functions:"
@@ -85,7 +85,7 @@ jobs:
           output_location: "" # Built app content directory - optional
           github_id_token: ${{ steps.idtoken.outputs.result }}
           skip_app_build: true # We're building manually above
-          # Let Oryx detect Node functions and package correctly
+          skip_api_build: true  # Use our prebuilt API (functions/build) with apiRuntime pinned via staticwebapp.config.json
           ###### End of Repository/Build Configurations ######
 
   close_pull_request_job:
