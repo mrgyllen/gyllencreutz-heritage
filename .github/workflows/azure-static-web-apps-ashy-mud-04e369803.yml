@@ -78,9 +78,9 @@ jobs:
           cp functions/host.json functions/main.js functions/package.json functions/publish/
           cp -R functions/build functions/publish/build
           cp -R functions/shared functions/publish/shared || true
+          cp -R functions/src functions/publish/src
           cp -R functions/node_modules functions/publish/node_modules
-          # Remove any leftover sources/maps to minimize artifact size
-          rm -rf functions/src || true
+          # Remove any leftover sources/maps to minimize artifact size from original location
           find functions -type f -name "*.map" -delete || true
           echo "Publish contents:"
           du -sh functions/publish || true
